@@ -1,5 +1,6 @@
-repos/
+/repos/
 .venv/
 .qualgraph/
+.pytest_cache/
 __pycache__/
 *.py[cod]
