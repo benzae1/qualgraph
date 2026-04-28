@@ -35,6 +35,19 @@ def find_node_for_location(graph: nx.DiGraph, file_path: str | Path, line: int) 
     return None
 
 
+def nodes_for_file(graph: nx.DiGraph, file_path: str | Path) -> list[str]:
+    index = graph.graph.get(LOCATION_INDEX_KEY)
+    if index is None:
+        index = _build_location_index(graph)
+        graph.graph[LOCATION_INDEX_KEY] = index
+
+    normalized = _normalize_path(file_path)
+    candidates = index.get(normalized)
+    if candidates is None:
+        candidates = _suffix_candidates(index, normalized)
+    return [node_id for _line_start, _line_end, node_id in candidates or []]
+
+
 def _build_location_index(graph: nx.DiGraph) -> dict[str, list[tuple[int, int, str]]]:
     by_file: dict[str, list[tuple[int, int, str]]] = {}
     for node_id, attrs in graph.nodes(data=True):
