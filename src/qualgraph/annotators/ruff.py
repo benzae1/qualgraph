@@ -12,6 +12,7 @@ from typing import Any
 import networkx as nx
 
 from qualgraph.annotators.base import AnnotatorResult, BaseAnnotator
+from qualgraph.annotators.findings import add_finding, clear_findings_by_source
 from qualgraph.annotators.locations import find_node_for_location
 
 
@@ -23,6 +24,7 @@ class RuffAnnotator(BaseAnnotator):
         return importlib.util.find_spec("ruff") is not None
 
     def annotate(self, graph: nx.DiGraph, repo_path: Path) -> AnnotatorResult:
+        clear_findings_by_source(graph, self.name)
         completed = subprocess.run(
             [sys.executable, "-m", "ruff", "check", "--output-format=json", "--select=ALL", "."],
             cwd=repo_path,
@@ -43,8 +45,8 @@ class RuffAnnotator(BaseAnnotator):
             node_id = find_node_for_location(graph, _relative_to_repo(repo_path, filename), int(row))
             if node_id is None:
                 continue
-            graph.nodes[node_id].setdefault("findings", []).append(_finding_payload(finding))
-            nodes_touched.add(node_id)
+            if add_finding(graph.nodes[node_id], _finding_payload(finding)):
+                nodes_touched.add(node_id)
 
         return AnnotatorResult(name=self.name, nodes_annotated=len(nodes_touched))
 

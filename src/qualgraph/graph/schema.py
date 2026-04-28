@@ -53,6 +53,10 @@ class NodeAttrs:
     author_count: Optional[int] = None
     bug_fix_keywords: Optional[int] = None
     centrality: Optional[float] = None
+    betweenness_centrality: Optional[float] = None
+    degree_centrality: Optional[float] = None
+    pagerank: Optional[float] = None
+    structural_score: Optional[float] = None
     in_degree: Optional[int] = None
     out_degree: Optional[int] = None
     cluster_id: Optional[int] = None
@@ -93,6 +97,10 @@ OPTIONAL_NODE_ATTRS = (
     "author_count",
     "bug_fix_keywords",
     "centrality",
+    "betweenness_centrality",
+    "degree_centrality",
+    "pagerank",
+    "structural_score",
     "in_degree",
     "out_degree",
     "cluster_id",

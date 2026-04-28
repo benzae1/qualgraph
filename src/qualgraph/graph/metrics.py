@@ -9,7 +9,12 @@ import networkx as nx
 
 
 def annotate_metrics(g: nx.DiGraph) -> None:
-    """Write centrality and degree metrics back onto graph nodes."""
+    """Write structural metrics back onto graph nodes.
+
+    Betweenness is useful for bridge-finding, but it is often exactly zero in
+    small sparse code graphs. ``centrality`` is therefore a composite structural
+    score for ranking, while raw betweenness remains available separately.
+    """
 
     if g.number_of_nodes() == 0:
         return
@@ -19,10 +24,16 @@ def annotate_metrics(g: nx.DiGraph) -> None:
     else:
         bw = nx.betweenness_centrality(g)
 
-    for node_id, value in bw.items():
-        g.nodes[node_id]["centrality"] = value
+    degree = _degree_centrality(g)
+    pagerank = _pagerank(g)
+    structural_scores = _structural_scores(bw, degree, pagerank)
 
     for node_id in g.nodes:
+        g.nodes[node_id]["betweenness_centrality"] = float(bw.get(node_id, 0.0))
+        g.nodes[node_id]["degree_centrality"] = float(degree.get(node_id, 0.0))
+        g.nodes[node_id]["pagerank"] = float(pagerank.get(node_id, 0.0))
+        g.nodes[node_id]["structural_score"] = float(structural_scores.get(node_id, 0.0))
+        g.nodes[node_id]["centrality"] = float(structural_scores.get(node_id, 0.0))
         g.nodes[node_id]["in_degree"] = int(g.in_degree(node_id))
         g.nodes[node_id]["out_degree"] = int(g.out_degree(node_id))
 
@@ -100,3 +111,44 @@ def _percentile(values: list[int], percentile: float) -> int:
     ordered = sorted(values)
     index = round((len(ordered) - 1) * percentile)
     return ordered[index]
+
+
+def _degree_centrality(g: nx.DiGraph) -> dict[str, float]:
+    if g.number_of_nodes() <= 1:
+        return {node_id: 0.0 for node_id in g.nodes}
+    denominator = 2 * (g.number_of_nodes() - 1)
+    return {node_id: float(g.degree(node_id)) / denominator for node_id in g.nodes}
+
+
+def _pagerank(g: nx.DiGraph) -> dict[str, float]:
+    try:
+        return nx.pagerank(g)
+    except (ImportError, nx.PowerIterationFailedConvergence):
+        return {node_id: 0.0 for node_id in g.nodes}
+
+
+def _structural_scores(
+    betweenness: dict[str, float],
+    degree: dict[str, float],
+    pagerank: dict[str, float],
+) -> dict[str, float]:
+    bw_norm = _normalize(betweenness)
+    degree_norm = _normalize(degree)
+    pagerank_norm = _normalize(pagerank)
+    return {
+        node_id: (
+            0.45 * degree_norm.get(node_id, 0.0)
+            + 0.35 * pagerank_norm.get(node_id, 0.0)
+            + 0.20 * bw_norm.get(node_id, 0.0)
+        )
+        for node_id in set(betweenness) | set(degree) | set(pagerank)
+    }
+
+
+def _normalize(values: dict[str, float]) -> dict[str, float]:
+    if not values:
+        return {}
+    maximum = max(values.values())
+    if maximum <= 0:
+        return {node_id: 0.0 for node_id in values}
+    return {node_id: value / maximum for node_id, value in values.items()}

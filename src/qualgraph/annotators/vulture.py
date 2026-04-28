@@ -11,6 +11,7 @@ from pathlib import Path
 import networkx as nx
 
 from qualgraph.annotators.base import AnnotatorResult, BaseAnnotator
+from qualgraph.annotators.findings import add_finding, clear_findings_by_source
 from qualgraph.annotators.locations import find_node_for_location
 
 
@@ -25,6 +26,10 @@ class VultureAnnotator(BaseAnnotator):
         return importlib.util.find_spec("vulture") is not None
 
     def annotate(self, graph: nx.DiGraph, repo_path: Path) -> AnnotatorResult:
+        clear_findings_by_source(graph, self.name)
+        for _node_id, attrs in graph.nodes(data=True):
+            attrs.pop("dead_code", None)
+
         completed = subprocess.run(
             [sys.executable, "-m", "vulture", ".", "--make-whitelist"],
             cwd=repo_path,
@@ -49,14 +54,15 @@ class VultureAnnotator(BaseAnnotator):
                 continue
             attrs = graph.nodes[node_id]
             attrs["dead_code"] = True
-            attrs.setdefault("findings", []).append(
+            if add_finding(
+                attrs,
                 {
                     "source": "vulture",
                     "message": line.strip(),
                     "line": int(match.group("line")),
-                }
-            )
-            nodes_touched.add(node_id)
+                },
+            ):
+                nodes_touched.add(node_id)
 
         return AnnotatorResult(name=self.name, nodes_annotated=len(nodes_touched))
 
