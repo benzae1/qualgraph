@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(python .graphify_ast_run.py)",
+      "PowerShell(python .graphify_merge.py)",
+      "PowerShell(python .graphify_build.py)",
+      "PowerShell(python .graphify_inspect.py)",
+      "PowerShell(python .graphify_label.py)",
+      "PowerShell(python .graphify_html.py)",
+      "Bash(mv /c/Users/anton/Documents/Projects/analytify/src/qualgraph/graph/serialise.py /c/Users/anton/Documents/Projects/analytify/src/qualgraph/graph/serialize.py)",
+      "Bash(mv /c/Users/anton/Documents/Projects/analytify/src/qualgraph/llm/analyser.py /c/Users/anton/Documents/Projects/analytify/src/qualgraph/llm/analyzer.py)",
+      "Bash(touch /c/Users/anton/Documents/Projects/analytify/src/qualgraph/llm/providers/__init__.py)",
+      "Bash(touch /c/Users/anton/Documents/Projects/analytify/qualgraph.yaml.example)"
+    ]
+  }
+}
