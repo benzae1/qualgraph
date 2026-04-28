@@ -2,47 +2,132 @@
 
 from __future__ import annotations
 
+import logging
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Protocol
 
-from qualgraph.annotators.base import BaseAnnotator
+import networkx as nx
+
+from qualgraph.annotators.base import AnnotatorResult, BaseAnnotator
 from qualgraph.logging import RunLogger
+
+
+class PipelineLogger(Protocol):
+    def info(self, message: str, *args: Any, **kwargs: Any) -> None:
+        ...
+
+    def warning(self, message: str, *args: Any, **kwargs: Any) -> None:
+        ...
+
+    def exception(self, message: str, *args: Any, **kwargs: Any) -> None:
+        ...
 
 
 @dataclass(slots=True)
 class AnnotatorPipeline:
     annotators: list[BaseAnnotator] = field(default_factory=list)
-    continue_on_error: bool = True
 
     def __init__(
         self,
         annotators: Iterable[BaseAnnotator] = (),
-        continue_on_error: bool = True,
     ) -> None:
         self.annotators = list(annotators)
-        self.continue_on_error = continue_on_error
 
     def run(
         self,
-        graph: Any,
+        graph: nx.DiGraph,
         repo_path: str | Path,
-        run_logger: RunLogger | None = None,
-    ) -> Any:
-        if run_logger is not None:
-            run_logger.log_event(
-                "annotator_pipeline_started",
-                annotator_count=len(self.annotators),
-                annotators=[annotator.name for annotator in self.annotators],
+        logger: PipelineLogger | RunLogger | None = None,
+    ) -> list[AnnotatorResult]:
+        return run_pipeline(graph, Path(repo_path), self.annotators, logger)
+
+
+def run_pipeline(
+    graph: nx.DiGraph,
+    repo_path: str | Path,
+    annotators: Iterable[BaseAnnotator],
+    logger: PipelineLogger | RunLogger | None = None,
+) -> list[AnnotatorResult]:
+    """Run annotators sequentially without letting one failure stop the rest."""
+
+    annotator_list = list(annotators)
+    stdlib_logger = _stdlib_logger(logger)
+    run_logger = logger if isinstance(logger, RunLogger) else None
+    repo = Path(repo_path)
+    results: list[AnnotatorResult] = []
+
+    if run_logger is not None:
+        run_logger.log_event(
+            "annotator_pipeline_started",
+            annotator_count=len(annotator_list),
+            annotators=[annotator.name for annotator in annotator_list],
+        )
+
+    for annotator in annotator_list:
+        if not annotator.is_available():
+            stdlib_logger.warning("%s unavailable, skipping", annotator.name)
+            if run_logger is not None:
+                run_logger.log_annotator(
+                    name=annotator.name,
+                    version=annotator.version,
+                    duration_ms=0.0,
+                    counts={},
+                    status="skipped",
+                )
+            continue
+
+        started = time.perf_counter()
+        try:
+            result = annotator.annotate(graph, repo)
+            if not isinstance(result, AnnotatorResult):
+                raise TypeError(f"{annotator.name}.annotate returned {type(result).__name__}")
+            result.duration_seconds = time.perf_counter() - started
+            results.append(result)
+            stdlib_logger.info(
+                "%s annotated %s nodes in %.1fs",
+                annotator.name,
+                result.nodes_annotated,
+                result.duration_seconds,
             )
+            if run_logger is not None:
+                run_logger.log_annotator(
+                    name=annotator.name,
+                    version=annotator.version,
+                    duration_ms=result.duration_seconds * 1000,
+                    counts=result.counts(),
+                    status="ok" if not result.errors else "ok_with_errors",
+                )
+        except Exception as exc:
+            duration_seconds = time.perf_counter() - started
+            stdlib_logger.exception("%s failed: %s", annotator.name, exc)
+            result = AnnotatorResult(
+                name=annotator.name,
+                duration_seconds=duration_seconds,
+                errors=[str(exc)],
+            )
+            results.append(result)
+            if run_logger is not None:
+                run_logger.log_annotator(
+                    name=annotator.name,
+                    version=annotator.version,
+                    duration_ms=duration_seconds * 1000,
+                    counts=result.counts(),
+                    status="failed",
+                    error=exc,
+                )
 
-        for annotator in self.annotators:
-            try:
-                annotator.run(graph, repo_path, run_logger=run_logger)
-            except Exception:
-                if not self.continue_on_error:
-                    raise
+    if run_logger is not None:
+        run_logger.log_event(
+            "annotator_pipeline_finished",
+            annotator_count=len(annotator_list),
+            result_count=len(results),
+        )
+    return results
 
-        if run_logger is not None:
-            run_logger.log_event("annotator_pipeline_finished", annotator_count=len(self.annotators))
-        return graph
+
+def _stdlib_logger(logger: PipelineLogger | RunLogger | None) -> PipelineLogger:
+    if logger is not None and all(hasattr(logger, name) for name in ("info", "warning", "exception")):
+        return logger
+    return logging.getLogger("qualgraph.annotators")
