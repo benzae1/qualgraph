@@ -1,1 +1,5 @@
 repos/
+.venv/
+.qualgraph/
+__pycache__/
+*.py[cod]

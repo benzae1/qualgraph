@@ -94,8 +94,53 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L1",
       "id": "cli_py",
-      "community": 7,
+      "community": 1,
       "norm_label": "cli.py"
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L21",
+      "id": "cli_main",
+      "community": 1,
+      "norm_label": "main()"
+    },
+    {
+      "label": "build()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L26",
+      "id": "cli_build",
+      "community": 1,
+      "norm_label": "build()"
+    },
+    {
+      "label": "Command-line interface for qualgraph.",
+      "file_type": "rationale",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L1",
+      "id": "cli_rationale_1",
+      "community": 1,
+      "norm_label": "command-line interface for qualgraph."
+    },
+    {
+      "label": "Graph-aware code quality analysis for Python projects.",
+      "file_type": "rationale",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L22",
+      "id": "cli_rationale_22",
+      "community": 1,
+      "norm_label": "graph-aware code quality analysis for python projects."
+    },
+    {
+      "label": "Build a Python code graph and write an annotated graph artifact.",
+      "file_type": "rationale",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L33",
+      "id": "cli_rationale_33",
+      "community": 1,
+      "norm_label": "build a python code graph and write an annotated graph artifact."
     },
     {
       "label": "config.py",
@@ -103,7 +148,7 @@
       "source_file": "src\\qualgraph\\config.py",
       "source_location": "L1",
       "id": "config_py",
-      "community": 8,
+      "community": 9,
       "norm_label": "config.py"
     },
     {
@@ -112,7 +157,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L1",
       "id": "logging_py",
-      "community": 0,
+      "community": 1,
       "norm_label": "logging.py"
     },
     {
@@ -121,7 +166,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L26",
       "id": "logging_utc_now_iso",
-      "community": 0,
+      "community": 1,
       "norm_label": "utc_now_iso()"
     },
     {
@@ -130,7 +175,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L30",
       "id": "logging_configure_console_logging",
-      "community": 0,
+      "community": 1,
       "norm_label": "configure_console_logging()"
     },
     {
@@ -139,7 +184,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L38",
       "id": "logging_llmusage",
-      "community": 0,
+      "community": 1,
       "norm_label": "llmusage"
     },
     {
@@ -148,7 +193,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L47",
       "id": "logging_runsummary",
-      "community": 0,
+      "community": 1,
       "norm_label": "runsummary"
     },
     {
@@ -157,7 +202,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L58",
       "id": "logging_runlogger",
-      "community": 0,
+      "community": 1,
       "norm_label": "runlogger"
     },
     {
@@ -166,7 +211,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L61",
       "id": "logging_runlogger_init",
-      "community": 0,
+      "community": 1,
       "norm_label": ".__init__()"
     },
     {
@@ -175,7 +220,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L82",
       "id": "logging_runlogger_log_event",
-      "community": 0,
+      "community": 1,
       "norm_label": ".log_event()"
     },
     {
@@ -184,7 +229,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L93",
       "id": "logging_span",
-      "community": 0,
+      "community": 1,
       "norm_label": "span()"
     },
     {
@@ -193,7 +238,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L113",
       "id": "logging_runlogger_log_annotator",
-      "community": 0,
+      "community": 1,
       "norm_label": ".log_annotator()"
     },
     {
@@ -202,7 +247,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L136",
       "id": "logging_runlogger_log_llm_call",
-      "community": 0,
+      "community": 3,
       "norm_label": ".log_llm_call()"
     },
     {
@@ -211,7 +256,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L174",
       "id": "logging_runlogger_finish",
-      "community": 0,
+      "community": 1,
       "norm_label": ".finish()"
     },
     {
@@ -229,7 +274,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L198",
       "id": "logging_elapsed_ms",
-      "community": 0,
+      "community": 1,
       "norm_label": "_elapsed_ms()"
     },
     {
@@ -238,7 +283,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L202",
       "id": "logging_error_record",
-      "community": 0,
+      "community": 1,
       "norm_label": "_error_record()"
     },
     {
@@ -247,7 +292,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L210",
       "id": "logging_json_safe",
-      "community": 0,
+      "community": 1,
       "norm_label": "_json_safe()"
     },
     {
@@ -255,7 +300,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L1",
-      "community": 0,
+      "community": 1,
       "norm_label": "structured run logging for qualgraph.  every cli run should create a jsonl event",
       "id": "logging_rationale_1"
     },
@@ -264,7 +309,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L59",
-      "community": 0,
+      "community": 1,
       "norm_label": "write structured jsonl events and aggregate per-run counters.",
       "id": "logging_rationale_59"
     },
@@ -274,7 +319,7 @@
       "source_file": "src\\qualgraph\\__init__.py",
       "source_location": "L1",
       "id": "init_py",
-      "community": 9,
+      "community": 10,
       "norm_label": "__init__.py"
     },
     {
@@ -283,7 +328,7 @@
       "source_file": "src\\qualgraph\\annotators\\bandit.py",
       "source_location": "L1",
       "id": "annotators_bandit_py",
-      "community": 10,
+      "community": 11,
       "norm_label": "bandit.py"
     },
     {
@@ -390,7 +435,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\annotators\\base.py",
       "source_location": "L36",
-      "community": 0,
+      "community": 1,
       "norm_label": "mutate ``graph`` with this annotator's signal.",
       "id": "base_rationale_36"
     },
@@ -400,7 +445,7 @@
       "source_file": "src\\qualgraph\\annotators\\coverage.py",
       "source_location": "L1",
       "id": "annotators_coverage_py",
-      "community": 11,
+      "community": 12,
       "norm_label": "coverage.py"
     },
     {
@@ -409,7 +454,7 @@
       "source_file": "src\\qualgraph\\annotators\\co_change.py",
       "source_location": "L1",
       "id": "annotators_co_change_py",
-      "community": 12,
+      "community": 13,
       "norm_label": "co_change.py"
     },
     {
@@ -418,7 +463,7 @@
       "source_file": "src\\qualgraph\\annotators\\docstring.py",
       "source_location": "L1",
       "id": "annotators_docstring_py",
-      "community": 13,
+      "community": 14,
       "norm_label": "docstring.py"
     },
     {
@@ -427,7 +472,7 @@
       "source_file": "src\\qualgraph\\annotators\\git_history.py",
       "source_location": "L1",
       "id": "annotators_git_history_py",
-      "community": 14,
+      "community": 15,
       "norm_label": "git_history.py"
     },
     {
@@ -436,7 +481,7 @@
       "source_file": "src\\qualgraph\\annotators\\pipeline.py",
       "source_location": "L1",
       "id": "annotators_pipeline_py",
-      "community": 0,
+      "community": 4,
       "norm_label": "pipeline.py"
     },
     {
@@ -445,7 +490,7 @@
       "source_file": "src\\qualgraph\\annotators\\pipeline.py",
       "source_location": "L14",
       "id": "pipeline_annotatorpipeline",
-      "community": 0,
+      "community": 4,
       "norm_label": "annotatorpipeline"
     },
     {
@@ -454,7 +499,7 @@
       "source_file": "src\\qualgraph\\annotators\\pipeline.py",
       "source_location": "L18",
       "id": "pipeline_annotatorpipeline_init",
-      "community": 0,
+      "community": 4,
       "norm_label": ".__init__()"
     },
     {
@@ -463,7 +508,7 @@
       "source_file": "src\\qualgraph\\annotators\\pipeline.py",
       "source_location": "L26",
       "id": "pipeline_annotatorpipeline_run",
-      "community": 0,
+      "community": 4,
       "norm_label": ".run()"
     },
     {
@@ -471,7 +516,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\annotators\\pipeline.py",
       "source_location": "L1",
-      "community": 0,
+      "community": 4,
       "norm_label": "sequential annotator pipeline.",
       "id": "pipeline_rationale_1"
     },
@@ -481,7 +526,7 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L1",
       "id": "annotators_pip_audit_py",
-      "community": 15,
+      "community": 16,
       "norm_label": "pip_audit.py"
     },
     {
@@ -490,7 +535,7 @@
       "source_file": "src\\qualgraph\\annotators\\profiler.py",
       "source_location": "L1",
       "id": "annotators_profiler_py",
-      "community": 16,
+      "community": 17,
       "norm_label": "profiler.py"
     },
     {
@@ -499,7 +544,7 @@
       "source_file": "src\\qualgraph\\annotators\\radon.py",
       "source_location": "L1",
       "id": "annotators_radon_py",
-      "community": 17,
+      "community": 18,
       "norm_label": "radon.py"
     },
     {
@@ -508,7 +553,7 @@
       "source_file": "src\\qualgraph\\annotators\\ruff.py",
       "source_location": "L1",
       "id": "annotators_ruff_py",
-      "community": 18,
+      "community": 19,
       "norm_label": "ruff.py"
     },
     {
@@ -517,7 +562,7 @@
       "source_file": "src\\qualgraph\\annotators\\test_linkage.py",
       "source_location": "L1",
       "id": "annotators_test_linkage_py",
-      "community": 19,
+      "community": 20,
       "norm_label": "test_linkage.py"
     },
     {
@@ -526,7 +571,7 @@
       "source_file": "src\\qualgraph\\annotators\\type_coverage.py",
       "source_location": "L1",
       "id": "annotators_type_coverage_py",
-      "community": 20,
+      "community": 21,
       "norm_label": "type_coverage.py"
     },
     {
@@ -535,7 +580,7 @@
       "source_file": "src\\qualgraph\\annotators\\vulture.py",
       "source_location": "L1",
       "id": "annotators_vulture_py",
-      "community": 21,
+      "community": 22,
       "norm_label": "vulture.py"
     },
     {
@@ -544,7 +589,7 @@
       "source_file": "src\\qualgraph\\annotators\\__init__.py",
       "source_location": "L1",
       "id": "annotators_init_py",
-      "community": 22,
+      "community": 23,
       "norm_label": "__init__.py"
     },
     {
@@ -553,7 +598,7 @@
       "source_file": "src\\qualgraph\\cache\\sqlite.py",
       "source_location": "L1",
       "id": "cache_sqlite_py",
-      "community": 23,
+      "community": 24,
       "norm_label": "sqlite.py"
     },
     {
@@ -562,7 +607,7 @@
       "source_file": "src\\qualgraph\\cache\\__init__.py",
       "source_location": "L1",
       "id": "cache_init_py",
-      "community": 24,
+      "community": 25,
       "norm_label": "__init__.py"
     },
     {
@@ -571,7 +616,7 @@
       "source_file": "src\\qualgraph\\findings\\cross_signal.py",
       "source_location": "L1",
       "id": "findings_cross_signal_py",
-      "community": 25,
+      "community": 26,
       "norm_label": "cross_signal.py"
     },
     {
@@ -580,7 +625,7 @@
       "source_file": "src\\qualgraph\\findings\\model.py",
       "source_location": "L1",
       "id": "findings_model_py",
-      "community": 26,
+      "community": 27,
       "norm_label": "model.py"
     },
     {
@@ -589,7 +634,7 @@
       "source_file": "src\\qualgraph\\findings\\__init__.py",
       "source_location": "L1",
       "id": "findings_init_py",
-      "community": 27,
+      "community": 28,
       "norm_label": "__init__.py"
     },
     {
@@ -598,7 +643,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L1",
       "id": "graph_builder_py",
-      "community": 1,
+      "community": 0,
       "norm_label": "builder.py"
     },
     {
@@ -607,7 +652,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L50",
       "id": "builder_definition",
-      "community": 2,
+      "community": 0,
       "norm_label": "definition"
     },
     {
@@ -616,7 +661,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L59",
       "id": "builder_build_graph",
-      "community": 1,
+      "community": 0,
       "norm_label": "build_graph()"
     },
     {
@@ -625,7 +670,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L88",
       "id": "builder_collect_python_files",
-      "community": 1,
+      "community": 0,
       "norm_label": "_collect_python_files()"
     },
     {
@@ -634,7 +679,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L99",
       "id": "builder_extract_module",
-      "community": 2,
+      "community": 0,
       "norm_label": "_extract_module()"
     },
     {
@@ -643,7 +688,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L125",
       "id": "builder_extract_classes_and_functions",
-      "community": 2,
+      "community": 0,
       "norm_label": "_extract_classes_and_functions()"
     },
     {
@@ -652,7 +697,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L182",
       "id": "builder_extract_imports",
-      "community": 1,
+      "community": 0,
       "norm_label": "_extract_imports()"
     },
     {
@@ -661,7 +706,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L211",
       "id": "builder_extract_intra_file_calls",
-      "community": 1,
+      "community": 0,
       "norm_label": "_extract_intra_file_calls()"
     },
     {
@@ -670,7 +715,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L248",
       "id": "builder_class_definition_nodes",
-      "community": 1,
+      "community": 0,
       "norm_label": "_class_definition_nodes()"
     },
     {
@@ -679,7 +724,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L259",
       "id": "builder_function_definition_nodes",
-      "community": 1,
+      "community": 0,
       "norm_label": "_function_definition_nodes()"
     },
     {
@@ -688,7 +733,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L270",
       "id": "builder_nearest_parent_definition",
-      "community": 1,
+      "community": 0,
       "norm_label": "_nearest_parent_definition()"
     },
     {
@@ -697,7 +742,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L281",
       "id": "builder_node_type",
-      "community": 2,
+      "community": 0,
       "norm_label": "_node_type()"
     },
     {
@@ -706,7 +751,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L291",
       "id": "builder_class_base_names",
-      "community": 1,
+      "community": 0,
       "norm_label": "_class_base_names()"
     },
     {
@@ -715,7 +760,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L302",
       "id": "builder_parse_import_statement",
-      "community": 1,
+      "community": 0,
       "norm_label": "_parse_import_statement()"
     },
     {
@@ -724,7 +769,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L310",
       "id": "builder_parse_plain_import",
-      "community": 1,
+      "community": 0,
       "norm_label": "_parse_plain_import()"
     },
     {
@@ -733,7 +778,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L332",
       "id": "builder_parse_from_import",
-      "community": 1,
+      "community": 0,
       "norm_label": "_parse_from_import()"
     },
     {
@@ -742,7 +787,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L359",
       "id": "builder_aliased_import_parts",
-      "community": 1,
+      "community": 0,
       "norm_label": "_aliased_import_parts()"
     },
     {
@@ -751,7 +796,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L366",
       "id": "builder_local_symbol_index",
-      "community": 1,
+      "community": 0,
       "norm_label": "_local_symbol_index()"
     },
     {
@@ -760,7 +805,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L374",
       "id": "builder_resolve_local_call",
-      "community": 1,
+      "community": 0,
       "norm_label": "_resolve_local_call()"
     },
     {
@@ -769,7 +814,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L397",
       "id": "builder_call_name",
-      "community": 1,
+      "community": 0,
       "norm_label": "_call_name()"
     },
     {
@@ -778,7 +823,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L403",
       "id": "builder_docstring",
-      "community": 2,
+      "community": 0,
       "norm_label": "_docstring()"
     },
     {
@@ -787,7 +832,7 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L419",
       "id": "builder_module_qualified_name",
-      "community": 2,
+      "community": 0,
       "norm_label": "_module_qualified_name()"
     },
     {
@@ -796,16 +841,25 @@
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L430",
       "id": "builder_matches_glob",
-      "community": 1,
+      "community": 0,
       "norm_label": "_matches_glob()"
+    },
+    {
+      "label": "_point_row()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\graph\\builder.py",
+      "source_location": "L435",
+      "id": "builder_point_row",
+      "community": 0,
+      "norm_label": "_point_row()"
     },
     {
       "label": "_add_edge()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\graph\\builder.py",
-      "source_location": "L435",
+      "source_location": "L439",
       "id": "builder_add_edge",
-      "community": 5,
+      "community": 2,
       "norm_label": "_add_edge()"
     },
     {
@@ -823,8 +877,53 @@
       "source_file": "src\\qualgraph\\graph\\clustering.py",
       "source_location": "L1",
       "id": "graph_clustering_py",
-      "community": 28,
+      "community": 7,
       "norm_label": "clustering.py"
+    },
+    {
+      "label": "cluster_leiden()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\graph\\clustering.py",
+      "source_location": "L10",
+      "id": "clustering_cluster_leiden",
+      "community": 7,
+      "norm_label": "cluster_leiden()"
+    },
+    {
+      "label": "annotate_clusters()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\graph\\clustering.py",
+      "source_location": "L32",
+      "id": "clustering_annotate_clusters",
+      "community": 7,
+      "norm_label": "annotate_clusters()"
+    },
+    {
+      "label": "_to_igraph()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\graph\\clustering.py",
+      "source_location": "L41",
+      "id": "clustering_to_igraph",
+      "community": 7,
+      "norm_label": "_to_igraph()"
+    },
+    {
+      "label": "Leiden community detection for code graphs.",
+      "file_type": "rationale",
+      "source_file": "src\\qualgraph\\graph\\clustering.py",
+      "source_location": "L1",
+      "id": "clustering_rationale_1",
+      "community": 7,
+      "norm_label": "leiden community detection for code graphs."
+    },
+    {
+      "label": "Return ``node_id -> cluster_id`` using Leiden on an undirected graph.",
+      "file_type": "rationale",
+      "source_file": "src\\qualgraph\\graph\\clustering.py",
+      "source_location": "L11",
+      "id": "clustering_rationale_11",
+      "community": 7,
+      "norm_label": "return ``node_id -> cluster_id`` using leiden on an undirected graph."
     },
     {
       "label": "metrics.py",
@@ -832,8 +931,80 @@
       "source_file": "src\\qualgraph\\graph\\metrics.py",
       "source_location": "L1",
       "id": "graph_metrics_py",
-      "community": 29,
+      "community": 6,
       "norm_label": "metrics.py"
+    },
+    {
+      "label": "annotate_metrics()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\graph\\metrics.py",
+      "source_location": "L11",
+      "id": "metrics_annotate_metrics",
+      "community": 6,
+      "norm_label": "annotate_metrics()"
+    },
+    {
+      "label": "annotate_cluster_roles()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\graph\\metrics.py",
+      "source_location": "L32",
+      "id": "metrics_annotate_cluster_roles",
+      "community": 6,
+      "norm_label": "annotate_cluster_roles()"
+    },
+    {
+      "label": "_cluster_role()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\graph\\metrics.py",
+      "source_location": "L66",
+      "id": "metrics_cluster_role",
+      "community": 6,
+      "norm_label": "_cluster_role()"
+    },
+    {
+      "label": "_is_pipeline_node()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\graph\\metrics.py",
+      "source_location": "L87",
+      "id": "metrics_is_pipeline_node",
+      "community": 6,
+      "norm_label": "_is_pipeline_node()"
+    },
+    {
+      "label": "_percentile()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\graph\\metrics.py",
+      "source_location": "L97",
+      "id": "metrics_percentile",
+      "community": 6,
+      "norm_label": "_percentile()"
+    },
+    {
+      "label": "Structural metrics and cluster role heuristics.",
+      "file_type": "rationale",
+      "source_file": "src\\qualgraph\\graph\\metrics.py",
+      "source_location": "L1",
+      "id": "metrics_rationale_1",
+      "community": 6,
+      "norm_label": "structural metrics and cluster role heuristics."
+    },
+    {
+      "label": "Write centrality and degree metrics back onto graph nodes.",
+      "file_type": "rationale",
+      "source_file": "src\\qualgraph\\graph\\metrics.py",
+      "source_location": "L12",
+      "id": "metrics_rationale_12",
+      "community": 6,
+      "norm_label": "write centrality and degree metrics back onto graph nodes."
+    },
+    {
+      "label": "Classify each node's role within its cluster using simple topology.",
+      "file_type": "rationale",
+      "source_file": "src\\qualgraph\\graph\\metrics.py",
+      "source_location": "L33",
+      "id": "metrics_rationale_33",
+      "community": 6,
+      "norm_label": "classify each node's role within its cluster using simple topology."
     },
     {
       "label": "parser.py",
@@ -841,42 +1012,60 @@
       "source_file": "src\\qualgraph\\graph\\parser.py",
       "source_location": "L1",
       "id": "graph_parser_py",
-      "community": 1,
+      "community": 0,
       "norm_label": "parser.py"
     },
     {
       "label": "parse_file()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\graph\\parser.py",
-      "source_location": "L53",
+      "source_location": "L52",
       "id": "parser_parse_file",
-      "community": 1,
+      "community": 0,
       "norm_label": "parse_file()"
     },
     {
       "label": "query_matches()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\graph\\parser.py",
-      "source_location": "L60",
+      "source_location": "L59",
       "id": "parser_query_matches",
-      "community": 1,
+      "community": 0,
       "norm_label": "query_matches()"
     },
     {
       "label": "node_text()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\graph\\parser.py",
-      "source_location": "L64",
+      "source_location": "L71",
       "id": "parser_node_text",
-      "community": 1,
+      "community": 0,
       "norm_label": "node_text()"
+    },
+    {
+      "label": "_parser()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\graph\\parser.py",
+      "source_location": "L75",
+      "id": "parser_parser",
+      "community": 0,
+      "norm_label": "_parser()"
+    },
+    {
+      "label": "_normalize_captures()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\graph\\parser.py",
+      "source_location": "L87",
+      "id": "parser_normalize_captures",
+      "community": 0,
+      "norm_label": "_normalize_captures()"
     },
     {
       "label": "Tree-sitter parsing helpers for Python source files.",
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\graph\\parser.py",
       "source_location": "L1",
-      "community": 1,
+      "community": 0,
       "norm_label": "tree-sitter parsing helpers for python source files.",
       "id": "parser_rationale_1"
     },
@@ -886,7 +1075,7 @@
       "source_file": "src\\qualgraph\\graph\\resolver.py",
       "source_location": "L1",
       "id": "graph_resolver_py",
-      "community": 5,
+      "community": 2,
       "norm_label": "resolver.py"
     },
     {
@@ -895,7 +1084,7 @@
       "source_file": "src\\qualgraph\\graph\\resolver.py",
       "source_location": "L18",
       "id": "resolver_resolve_calls",
-      "community": 5,
+      "community": 2,
       "norm_label": "resolve_calls()"
     },
     {
@@ -904,7 +1093,7 @@
       "source_file": "src\\qualgraph\\graph\\resolver.py",
       "source_location": "L56",
       "id": "resolver_resolve_name",
-      "community": 5,
+      "community": 2,
       "norm_label": "_resolve_name()"
     },
     {
@@ -913,7 +1102,7 @@
       "source_file": "src\\qualgraph\\graph\\resolver.py",
       "source_location": "L78",
       "id": "resolver_candidate_names",
-      "community": 5,
+      "community": 2,
       "norm_label": "_candidate_names()"
     },
     {
@@ -922,7 +1111,7 @@
       "source_file": "src\\qualgraph\\graph\\resolver.py",
       "source_location": "L98",
       "id": "resolver_matches_suffix",
-      "community": 5,
+      "community": 2,
       "norm_label": "_matches_suffix()"
     },
     {
@@ -931,7 +1120,7 @@
       "source_file": "src\\qualgraph\\graph\\resolver.py",
       "source_location": "L102",
       "id": "resolver_dedupe",
-      "community": 5,
+      "community": 2,
       "norm_label": "_dedupe()"
     },
     {
@@ -940,7 +1129,7 @@
       "source_file": "src\\qualgraph\\graph\\resolver.py",
       "source_location": "L113",
       "id": "resolver_add_edge",
-      "community": 5,
+      "community": 2,
       "norm_label": "_add_edge()"
     },
     {
@@ -948,7 +1137,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\graph\\resolver.py",
       "source_location": "L1",
-      "community": 5,
+      "community": 2,
       "norm_label": "name-based cross-file graph resolution.  this resolver is deliberately conservat",
       "id": "resolver_rationale_1"
     },
@@ -976,7 +1165,7 @@
       "source_file": "",
       "source_location": "",
       "id": "str",
-      "community": 2,
+      "community": 1,
       "norm_label": "str"
     },
     {
@@ -1003,23 +1192,23 @@
       "source_file": "src\\qualgraph\\graph\\schema.py",
       "source_location": "L36",
       "id": "schema_nodeattrs",
-      "community": 2,
+      "community": 0,
       "norm_label": "nodeattrs"
     },
     {
       "label": "EdgeAttrs",
       "file_type": "code",
       "source_file": "src\\qualgraph\\graph\\schema.py",
-      "source_location": "L64",
+      "source_location": "L66",
       "id": "schema_edgeattrs",
-      "community": 5,
+      "community": 2,
       "norm_label": "edgeattrs"
     },
     {
       "label": "make_node_id()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\graph\\schema.py",
-      "source_location": "L105",
+      "source_location": "L109",
       "id": "schema_make_node_id",
       "community": 2,
       "norm_label": "make_node_id()"
@@ -1028,25 +1217,25 @@
       "label": "node_attrs_to_graph()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\graph\\schema.py",
-      "source_location": "L115",
+      "source_location": "L119",
       "id": "schema_node_attrs_to_graph",
-      "community": 2,
+      "community": 0,
       "norm_label": "node_attrs_to_graph()"
     },
     {
       "label": "edge_attrs_to_graph()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\graph\\schema.py",
-      "source_location": "L121",
+      "source_location": "L125",
       "id": "schema_edge_attrs_to_graph",
-      "community": 5,
+      "community": 2,
       "norm_label": "edge_attrs_to_graph()"
     },
     {
       "label": "coerce_node_type()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\graph\\schema.py",
-      "source_location": "L127",
+      "source_location": "L131",
       "id": "schema_coerce_node_type",
       "community": 2,
       "norm_label": "coerce_node_type()"
@@ -1055,7 +1244,7 @@
       "label": "coerce_edge_type()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\graph\\schema.py",
-      "source_location": "L131",
+      "source_location": "L135",
       "id": "schema_coerce_edge_type",
       "community": 2,
       "norm_label": "coerce_edge_type()"
@@ -1073,10 +1262,10 @@
       "label": "Return the stable node id used by graph building and caching.      Convention: `",
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\graph\\schema.py",
-      "source_location": "L106",
+      "source_location": "L110",
+      "id": "schema_rationale_110",
       "community": 2,
-      "norm_label": "return the stable node id used by graph building and caching.      convention: `",
-      "id": "schema_rationale_106"
+      "norm_label": "return the stable node id used by graph building and caching.      convention: `"
     },
     {
       "label": "serialize.py",
@@ -1084,8 +1273,80 @@
       "source_file": "src\\qualgraph\\graph\\serialize.py",
       "source_location": "L1",
       "id": "graph_serialize_py",
-      "community": 30,
+      "community": 5,
       "norm_label": "serialize.py"
+    },
+    {
+      "label": "to_node_link_data()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L16",
+      "id": "serialize_to_node_link_data",
+      "community": 5,
+      "norm_label": "to_node_link_data()"
+    },
+    {
+      "label": "write_json_graph()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L27",
+      "id": "serialize_write_json_graph",
+      "community": 5,
+      "norm_label": "write_json_graph()"
+    },
+    {
+      "label": "read_json_graph()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L37",
+      "id": "serialize_read_json_graph",
+      "community": 5,
+      "norm_label": "read_json_graph()"
+    },
+    {
+      "label": "write_graphml_graph()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L45",
+      "id": "serialize_write_graphml_graph",
+      "community": 5,
+      "norm_label": "write_graphml_graph()"
+    },
+    {
+      "label": "_graphml_safe_copy()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L52",
+      "id": "serialize_graphml_safe_copy",
+      "community": 5,
+      "norm_label": "_graphml_safe_copy()"
+    },
+    {
+      "label": "_json_safe()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L63",
+      "id": "serialize_json_safe",
+      "community": 5,
+      "norm_label": "_json_safe()"
+    },
+    {
+      "label": "_graphml_value()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L77",
+      "id": "serialize_graphml_value",
+      "community": 5,
+      "norm_label": "_graphml_value()"
+    },
+    {
+      "label": "Graph serialization helpers.",
+      "file_type": "rationale",
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L1",
+      "id": "serialize_rationale_1",
+      "community": 5,
+      "norm_label": "graph serialization helpers."
     },
     {
       "label": "__init__.py",
@@ -1093,7 +1354,7 @@
       "source_file": "src\\qualgraph\\graph\\__init__.py",
       "source_location": "L1",
       "id": "graph_init_py",
-      "community": 31,
+      "community": 29,
       "norm_label": "__init__.py"
     },
     {
@@ -1264,7 +1525,7 @@
       "source_file": "src\\qualgraph\\llm\\context.py",
       "source_location": "L1",
       "id": "llm_context_py",
-      "community": 32,
+      "community": 30,
       "norm_label": "context.py"
     },
     {
@@ -1273,7 +1534,7 @@
       "source_file": "src\\qualgraph\\llm\\parser.py",
       "source_location": "L1",
       "id": "llm_parser_py",
-      "community": 33,
+      "community": 31,
       "norm_label": "parser.py"
     },
     {
@@ -1282,7 +1543,7 @@
       "source_file": "src\\qualgraph\\llm\\__init__.py",
       "source_location": "L1",
       "id": "llm_init_py",
-      "community": 34,
+      "community": 32,
       "norm_label": "__init__.py"
     },
     {
@@ -1291,7 +1552,7 @@
       "source_file": "src\\qualgraph\\llm\\providers\\anthropic.py",
       "source_location": "L1",
       "id": "llm_providers_anthropic_py",
-      "community": 35,
+      "community": 33,
       "norm_label": "anthropic.py"
     },
     {
@@ -1300,7 +1561,7 @@
       "source_file": "src\\qualgraph\\llm\\providers\\ollama.py",
       "source_location": "L1",
       "id": "llm_providers_ollama_py",
-      "community": 36,
+      "community": 34,
       "norm_label": "ollama.py"
     },
     {
@@ -1309,7 +1570,7 @@
       "source_file": "src\\qualgraph\\llm\\providers\\openai.py",
       "source_location": "L1",
       "id": "llm_providers_openai_py",
-      "community": 37,
+      "community": 35,
       "norm_label": "openai.py"
     },
     {
@@ -1318,7 +1579,7 @@
       "source_file": "src\\qualgraph\\llm\\providers\\__init__.py",
       "source_location": "L1",
       "id": "llm_providers_init_py",
-      "community": 38,
+      "community": 36,
       "norm_label": "__init__.py"
     },
     {
@@ -1327,7 +1588,7 @@
       "source_file": "src\\qualgraph\\report\\json_export.py",
       "source_location": "L1",
       "id": "report_json_export_py",
-      "community": 39,
+      "community": 37,
       "norm_label": "json_export.py"
     },
     {
@@ -1336,7 +1597,7 @@
       "source_file": "src\\qualgraph\\report\\markdown.py",
       "source_location": "L1",
       "id": "report_markdown_py",
-      "community": 40,
+      "community": 38,
       "norm_label": "markdown.py"
     },
     {
@@ -1345,7 +1606,7 @@
       "source_file": "src\\qualgraph\\report\\__init__.py",
       "source_location": "L1",
       "id": "report_init_py",
-      "community": 41,
+      "community": 39,
       "norm_label": "__init__.py"
     },
     {
@@ -1354,7 +1615,7 @@
       "source_file": "src\\qualgraph\\scoring\\risk.py",
       "source_location": "L1",
       "id": "scoring_risk_py",
-      "community": 42,
+      "community": 40,
       "norm_label": "risk.py"
     },
     {
@@ -1363,8 +1624,17 @@
       "source_file": "src\\qualgraph\\scoring\\__init__.py",
       "source_location": "L1",
       "id": "scoring_init_py",
-      "community": 43,
+      "community": 41,
       "norm_label": "__init__.py"
+    },
+    {
+      "label": "Return the stable node id used by graph building and caching.      Convention: `",
+      "file_type": "rationale",
+      "source_file": "src\\qualgraph\\graph\\schema.py",
+      "source_location": "L106",
+      "community": 42,
+      "norm_label": "return the stable node id used by graph building and caching.      convention: `",
+      "id": "schema_rationale_106"
     },
     {
       "label": "CHANGELOG",
@@ -1375,7 +1645,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 8,
       "norm_label": "changelog",
       "id": "changelog_doc"
     },
@@ -1388,12 +1658,204 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 8,
       "norm_label": "readme",
       "id": "readme_doc"
     }
   ],
   "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_src": "cli_py",
+      "_tgt": "cli_main",
+      "source": "cli_py",
+      "target": "cli_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_src": "cli_py",
+      "_tgt": "cli_build",
+      "source": "cli_py",
+      "target": "cli_build",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_src": "cli_rationale_1",
+      "_tgt": "cli_py",
+      "source": "cli_py",
+      "target": "cli_rationale_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_src": "cli_rationale_22",
+      "_tgt": "cli_main",
+      "source": "cli_main",
+      "target": "cli_rationale_22",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L33",
+      "weight": 1.0,
+      "_src": "cli_rationale_33",
+      "_tgt": "cli_build",
+      "source": "cli_build",
+      "target": "cli_rationale_33",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L35",
+      "weight": 1.0,
+      "_src": "cli_build",
+      "_tgt": "logging_runlogger",
+      "source": "cli_build",
+      "target": "logging_runlogger"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_src": "cli_build",
+      "_tgt": "logging_span",
+      "source": "cli_build",
+      "target": "logging_span"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_src": "cli_build",
+      "_tgt": "builder_build_graph",
+      "source": "cli_build",
+      "target": "builder_build_graph"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L43",
+      "weight": 1.0,
+      "_src": "cli_build",
+      "_tgt": "clustering_annotate_clusters",
+      "source": "cli_build",
+      "target": "clustering_annotate_clusters"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L47",
+      "weight": 1.0,
+      "_src": "cli_build",
+      "_tgt": "metrics_annotate_metrics",
+      "source": "cli_build",
+      "target": "metrics_annotate_metrics"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L51",
+      "weight": 1.0,
+      "_src": "cli_build",
+      "_tgt": "serialize_write_json_graph",
+      "source": "cli_build",
+      "target": "serialize_write_json_graph"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L55",
+      "weight": 1.0,
+      "_src": "cli_build",
+      "_tgt": "serialize_write_graphml_graph",
+      "source": "cli_build",
+      "target": "serialize_write_graphml_graph"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L57",
+      "weight": 1.0,
+      "_src": "cli_build",
+      "_tgt": "logging_runlogger_finish",
+      "source": "cli_build",
+      "target": "logging_runlogger_finish"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L14",
+      "weight": 0.8,
+      "_src": "cli_rationale_1",
+      "_tgt": "logging_runlogger",
+      "source": "cli_rationale_1",
+      "target": "logging_runlogger",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L14",
+      "weight": 0.8,
+      "_src": "cli_rationale_22",
+      "_tgt": "logging_runlogger",
+      "source": "cli_rationale_22",
+      "target": "logging_runlogger",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L14",
+      "weight": 0.8,
+      "_src": "cli_rationale_33",
+      "_tgt": "logging_runlogger",
+      "source": "cli_rationale_33",
+      "target": "logging_runlogger",
+      "confidence_score": 0.5
+    },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
@@ -2541,6 +3003,18 @@
       "source_location": "L435",
       "weight": 1.0,
       "_src": "graph_builder_py",
+      "_tgt": "builder_point_row",
+      "source": "graph_builder_py",
+      "target": "builder_point_row",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\builder.py",
+      "source_location": "L439",
+      "weight": 1.0,
+      "_src": "graph_builder_py",
       "_tgt": "builder_add_edge",
       "source": "graph_builder_py",
       "target": "builder_add_edge",
@@ -2742,6 +3216,18 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\graph\\builder.py",
+      "source_location": "L107",
+      "weight": 1.0,
+      "_src": "builder_extract_module",
+      "_tgt": "builder_point_row",
+      "source": "builder_extract_module",
+      "target": "builder_point_row",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L118",
       "weight": 1.0,
       "_src": "builder_extract_module",
@@ -2844,6 +3330,18 @@
       "_tgt": "builder_node_type",
       "source": "builder_extract_classes_and_functions",
       "target": "builder_node_type",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\builder.py",
+      "source_location": "L143",
+      "weight": 1.0,
+      "_src": "builder_extract_classes_and_functions",
+      "_tgt": "builder_point_row",
+      "source": "builder_extract_classes_and_functions",
+      "target": "builder_point_row",
       "confidence_score": 1.0
     },
     {
@@ -3004,6 +3502,18 @@
     },
     {
       "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\builder.py",
+      "source_location": "L243",
+      "weight": 1.0,
+      "_src": "builder_extract_intra_file_calls",
+      "_tgt": "builder_point_row",
+      "source": "builder_extract_intra_file_calls",
+      "target": "builder_point_row",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src\\qualgraph\\graph\\builder.py",
@@ -3112,6 +3622,18 @@
     },
     {
       "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\builder.py",
+      "source_location": "L326",
+      "weight": 1.0,
+      "_src": "builder_parse_plain_import",
+      "_tgt": "builder_point_row",
+      "source": "builder_parse_plain_import",
+      "target": "builder_point_row",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src\\qualgraph\\graph\\builder.py",
@@ -3132,6 +3654,18 @@
       "_tgt": "builder_aliased_import_parts",
       "source": "builder_parse_from_import",
       "target": "builder_aliased_import_parts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\builder.py",
+      "source_location": "L353",
+      "weight": 1.0,
+      "_src": "builder_parse_from_import",
+      "_tgt": "builder_point_row",
+      "source": "builder_parse_from_import",
+      "target": "builder_point_row",
       "confidence_score": 1.0
     },
     {
@@ -3245,8 +3779,236 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\clustering.py",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_src": "graph_clustering_py",
+      "_tgt": "clustering_cluster_leiden",
+      "source": "graph_clustering_py",
+      "target": "clustering_cluster_leiden",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\clustering.py",
+      "source_location": "L32",
+      "weight": 1.0,
+      "_src": "graph_clustering_py",
+      "_tgt": "clustering_annotate_clusters",
+      "source": "graph_clustering_py",
+      "target": "clustering_annotate_clusters",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\clustering.py",
+      "source_location": "L41",
+      "weight": 1.0,
+      "_src": "graph_clustering_py",
+      "_tgt": "clustering_to_igraph",
+      "source": "graph_clustering_py",
+      "target": "clustering_to_igraph",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\clustering.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_src": "clustering_rationale_1",
+      "_tgt": "graph_clustering_py",
+      "source": "graph_clustering_py",
+      "target": "clustering_rationale_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\clustering.py",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "clustering_cluster_leiden",
+      "_tgt": "clustering_to_igraph",
+      "source": "clustering_cluster_leiden",
+      "target": "clustering_to_igraph",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\clustering.py",
+      "source_location": "L33",
+      "weight": 1.0,
+      "_src": "clustering_annotate_clusters",
+      "_tgt": "clustering_cluster_leiden",
+      "source": "clustering_cluster_leiden",
+      "target": "clustering_annotate_clusters",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\clustering.py",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_src": "clustering_rationale_11",
+      "_tgt": "clustering_cluster_leiden",
+      "source": "clustering_cluster_leiden",
+      "target": "clustering_rationale_11",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\metrics.py",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_src": "graph_metrics_py",
+      "_tgt": "metrics_annotate_metrics",
+      "source": "graph_metrics_py",
+      "target": "metrics_annotate_metrics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\metrics.py",
+      "source_location": "L32",
+      "weight": 1.0,
+      "_src": "graph_metrics_py",
+      "_tgt": "metrics_annotate_cluster_roles",
+      "source": "graph_metrics_py",
+      "target": "metrics_annotate_cluster_roles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\metrics.py",
+      "source_location": "L66",
+      "weight": 1.0,
+      "_src": "graph_metrics_py",
+      "_tgt": "metrics_cluster_role",
+      "source": "graph_metrics_py",
+      "target": "metrics_cluster_role",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\metrics.py",
+      "source_location": "L87",
+      "weight": 1.0,
+      "_src": "graph_metrics_py",
+      "_tgt": "metrics_is_pipeline_node",
+      "source": "graph_metrics_py",
+      "target": "metrics_is_pipeline_node",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\metrics.py",
+      "source_location": "L97",
+      "weight": 1.0,
+      "_src": "graph_metrics_py",
+      "_tgt": "metrics_percentile",
+      "source": "graph_metrics_py",
+      "target": "metrics_percentile",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\metrics.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_src": "metrics_rationale_1",
+      "_tgt": "graph_metrics_py",
+      "source": "graph_metrics_py",
+      "target": "metrics_rationale_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\metrics.py",
+      "source_location": "L29",
+      "weight": 1.0,
+      "_src": "metrics_annotate_metrics",
+      "_tgt": "metrics_annotate_cluster_roles",
+      "source": "metrics_annotate_metrics",
+      "target": "metrics_annotate_cluster_roles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\metrics.py",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_src": "metrics_rationale_12",
+      "_tgt": "metrics_annotate_metrics",
+      "source": "metrics_annotate_metrics",
+      "target": "metrics_rationale_12",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\metrics.py",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_src": "metrics_annotate_cluster_roles",
+      "_tgt": "metrics_percentile",
+      "source": "metrics_annotate_cluster_roles",
+      "target": "metrics_percentile",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\metrics.py",
+      "source_location": "L54",
+      "weight": 1.0,
+      "_src": "metrics_annotate_cluster_roles",
+      "_tgt": "metrics_cluster_role",
+      "source": "metrics_annotate_cluster_roles",
+      "target": "metrics_cluster_role",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\metrics.py",
+      "source_location": "L33",
+      "weight": 1.0,
+      "_src": "metrics_rationale_33",
+      "_tgt": "metrics_annotate_cluster_roles",
+      "source": "metrics_annotate_cluster_roles",
+      "target": "metrics_rationale_33",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\metrics.py",
+      "source_location": "L80",
+      "weight": 1.0,
+      "_src": "metrics_cluster_role",
+      "_tgt": "metrics_is_pipeline_node",
+      "source": "metrics_cluster_role",
+      "target": "metrics_is_pipeline_node",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\graph\\parser.py",
-      "source_location": "L53",
+      "source_location": "L52",
       "weight": 1.0,
       "_src": "graph_parser_py",
       "_tgt": "parser_parse_file",
@@ -3258,7 +4020,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\graph\\parser.py",
-      "source_location": "L60",
+      "source_location": "L59",
       "weight": 1.0,
       "_src": "graph_parser_py",
       "_tgt": "parser_query_matches",
@@ -3270,12 +4032,36 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\graph\\parser.py",
-      "source_location": "L64",
+      "source_location": "L71",
       "weight": 1.0,
       "_src": "graph_parser_py",
       "_tgt": "parser_node_text",
       "source": "graph_parser_py",
       "target": "parser_node_text",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\parser.py",
+      "source_location": "L75",
+      "weight": 1.0,
+      "_src": "graph_parser_py",
+      "_tgt": "parser_parser",
+      "source": "graph_parser_py",
+      "target": "parser_parser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\parser.py",
+      "source_location": "L87",
+      "weight": 1.0,
+      "_src": "graph_parser_py",
+      "_tgt": "parser_normalize_captures",
+      "source": "graph_parser_py",
+      "target": "parser_normalize_captures",
       "confidence_score": 1.0
     },
     {
@@ -3288,6 +4074,30 @@
       "_tgt": "graph_parser_py",
       "source": "graph_parser_py",
       "target": "parser_rationale_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\parser.py",
+      "source_location": "L55",
+      "weight": 1.0,
+      "_src": "parser_parse_file",
+      "_tgt": "parser_parser",
+      "source": "parser_parse_file",
+      "target": "parser_parser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\parser.py",
+      "source_location": "L62",
+      "weight": 1.0,
+      "_src": "parser_query_matches",
+      "_tgt": "parser_normalize_captures",
+      "source": "parser_query_matches",
+      "target": "parser_normalize_captures",
       "confidence_score": 1.0
     },
     {
@@ -3534,7 +4344,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\graph\\schema.py",
-      "source_location": "L64",
+      "source_location": "L66",
       "weight": 1.0,
       "_src": "graph_schema_py",
       "_tgt": "schema_edgeattrs",
@@ -3546,7 +4356,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\graph\\schema.py",
-      "source_location": "L105",
+      "source_location": "L109",
       "weight": 1.0,
       "_src": "graph_schema_py",
       "_tgt": "schema_make_node_id",
@@ -3558,7 +4368,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\graph\\schema.py",
-      "source_location": "L115",
+      "source_location": "L119",
       "weight": 1.0,
       "_src": "graph_schema_py",
       "_tgt": "schema_node_attrs_to_graph",
@@ -3570,7 +4380,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\graph\\schema.py",
-      "source_location": "L121",
+      "source_location": "L125",
       "weight": 1.0,
       "_src": "graph_schema_py",
       "_tgt": "schema_edge_attrs_to_graph",
@@ -3582,7 +4392,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\graph\\schema.py",
-      "source_location": "L127",
+      "source_location": "L131",
       "weight": 1.0,
       "_src": "graph_schema_py",
       "_tgt": "schema_coerce_node_type",
@@ -3594,7 +4404,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\graph\\schema.py",
-      "source_location": "L131",
+      "source_location": "L135",
       "weight": 1.0,
       "_src": "graph_schema_py",
       "_tgt": "schema_coerce_edge_type",
@@ -3642,7 +4452,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\graph\\schema.py",
-      "source_location": "L128",
+      "source_location": "L132",
       "weight": 1.0,
       "_src": "schema_coerce_node_type",
       "_tgt": "schema_nodetype",
@@ -3666,13 +4476,25 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\graph\\schema.py",
-      "source_location": "L112",
+      "source_location": "L116",
       "weight": 1.0,
       "_src": "schema_make_node_id",
       "_tgt": "str",
       "source": "str",
       "target": "schema_make_node_id",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L65",
+      "weight": 1.0,
+      "_src": "serialize_json_safe",
+      "_tgt": "str",
+      "source": "str",
+      "target": "serialize_json_safe"
     },
     {
       "relation": "inherits",
@@ -3690,7 +4512,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\graph\\schema.py",
-      "source_location": "L132",
+      "source_location": "L136",
       "weight": 1.0,
       "_src": "schema_coerce_edge_type",
       "_tgt": "schema_edgetype",
@@ -3702,12 +4524,168 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\graph\\schema.py",
-      "source_location": "L106",
+      "source_location": "L110",
       "weight": 1.0,
-      "_src": "schema_rationale_106",
+      "_src": "schema_rationale_110",
       "_tgt": "schema_make_node_id",
       "source": "schema_make_node_id",
-      "target": "schema_rationale_106",
+      "target": "schema_rationale_110",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "graph_serialize_py",
+      "_tgt": "serialize_to_node_link_data",
+      "source": "graph_serialize_py",
+      "target": "serialize_to_node_link_data",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_src": "graph_serialize_py",
+      "_tgt": "serialize_write_json_graph",
+      "source": "graph_serialize_py",
+      "target": "serialize_write_json_graph",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_src": "graph_serialize_py",
+      "_tgt": "serialize_read_json_graph",
+      "source": "graph_serialize_py",
+      "target": "serialize_read_json_graph",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L45",
+      "weight": 1.0,
+      "_src": "graph_serialize_py",
+      "_tgt": "serialize_write_graphml_graph",
+      "source": "graph_serialize_py",
+      "target": "serialize_write_graphml_graph",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_src": "graph_serialize_py",
+      "_tgt": "serialize_graphml_safe_copy",
+      "source": "graph_serialize_py",
+      "target": "serialize_graphml_safe_copy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L63",
+      "weight": 1.0,
+      "_src": "graph_serialize_py",
+      "_tgt": "serialize_json_safe",
+      "source": "graph_serialize_py",
+      "target": "serialize_json_safe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L77",
+      "weight": 1.0,
+      "_src": "graph_serialize_py",
+      "_tgt": "serialize_graphml_value",
+      "source": "graph_serialize_py",
+      "target": "serialize_graphml_value",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_src": "serialize_rationale_1",
+      "_tgt": "graph_serialize_py",
+      "source": "graph_serialize_py",
+      "target": "serialize_rationale_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_src": "serialize_to_node_link_data",
+      "_tgt": "serialize_json_safe",
+      "source": "serialize_to_node_link_data",
+      "target": "serialize_json_safe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L31",
+      "weight": 1.0,
+      "_src": "serialize_write_json_graph",
+      "_tgt": "serialize_to_node_link_data",
+      "source": "serialize_to_node_link_data",
+      "target": "serialize_write_json_graph",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L48",
+      "weight": 1.0,
+      "_src": "serialize_write_graphml_graph",
+      "_tgt": "serialize_graphml_safe_copy",
+      "source": "serialize_write_graphml_graph",
+      "target": "serialize_graphml_safe_copy",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L54",
+      "weight": 1.0,
+      "_src": "serialize_graphml_safe_copy",
+      "_tgt": "serialize_graphml_value",
+      "source": "serialize_graphml_safe_copy",
+      "target": "serialize_graphml_value",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\graph\\serialize.py",
+      "source_location": "L82",
+      "weight": 1.0,
+      "_src": "serialize_graphml_value",
+      "_tgt": "serialize_json_safe",
+      "source": "serialize_json_safe",
+      "target": "serialize_graphml_value",
       "confidence_score": 1.0
     },
     {

@@ -53,6 +53,8 @@ class NodeAttrs:
     author_count: Optional[int] = None
     bug_fix_keywords: Optional[int] = None
     centrality: Optional[float] = None
+    in_degree: Optional[int] = None
+    out_degree: Optional[int] = None
     cluster_id: Optional[int] = None
     cluster_role: Optional[str] = None
     findings: list[Any] = field(default_factory=list)
@@ -91,6 +93,8 @@ OPTIONAL_NODE_ATTRS = (
     "author_count",
     "bug_fix_keywords",
     "centrality",
+    "in_degree",
+    "out_degree",
     "cluster_id",
     "cluster_role",
     "findings",

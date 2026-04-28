@@ -104,7 +104,7 @@ def _extract_module(
     symbol_table: dict[str, str],
 ) -> str:
     qualified_name = _module_qualified_name(file_path)
-    line_end = max(tree.root_node.end_point.row + 1, 1)
+    line_end = max(_point_row(tree.root_node.end_point) + 1, 1)
     node_id = make_node_id(file_path, qualified_name, 1)
     attrs = NodeAttrs(
         id=node_id,
@@ -140,7 +140,7 @@ def _extract_classes_and_functions(
         parent = _nearest_parent_definition(node, definitions)
         qualified_name = f"{parent.qualified_name}.{name}" if parent else f"{module_name}.{name}"
         node_type = _node_type(name, node, parent)
-        line_start = node.start_point.row + 1
+        line_start = _point_row(node.start_point) + 1
         node_id = make_node_id(file_path, qualified_name, line_start)
         attrs = NodeAttrs(
             id=node_id,
@@ -149,7 +149,7 @@ def _extract_classes_and_functions(
             qualified_name=qualified_name,
             file_path=file_path,
             line_start=line_start,
-            line_end=node.end_point.row + 1,
+            line_end=_point_row(node.end_point) + 1,
             source=node_text(source, node),
             docstring=_docstring(source, item.get("body")),
         )
@@ -240,7 +240,7 @@ def _extract_intra_file_calls(
                     "source": source_id,
                     "name": call_name,
                     "file_path": file_path,
-                    "line_start": call_node.start_point.row + 1,
+                    "line_start": _point_row(call_node.start_point) + 1,
                 }
             )
 
@@ -323,7 +323,7 @@ def _parse_plain_import(source: bytes, statement: Any) -> list[dict[str, Any]]:
             {
                 "qualified_name": qualified_name,
                 "alias": alias,
-                "line_start": statement.start_point.row + 1,
+                "line_start": _point_row(statement.start_point) + 1,
             }
         )
     return imports
@@ -350,7 +350,7 @@ def _parse_from_import(source: bytes, statement: Any) -> list[dict[str, Any]]:
             {
                 "qualified_name": f"{module_name}.{imported_name}",
                 "alias": alias,
-                "line_start": statement.start_point.row + 1,
+                "line_start": _point_row(statement.start_point) + 1,
             }
         )
     return imports
@@ -430,6 +430,10 @@ def _module_qualified_name(file_path: str) -> str:
 def _matches_glob(path: str, pattern: str) -> bool:
     normalized = pattern.replace("\\", "/")
     return fnmatch(path, normalized) or fnmatch(path, normalized.rstrip("/") + "/**")
+
+
+def _point_row(point: Any) -> int:
+    return point.row if hasattr(point, "row") else point[0]
 
 
 def _add_edge(g: nx.DiGraph, source_id: str, target_id: str, edge_type: EdgeType, **attrs: Any) -> None:
