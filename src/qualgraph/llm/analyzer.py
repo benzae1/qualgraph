@@ -12,6 +12,8 @@ from qualgraph.llm.client import LLMClient, LLMRequest, LLMResponse
 class NodeAnalysisRequest:
     node_id: str
     context: str
+    system: str = "You are a careful code quality analyst. Return concise, evidence-backed findings."
+    prompt_template: str = "node_analysis"
 
 
 class LLMAnalyzer:
@@ -21,9 +23,10 @@ class LLMAnalyzer:
     def analyze_node(self, request: NodeAnalysisRequest) -> LLMResponse:
         return self.client.complete(
             LLMRequest(
-                prompt=request.context,
-                operation="node_analysis",
-                metadata={"node_id": request.node_id},
+                system=request.system,
+                user=request.context,
+                node_id=request.node_id,
+                prompt_template=request.prompt_template,
             )
         )
 

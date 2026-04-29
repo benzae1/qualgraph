@@ -2,40 +2,42 @@
 
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from time import perf_counter
-from typing import Any, Protocol
 
 from qualgraph.logging import RunLogger
 
 
 @dataclass(slots=True)
 class LLMRequest:
-    prompt: str
-    operation: str = "completion"
-    system: str | None = None
+    system: str
+    user: str
+    max_tokens: int = 2000
     temperature: float = 0.0
-    max_tokens: int | None = None
-    metadata: dict[str, Any] = field(default_factory=dict)
+    cache_keys: list[str] = field(default_factory=list)
+    node_id: str | None = None
+    prompt_template: str | None = None
 
 
 @dataclass(slots=True)
 class LLMResponse:
     text: str
-    model: str
-    provider: str
-    prompt_tokens: int = 0
-    completion_tokens: int = 0
-    total_tokens: int | None = None
+    input_tokens: int
+    output_tokens: int
+    cached_input_tokens: int
+    model_id: str
     cost_usd: float = 0.0
-    raw: Any = None
 
 
-class LLMProvider(Protocol):
-    name: str
-    model: str
+class LLMProvider(ABC):
+    @abstractmethod
+    def complete(self, req: LLMRequest) -> LLMResponse:
+        ...
 
-    def complete(self, request: LLMRequest) -> LLMResponse:
+    @property
+    @abstractmethod
+    def model_id(self) -> str:
         ...
 
 
@@ -50,16 +52,14 @@ class LLMClient:
 
     def complete(self, request: LLMRequest) -> LLMResponse:
         started = perf_counter()
-        provider_name = getattr(self.provider, "name", type(self.provider).__name__)
-        model = getattr(self.provider, "model", "unknown")
         try:
             response = self.provider.complete(request)
         except Exception as exc:
             if self.run_logger is not None:
                 self.run_logger.log_llm_call(
-                    provider=provider_name,
-                    model=model,
-                    operation=request.operation,
+                    node_id=request.node_id,
+                    prompt_template=request.prompt_template,
+                    model=self.provider.model_id,
                     duration_ms=_elapsed_ms(started),
                     status="failed",
                     error=exc,
@@ -68,13 +68,13 @@ class LLMClient:
 
         if self.run_logger is not None:
             self.run_logger.log_llm_call(
-                provider=response.provider or provider_name,
-                model=response.model or model,
-                operation=request.operation,
+                node_id=request.node_id,
+                prompt_template=request.prompt_template,
+                model=response.model_id,
                 duration_ms=_elapsed_ms(started),
-                prompt_tokens=response.prompt_tokens,
-                completion_tokens=response.completion_tokens,
-                total_tokens=response.total_tokens,
+                input_tokens=response.input_tokens,
+                cached_input_tokens=response.cached_input_tokens,
+                output_tokens=response.output_tokens,
                 cost_usd=response.cost_usd,
             )
         return response

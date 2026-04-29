@@ -37,10 +37,19 @@ def configure_console_logging(level: int = stdlib_logging.INFO) -> None:
 @dataclass(slots=True)
 class LLMUsage:
     calls: int = 0
-    prompt_tokens: int = 0
-    completion_tokens: int = 0
+    input_tokens: int = 0
+    cached_input_tokens: int = 0
+    output_tokens: int = 0
     total_tokens: int = 0
     cost_usd: float = 0.0
+
+    @property
+    def prompt_tokens(self) -> int:
+        return self.input_tokens
+
+    @property
+    def completion_tokens(self) -> int:
+        return self.output_tokens
 
 
 @dataclass(slots=True)
@@ -70,6 +79,7 @@ class RunLogger:
         self.run_dir = base_dir / self.run_id
         self.run_dir.mkdir(parents=True, exist_ok=True)
         self.events_path = self.run_dir / "run.jsonl"
+        self.llm_calls_path = self.run_dir / "llm_calls.jsonl"
         self.summary_path = self.run_dir / "run_summary.json"
         self._started = perf_counter()
         self.summary = RunSummary(
@@ -135,40 +145,43 @@ class RunLogger:
 
     def log_llm_call(
         self,
-        provider: str,
         model: str,
         duration_ms: float,
-        prompt_tokens: int = 0,
-        completion_tokens: int = 0,
-        total_tokens: int | None = None,
+        input_tokens: int = 0,
+        cached_input_tokens: int = 0,
+        output_tokens: int = 0,
         cost_usd: float = 0.0,
         status: str = "ok",
-        operation: str | None = None,
+        node_id: str | None = None,
+        prompt_template: str | None = None,
         error: BaseException | None = None,
     ) -> None:
-        computed_total = total_tokens if total_tokens is not None else prompt_tokens + completion_tokens
+        computed_total = input_tokens + output_tokens
         if status == "ok":
             self.summary.llm.calls += 1
-            self.summary.llm.prompt_tokens += prompt_tokens
-            self.summary.llm.completion_tokens += completion_tokens
+            self.summary.llm.input_tokens += input_tokens
+            self.summary.llm.cached_input_tokens += cached_input_tokens
+            self.summary.llm.output_tokens += output_tokens
             self.summary.llm.total_tokens += computed_total
             self.summary.llm.cost_usd += cost_usd
 
         record: dict[str, Any] = {
-            "provider": provider,
+            "node_id": node_id,
+            "prompt_template": prompt_template,
             "model": model,
-            "operation": operation,
-            "duration_ms": duration_ms,
-            "prompt_tokens": prompt_tokens,
-            "completion_tokens": completion_tokens,
-            "total_tokens": computed_total,
+            "input_tokens": input_tokens,
+            "cached_tokens": cached_input_tokens,
+            "output_tokens": output_tokens,
             "cost_usd": cost_usd,
+            "latency_ms": duration_ms,
             "status": status,
         }
         if error is not None:
             error_data = _error_record(error)
             record["error"] = error_data
             self.summary.errors.append({"event": "llm_call", **error_data})
+        with self.llm_calls_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(_json_safe(record), sort_keys=True) + "\n")
         self.log_event("llm_call_finished", **record)
 
     def finish(self) -> RunSummary:
