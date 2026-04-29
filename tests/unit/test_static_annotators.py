@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 import networkx as nx
 
+from qualgraph.annotators.cross_signal import CrossSignalAnnotator
 from qualgraph.annotators.docstring import DocstringAnnotator
 from qualgraph.annotators.findings import add_finding, clear_findings_by_source
 from qualgraph.annotators.git_history import _relative_to_target
@@ -11,7 +12,15 @@ from qualgraph.annotators.pip_audit import PipAuditAnnotator
 from qualgraph.annotators.radon import RadonAnnotator
 from qualgraph.annotators.secrets import SecretsAnnotator
 from qualgraph.annotators.test_linkage import TestLinkageAnnotator
-from qualgraph.findings.cross_signal import detect_untested_hotspots
+from qualgraph.findings.cross_signal import (
+    detect_cross_signal_findings,
+    detect_cyclic_dependencies,
+    detect_god_nodes,
+    detect_hidden_coupling,
+    detect_outdated_documentation,
+    detect_untested_hotspots,
+    detect_vulnerable_usage,
+)
 from qualgraph.graph.builder import build_graph
 from qualgraph.graph.metrics import annotate_metrics
 from qualgraph.graph.schema import NodeAttrs, NodeType, node_attrs_to_graph
@@ -137,6 +146,154 @@ def test_detect_untested_hotspots_combines_complexity_centrality_and_coverage() 
     assert findings[0].kind == "untested_hotspot"
     assert findings[0].severity == "high"
     assert findings[0].evidence == {"complexity": 12.0, "centrality": 0.9, "coverage": 0.0}
+
+
+def test_detect_hidden_coupling_requires_no_static_dependency_path() -> None:
+    graph = nx.DiGraph()
+    graph.add_nodes_from(["coupled_left", "coupled_right", "static_left", "middle", "static_right"])
+    graph.add_edge("coupled_left", "coupled_right", type="co_changes_with", co_change_count=8, co_change_rate=0.75)
+    graph.add_edge("static_left", "static_right", type="co_changes_with", co_change_count=9, co_change_rate=0.9)
+    graph.add_edge("static_left", "middle", type="calls")
+    graph.add_edge("middle", "static_right", type="imports")
+
+    findings = detect_hidden_coupling(graph)
+
+    assert [finding.node_id for finding in findings] == ["coupled_left"]
+    assert findings[0].kind == "hidden_coupling"
+    assert findings[0].evidence["target"] == "coupled_right"
+
+
+def test_detect_vulnerable_usage_requires_vulnerable_import_and_matching_call() -> None:
+    graph = nx.DiGraph()
+    graph.add_node("uses_vuln", type=NodeType.FUNCTION.value)
+    graph.add_node("imports_only", type=NodeType.FUNCTION.value)
+    graph.add_node("dependency::requests", type="Dependency", name="requests")
+    graph.add_node("requests_get", type=NodeType.FUNCTION.value, qualified_name="requests.api.get")
+    graph.add_node("safe_call", type=NodeType.FUNCTION.value, qualified_name="json.loads")
+    graph.add_node("uses_unresolved_vuln", type=NodeType.FUNCTION.value)
+    graph.add_edge(
+        "uses_vuln",
+        "dependency::requests",
+        type="imports_vulnerable",
+        package="requests",
+        vulnerability_ids=["CVE-2024-0001"],
+    )
+    graph.add_edge(
+        "imports_only",
+        "dependency::requests",
+        type="imports_vulnerable",
+        package="requests",
+        vulnerability_ids=["CVE-2024-0001"],
+    )
+    graph.add_edge(
+        "uses_unresolved_vuln",
+        "dependency::requests",
+        type="imports_vulnerable",
+        package="requests",
+        vulnerability_ids=["CVE-2024-0001"],
+    )
+    graph.add_edge("uses_vuln", "requests_get", type="calls", source="requests.get")
+    graph.add_edge("imports_only", "safe_call", type="calls", source="json.loads")
+    graph.graph["unresolved_calls"] = [{"source": "uses_unresolved_vuln", "name": "requests.post", "line_start": 12}]
+
+    findings = detect_vulnerable_usage(graph)
+
+    assert [finding.node_id for finding in findings] == ["uses_vuln", "uses_unresolved_vuln"]
+    assert {finding.kind for finding in findings} == {"vulnerable_usage"}
+    assert findings[0].evidence["package"] == "requests"
+    assert findings[0].evidence["matched_calls"] == [{"call": "requests.get", "target": "requests_get"}]
+    assert findings[1].evidence["matched_calls"] == [{"call": "requests.post"}]
+
+
+def test_detect_outdated_documentation_combines_docstring_llm_finding_and_churn() -> None:
+    graph = nx.DiGraph()
+    graph.add_node(
+        "stale_docs",
+        type=NodeType.FUNCTION.value,
+        churn=20,
+        findings=[
+            {
+                "source": "llm",
+                "code": "docstring_consistency",
+                "severity": "MEDIUM",
+                "confidence": "INFERRED",
+                "message": "Docstring no longer matches return behavior.",
+                "evidence": "return value",
+            }
+        ],
+    )
+    graph.add_node(
+        "low_churn_docs",
+        type=NodeType.FUNCTION.value,
+        churn=1,
+        findings=[{"source": "llm", "code": "docstring_consistency", "message": "Docstring mismatch."}],
+    )
+
+    findings = detect_outdated_documentation(graph, churn_pct=0.99)
+
+    assert [finding.node_id for finding in findings] == ["stale_docs"]
+    assert findings[0].kind == "outdated_documentation"
+    assert findings[0].evidence["churn"] == 20.0
+
+
+def test_detect_god_nodes_combines_top_centrality_complexity_and_degree() -> None:
+    graph = nx.DiGraph()
+    graph.add_node("god", type=NodeType.FUNCTION.value, centrality=1.0, complexity=30)
+    graph.add_node("complex_only", type=NodeType.FUNCTION.value, centrality=0.1, complexity=29)
+    graph.add_node("caller_1")
+    graph.add_node("caller_2")
+    graph.add_node("callee_1")
+    graph.add_node("callee_2")
+    graph.add_edge("caller_1", "god", type="calls")
+    graph.add_edge("caller_2", "god", type="calls")
+    graph.add_edge("god", "callee_1", type="calls")
+    graph.add_edge("god", "callee_2", type="calls")
+    graph.add_edge("complex_only", "callee_1", type="calls")
+
+    findings = detect_god_nodes(graph, centrality_pct=0.99, complexity_pct=0.99, degree_pct=0.99)
+
+    assert [finding.node_id for finding in findings] == ["god"]
+    assert findings[0].kind == "god_node"
+    assert findings[0].evidence["in_degree"] == 2
+    assert findings[0].evidence["out_degree"] == 2
+
+
+def test_detect_cyclic_dependencies_uses_calls_subgraph_only() -> None:
+    graph = nx.DiGraph()
+    graph.add_edge("a", "b", type="calls")
+    graph.add_edge("b", "a", type="calls")
+    graph.add_edge("c", "d", type="imports")
+    graph.add_edge("d", "c", type="imports")
+
+    findings = detect_cyclic_dependencies(graph)
+
+    assert sorted(finding.node_id for finding in findings) == ["a", "b"]
+    assert {finding.kind for finding in findings} == {"cyclic_dependency"}
+    assert all(finding.evidence["cycle_size"] == 2 for finding in findings)
+
+
+def test_detect_cross_signal_findings_runs_all_detectors() -> None:
+    graph = nx.DiGraph()
+    graph.add_node("hotspot", type=NodeType.FUNCTION.value, complexity=12, centrality=0.9, coverage_line=0.0)
+    graph.add_node("other", type=NodeType.FUNCTION.value, complexity=1, centrality=0.1, coverage_line=1.0)
+
+    findings = detect_cross_signal_findings(graph)
+
+    assert any(finding.kind == "untested_hotspot" for finding in findings)
+
+
+def test_cross_signal_annotator_attaches_reportable_findings() -> None:
+    graph = nx.DiGraph()
+    graph.add_node("hotspot", type=NodeType.FUNCTION.value, complexity=12, centrality=0.9, coverage_line=0.0)
+    graph.add_node("other", type=NodeType.FUNCTION.value, complexity=1, centrality=0.1, coverage_line=1.0)
+
+    result = CrossSignalAnnotator().annotate(graph, Path("."))
+
+    assert result.nodes_annotated == 1
+    finding = graph.nodes["hotspot"]["findings"][0]
+    assert finding["source"] == "cross-signal"
+    assert finding["code"] == "untested_hotspot"
+    assert finding["severity"] == "HIGH"
 
 
 def test_pip_audit_adds_vulnerable_import_edges_to_importing_node() -> None:

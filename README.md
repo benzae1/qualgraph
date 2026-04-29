@@ -173,12 +173,14 @@ Implemented or scaffolded annotators:
 - `BanditAnnotator`: Python security findings
 - `PipAuditAnnotator`: vulnerable dependency findings and `imports_vulnerable` attribution
 - `SecretsAnnotator`: conservative detect-secrets findings
+- `CrossSignalAnnotator`: derived findings that combine graph structure, metrics, history, security, and LLM signals
 
 Grouped annotator aliases:
 
 - `coverage` runs coverage plus test linkage
 - `git` runs git history plus co-change
 - `security` runs Bandit, PipAudit, and Secrets
+- `cross_signal` or `derived` runs cross-signal derived findings
 
 ## Cross-Signal Findings
 
@@ -187,12 +189,14 @@ Cross-signal findings exist because all inputs share graph nodes and edges.
 Implemented:
 
 - `detect_untested_hotspots(graph)`: high complexity + high centrality + zero line coverage
+- `detect_hidden_coupling(graph)`: co-change edge with no calls/imports path
+- `detect_vulnerable_usage(graph)`: vulnerable import plus a call to symbols from that package
+- `detect_outdated_documentation(graph)`: docstring-consistency LLM finding on high-churn code
+- `detect_god_nodes(graph)`: top-band centrality, complexity, and in/out degree
+- `detect_cyclic_dependencies(graph)`: cycles in the calls subgraph
 
 Planned:
 
-- hidden coupling: high co-change without static dependency
-- vulnerable usage: dependency CVE attributed to importing code node
-- stale docs: LLM detects docstring/code mismatch
 - complex hot path: profiler hot path + complexity + weak tests
 
 ## Risk Scoring

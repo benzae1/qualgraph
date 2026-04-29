@@ -12,6 +12,7 @@ import typer
 from qualgraph.annotators.bandit import BanditAnnotator
 from qualgraph.annotators.co_change import CoChangeAnnotator
 from qualgraph.annotators.coverage import CoverageAnnotator
+from qualgraph.annotators.cross_signal import CrossSignalAnnotator
 from qualgraph.annotators.docstring import DocstringAnnotator
 from qualgraph.annotators.git_history import GitHistoryAnnotator
 from qualgraph.annotators.pipeline import run_pipeline
@@ -250,6 +251,9 @@ def _resolve_annotators(names: str) -> list:
         "git": (GitHistoryAnnotator, CoChangeAnnotator),
         "git_history": GitHistoryAnnotator,
         "co_change": CoChangeAnnotator,
+        "cross_signal": CrossSignalAnnotator,
+        "cross-signal": CrossSignalAnnotator,
+        "derived": CrossSignalAnnotator,
     }
     selected = []
     for raw_name in names.split(","):
