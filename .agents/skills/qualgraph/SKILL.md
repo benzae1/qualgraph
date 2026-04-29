@@ -35,22 +35,23 @@ Use the requested path, or `.` if no path was provided.
    - Read `.qualgraph/runs/<run_id>/llm_tasks/manifest.json`.
    - For each task, read the referenced Markdown task file.
    - Write valid JSON to the task's `output_path`.
-   - The JSON must be:
+   - The JSON must match the analysis prompt shape:
      ```json
      {
        "findings": [
          {
-           "kind": "short_snake_case",
-           "severity": "LOW|MEDIUM|HIGH",
+           "dimension": "maintainability|reliability|security|performance",
+           "severity": "low|medium|high|critical",
            "confidence": "EXTRACTED|INFERRED|AMBIGUOUS",
-           "message": "one sentence",
-           "evidence": {"key": "value"},
-           "suggested_action": "one sentence",
-           "line": 123
+           "title": "short title",
+           "description": "one or two sentences",
+           "evidence": "exact source substring copied from the task prompt",
+           "suggested_action": "one sentence"
          }
        ]
      }
      ```
+   - `evidence` must be a string copied verbatim from the target, caller, or callee source shown in the task prompt. Findings with missing or paraphrased evidence are discarded during import.
    - If no meaningful issue is present, write `{"findings": []}`.
    - Do not ask the user to copy or paste prompts.
 
