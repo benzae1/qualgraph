@@ -1,6 +1,6 @@
 ---
 name: qualgraph
-description: Run Qualgraph on a Python repository end to end: build and annotate the code graph, export top-risk LLM task files, complete those task files using the current agent session, import the structured results, and render a final report. Use when the user asks for /qualgraph, code quality graph analysis, risk-ranked findings, or a finalized Qualgraph report without requiring API keys.
+description: "Run Qualgraph on a Python repository end to end: build and annotate the code graph, export top-risk LLM task files, complete those task files using the current agent session, import the structured results, and render a final report. Use when the user asks for /qualgraph, code quality graph analysis, risk-ranked findings, or a finalized Qualgraph report without requiring API keys."
 ---
 
 # Qualgraph
