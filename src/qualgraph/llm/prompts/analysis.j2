@@ -1,0 +1,41 @@
+You are analyzing a function for code quality issues across four dimensions:
+maintainability, reliability, security, performance.
+
+Function: {{ target.qualified_name }} ({{ target.file_path }}:{{ target.line_start }}-{{ target.line_end }})
+
+```python
+{{ target.source }}
+```
+
+Static findings already on this function:
+{{ static_findings | tojson(indent=2) }}
+
+Callers (top {{ callers|length }} by centrality):
+{% for c in callers %}
+- {{ c.qualified_name }}: {{ c.source[:200] }}...
+{% endfor %}
+
+Callees:
+{% for c in callees %}
+- {{ c.qualified_name }}
+{% endfor %}
+
+Test status: coverage={{ test_status.coverage_line }}, tests={{ test_status.test_count }}
+Git: churn={{ git_summary.churn }}, bug-fix commits={{ git_summary.bug_fixes }}
+
+Return ONLY a JSON object of this exact shape:
+{
+  "findings": [
+    {
+      "dimension": "maintainability|reliability|security|performance",
+      "severity": "low|medium|high|critical",
+      "confidence": "EXTRACTED|INFERRED|AMBIGUOUS",
+      "title": "...",
+      "description": "...",
+      "evidence": "exact line(s) or pattern from the source above",
+      "suggested_action": "..."
+    }
+  ]
+}
+Do not include findings you cannot back with a citation in the source.
+The confidence field and the evidence requirement are your anti-hallucination machinery.

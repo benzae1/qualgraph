@@ -11,7 +11,8 @@ from typing import Any
 import networkx as nx
 
 from qualgraph.annotators.findings import add_finding
-from qualgraph.llm.context import build_node_analysis_prompt
+from qualgraph.llm.context import build_context, build_node_analysis_prompt, evidence_corpus
+from qualgraph.llm.parser import parse_analysis_response
 from qualgraph.scoring.risk import score as score_risk
 from qualgraph.scoring.risk import top_risk_nodes
 
@@ -80,8 +81,10 @@ def import_results(graph: nx.DiGraph, run_dir: str | Path, strict: bool = False)
             continue
         payload = json.loads(output_path.read_text(encoding="utf-8"))
         node_id = task["node_id"]
+        context = build_context(graph, node_id)
+        parsed = parse_analysis_response(json.dumps(payload), evidence_corpus(context))
         imported += 1
-        for finding in payload.get("findings", []) or []:
+        for finding in parsed.get("findings", []) or []:
             normalized = _normalize_finding(finding)
             if add_finding(graph.nodes[node_id], normalized):
                 findings_added += 1
@@ -125,23 +128,28 @@ def _task_markdown(task: dict[str, Any], system: str, user: str) -> str:
 
 
 def _normalize_finding(finding: dict[str, Any]) -> dict[str, Any]:
-    severity = str(finding.get("severity") or "LOW").upper()
-    kind = str(finding.get("kind") or finding.get("code") or "llm_finding")
+    severity = str(finding.get("severity") or "low").lower()
+    kind = str(finding.get("kind") or finding.get("dimension") or finding.get("code") or "llm_finding")
+    title = str(finding.get("title") or kind.replace("_", " ").title())
+    description = str(finding.get("description") or finding.get("message") or title)
     return {
         "source": "llm",
         "code": kind,
-        "severity": severity,
+        "severity": severity.upper(),
         "severity_num": _severity_num(severity),
         "confidence": finding.get("confidence") or "INFERRED",
-        "message": finding.get("message") or kind.replace("_", " "),
-        "evidence": finding.get("evidence") or {},
+        "message": description,
+        "dimension": finding.get("dimension"),
+        "title": title,
+        "description": description,
+        "evidence": finding.get("evidence") or "",
         "suggested_action": finding.get("suggested_action"),
         "line": finding.get("line"),
     }
 
 
 def _severity_num(severity: str) -> float:
-    return {"HIGH": 1.0, "MEDIUM": 0.66, "LOW": 0.33}.get(severity.upper(), 0.0)
+    return {"CRITICAL": 1.0, "HIGH": 0.85, "MEDIUM": 0.66, "LOW": 0.33}.get(severity.upper(), 0.0)
 
 
 def _slug(value: str) -> str:
