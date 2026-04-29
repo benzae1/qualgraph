@@ -8,6 +8,7 @@ from qualgraph.annotators.git_history import _relative_to_target
 from qualgraph.annotators.locations import find_node_for_location
 from qualgraph.annotators.radon import RadonAnnotator
 from qualgraph.annotators.test_linkage import TestLinkageAnnotator
+from qualgraph.findings.cross_signal import detect_untested_hotspots
 from qualgraph.graph.builder import build_graph
 from qualgraph.graph.metrics import annotate_metrics
 from qualgraph.graph.schema import NodeAttrs, NodeType, node_attrs_to_graph
@@ -93,6 +94,45 @@ def test_findings_helpers_dedupe_and_clear_by_source() -> None:
     clear_findings_by_source(graph, "ruff")
 
     assert graph.nodes["node"]["findings"] == [{"source": "bandit", "test_id": "B101"}]
+
+
+def test_detect_untested_hotspots_combines_complexity_centrality_and_coverage() -> None:
+    graph = nx.DiGraph()
+    graph.add_node(
+        "hotspot",
+        type=NodeType.FUNCTION.value,
+        complexity=12,
+        centrality=0.9,
+        coverage_line=0.0,
+    )
+    graph.add_node(
+        "covered_hotspot",
+        type=NodeType.METHOD.value,
+        complexity=11,
+        centrality=0.8,
+        coverage_line=0.75,
+    )
+    graph.add_node(
+        "simple_center",
+        type=NodeType.FUNCTION.value,
+        complexity=2,
+        centrality=0.95,
+        coverage_line=0.0,
+    )
+    graph.add_node(
+        "module",
+        type=NodeType.MODULE.value,
+        complexity=99,
+        centrality=1.0,
+        coverage_line=0.0,
+    )
+
+    findings = detect_untested_hotspots(graph, complexity_pct=0.5, centrality_pct=0.5)
+
+    assert [finding.node_id for finding in findings] == ["hotspot"]
+    assert findings[0].kind == "untested_hotspot"
+    assert findings[0].severity == "high"
+    assert findings[0].evidence == {"complexity": 12.0, "centrality": 0.9, "coverage": 0.0}
 
 
 def test_report_surfaces_deduped_rules_hotspots_and_readable_centrality() -> None:
