@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
+from uuid import uuid4
 
 import typer
 
@@ -23,12 +25,16 @@ from qualgraph.graph.builder import build_graph
 from qualgraph.graph.clustering import annotate_clusters
 from qualgraph.graph.metrics import annotate_metrics
 from qualgraph.graph.serialize import read_json_graph, write_graphml_graph, write_json_graph
+from qualgraph.llm.tasks import export_tasks as export_llm_tasks
+from qualgraph.llm.tasks import import_results as import_llm_results
 from qualgraph.logging import RunLogger
 from qualgraph.report.markdown import write_markdown_report
 from qualgraph.scoring.risk import score as score_risk
 
 
 app = typer.Typer(help="Graph-aware code quality analysis for Python projects.")
+llm_app = typer.Typer(help="Export and import agent-completed LLM analysis tasks.")
+app.add_typer(llm_app, name="llm")
 
 
 @app.callback()
@@ -132,6 +138,43 @@ def report(
     typer.echo(f"Wrote {output}")
 
 
+@llm_app.command("export-tasks")
+def llm_export_tasks(
+    graph: Path = typer.Argument(..., exists=True, file_okay=True, dir_okay=False, readable=True),
+    output_dir: Optional[Path] = typer.Option(None, "--output-dir", "-o", help="Directory for LLM task files."),
+    limit: int = typer.Option(20, "--limit", "-n", min=1, help="Number of top-risk nodes to export."),
+) -> None:
+    """Export top-risk node prompts for an agent to complete from files."""
+
+    code_graph = read_json_graph(graph)
+    task_dir = output_dir or _default_llm_task_dir()
+    manifest = export_llm_tasks(code_graph, task_dir, limit=limit)
+    typer.echo(
+        f"Wrote {len(manifest['tasks'])} LLM task(s) to {manifest['task_dir']}. "
+        f"Results directory: {manifest['result_dir']}"
+    )
+
+
+@llm_app.command("import-results")
+def llm_import_results(
+    run_dir: Path = typer.Argument(..., exists=True, file_okay=False, dir_okay=True, readable=True),
+    graph: Path = typer.Option(..., "--graph", "-g", exists=True, file_okay=True, dir_okay=False, readable=True),
+    output: Optional[Path] = typer.Option(None, "--output", "-o", help="Graph path to write after importing results."),
+    strict: bool = typer.Option(False, "--strict", help="Fail if any expected result file is missing."),
+) -> None:
+    """Import agent-written LLM result JSON files back into a graph."""
+
+    code_graph = read_json_graph(graph)
+    summary = import_llm_results(code_graph, run_dir, strict=strict)
+    output = output or graph
+    write_json_graph(code_graph, output)
+    typer.echo(
+        f"Imported {summary['findings_added']} LLM finding(s) from "
+        f"{summary['imported']}/{summary['tasks']} completed task(s). "
+        f"Wrote {output}."
+    )
+
+
 def _resolve_annotators(names: str) -> list:
     registry = {
         "radon": RadonAnnotator,
@@ -164,3 +207,8 @@ def _resolve_annotators(names: str) -> list:
         else:
             selected.append(annotator())
     return selected
+
+
+def _default_llm_task_dir() -> Path:
+    run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid4().hex[:8]
+    return Path(".qualgraph") / "runs" / run_id / "llm_tasks"
