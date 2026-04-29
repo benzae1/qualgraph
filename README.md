@@ -122,10 +122,11 @@ Important node attributes:
 - maintainability: `complexity`, `maintainability_index`
 - reliability: `coverage_line`, `coverage_branch`
 - history: `churn`, `author_count`, `bug_fix_keywords`
+- profiling: `profile_cum_time`, `profile_call_count`, `cpu_pct`, `hotpath_weight`
 - findings: `findings`
 - risk: `risk_score`, `risk_components`
 - LLM: `llm_severity_max`
-- future performance: `hotpath_weight`
+- performance: `hotpath_weight`
 
 ## Implemented CLI Surface
 
@@ -174,6 +175,7 @@ Implemented or scaffolded annotators:
 - `PipAuditAnnotator`: vulnerable dependency findings and `imports_vulnerable` attribution
 - `SecretsAnnotator`: conservative detect-secrets findings
 - `CrossSignalAnnotator`: derived findings that combine graph structure, metrics, history, security, and LLM signals
+- `ProfilerAnnotator`: cProfile JSON ingestion, cumulative CPU time, call counts, and hot-path weight
 
 Grouped annotator aliases:
 
@@ -181,6 +183,7 @@ Grouped annotator aliases:
 - `git` runs git history plus co-change
 - `security` runs Bandit, PipAudit, and Secrets
 - `cross_signal` or `derived` runs cross-signal derived findings
+- `profiler` ingests `--profile-json <path>`
 
 ## Cross-Signal Findings
 
@@ -194,10 +197,7 @@ Implemented:
 - `detect_outdated_documentation(graph)`: docstring-consistency LLM finding on high-churn code
 - `detect_god_nodes(graph)`: top-band centrality, complexity, and in/out degree
 - `detect_cyclic_dependencies(graph)`: cycles in the calls subgraph
-
-Planned:
-
-- complex hot path: profiler hot path + complexity + weak tests
+- `detect_complex_hotspots(graph)`: CPU-heavy code with high complexity and weak coverage
 
 ## Risk Scoring
 
@@ -401,7 +401,8 @@ Implemented:
 - annotator pipeline
 - static annotators
 - security annotators
-- cross-signal untested hotspot detector
+- expanded cross-signal detectors
+- profiler/hot-path annotator
 - risk scorer
 - LLM provider abstraction
 - LLM telemetry
@@ -417,7 +418,6 @@ Still planned or incomplete:
 - single `qualgraph analyze` command
 - richer final report sections and executive summary
 - HTML report or dashboard
-- profiler/hot-path annotator
 - type coverage annotator
 - cluster summarization
 - docstring consistency LLM tasks

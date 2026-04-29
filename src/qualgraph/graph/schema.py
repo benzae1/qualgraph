@@ -52,6 +52,10 @@ class NodeAttrs:
     churn: Optional[int] = None
     author_count: Optional[int] = None
     bug_fix_keywords: Optional[int] = None
+    profile_cum_time: Optional[float] = None
+    profile_call_count: Optional[int] = None
+    cpu_pct: Optional[float] = None
+    hotpath_weight: Optional[float] = None
     centrality: Optional[float] = None
     betweenness_centrality: Optional[float] = None
     degree_centrality: Optional[float] = None
@@ -96,6 +100,10 @@ OPTIONAL_NODE_ATTRS = (
     "churn",
     "author_count",
     "bug_fix_keywords",
+    "profile_cum_time",
+    "profile_call_count",
+    "cpu_pct",
+    "hotpath_weight",
     "centrality",
     "betweenness_centrality",
     "degree_centrality",

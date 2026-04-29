@@ -17,6 +17,7 @@ from qualgraph.annotators.docstring import DocstringAnnotator
 from qualgraph.annotators.git_history import GitHistoryAnnotator
 from qualgraph.annotators.pipeline import run_pipeline
 from qualgraph.annotators.pip_audit import PipAuditAnnotator
+from qualgraph.annotators.profiler import ProfilerAnnotator
 from qualgraph.annotators.radon import RadonAnnotator
 from qualgraph.annotators.ruff import RuffAnnotator
 from qualgraph.annotators.secrets import SecretsAnnotator
@@ -100,6 +101,7 @@ def annotate(
     graph_path: Optional[Path] = typer.Option(None, "--graph", "-g", help="Existing graph JSON path."),
     output: Optional[Path] = typer.Option(None, "--output", "-o", help="Annotated graph JSON path."),
     annotators: str = typer.Option("radon,ruff,coverage,git", "--annotators", help="Comma-separated annotator names."),
+    profile_json: Optional[Path] = typer.Option(None, "--profile-json", help="cProfile JSON artifact for the profiler annotator."),
 ) -> None:
     """Run annotators over a graph, building the graph first if needed."""
 
@@ -114,7 +116,7 @@ def annotate(
             annotate_clusters(graph)
             annotate_metrics(graph)
 
-        selected = _resolve_annotators(annotators)
+        selected = _resolve_annotators(annotators, profile_json=profile_json)
         results = run_pipeline(graph, repo, selected, logger=run_logger)
         with run_logger.span("score_risk") as span:
             score_risk(graph)
@@ -233,7 +235,7 @@ def llm_analyze(
         )
 
 
-def _resolve_annotators(names: str) -> list:
+def _resolve_annotators(names: str, profile_json: Path | None = None) -> list:
     registry = {
         "radon": RadonAnnotator,
         "ruff": RuffAnnotator,
@@ -254,6 +256,8 @@ def _resolve_annotators(names: str) -> list:
         "cross_signal": CrossSignalAnnotator,
         "cross-signal": CrossSignalAnnotator,
         "derived": CrossSignalAnnotator,
+        "profiler": lambda: ProfilerAnnotator(profile_json),
+        "profile": lambda: ProfilerAnnotator(profile_json),
     }
     selected = []
     for raw_name in names.split(","):
@@ -265,6 +269,8 @@ def _resolve_annotators(names: str) -> list:
             raise typer.BadParameter(f"unknown annotator: {name}")
         if isinstance(annotator, tuple):
             selected.extend(item() for item in annotator)
+        elif callable(annotator) and not isinstance(annotator, type):
+            selected.append(annotator())
         else:
             selected.append(annotator())
     return selected

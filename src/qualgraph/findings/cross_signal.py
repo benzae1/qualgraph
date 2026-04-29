@@ -226,6 +226,57 @@ def detect_cyclic_dependencies(graph: nx.DiGraph, max_cycles: int = 50) -> list[
     return findings
 
 
+def detect_complex_hotspots(
+    graph: nx.DiGraph,
+    cpu_pct_threshold: float = 0.05,
+    complexity_threshold: float | None = None,
+    complexity_pct: float = 0.8,
+    coverage_threshold: float = 0.5,
+) -> list[Finding]:
+    """Find CPU-heavy, complex, weakly covered functions."""
+
+    candidates = [
+        (node_id, attrs)
+        for node_id, attrs in graph.nodes(data=True)
+        if attrs.get("type") in {NodeType.FUNCTION, NodeType.FUNCTION.value, NodeType.METHOD, NodeType.METHOD.value}
+        and attrs.get("complexity") is not None
+        and attrs.get("cpu_pct") is not None
+    ]
+    if not candidates:
+        return []
+    threshold = (
+        float(complexity_threshold)
+        if complexity_threshold is not None
+        else _percentile([float(attrs.get("complexity") or 0.0) for _node_id, attrs in candidates], complexity_pct)
+    )
+    findings: list[Finding] = []
+    for node_id, attrs in candidates:
+        cpu_pct = float(attrs.get("cpu_pct") or 0.0)
+        complexity = float(attrs.get("complexity") or 0.0)
+        coverage = float(attrs.get("coverage_line") or 0.0)
+        if cpu_pct > cpu_pct_threshold and complexity > threshold and coverage < coverage_threshold:
+            findings.append(
+                Finding(
+                    node_id=node_id,
+                    kind="complex_hotspot",
+                    severity="high",
+                    confidence="INFERRED",
+                    message="CPU-heavy code is also complex and weakly covered.",
+                    evidence={
+                        "cpu_pct": cpu_pct,
+                        "cpu_pct_threshold": cpu_pct_threshold,
+                        "complexity": complexity,
+                        "complexity_threshold": threshold,
+                        "coverage": coverage,
+                        "coverage_threshold": coverage_threshold,
+                        "profile_cum_time": attrs.get("profile_cum_time"),
+                        "profile_call_count": attrs.get("profile_call_count"),
+                    },
+                )
+            )
+    return findings
+
+
 def detect_cross_signal_findings(graph: nx.DiGraph) -> list[Finding]:
     """Run all deterministic cross-signal detectors."""
 
@@ -236,6 +287,7 @@ def detect_cross_signal_findings(graph: nx.DiGraph) -> list[Finding]:
     findings.extend(detect_outdated_documentation(graph))
     findings.extend(detect_god_nodes(graph))
     findings.extend(detect_cyclic_dependencies(graph))
+    findings.extend(detect_complex_hotspots(graph))
     return findings
 
 

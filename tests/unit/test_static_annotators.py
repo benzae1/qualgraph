@@ -9,11 +9,13 @@ from qualgraph.annotators.findings import add_finding, clear_findings_by_source
 from qualgraph.annotators.git_history import _relative_to_target
 from qualgraph.annotators.locations import find_node_for_location
 from qualgraph.annotators.pip_audit import PipAuditAnnotator
+from qualgraph.annotators.profiler import ProfilerAnnotator
 from qualgraph.annotators.radon import RadonAnnotator
 from qualgraph.annotators.secrets import SecretsAnnotator
 from qualgraph.annotators.test_linkage import TestLinkageAnnotator
 from qualgraph.findings.cross_signal import (
     detect_cross_signal_findings,
+    detect_complex_hotspots,
     detect_cyclic_dependencies,
     detect_god_nodes,
     detect_hidden_coupling,
@@ -85,6 +87,45 @@ def test_test_linkage_adds_static_tested_by_edges() -> None:
 
     assert result.edges_added > 0
     assert any(attrs.get("type") == "tested_by" for _source, _target, attrs in graph.edges(data=True))
+
+
+def test_profiler_annotator_attributes_cprofile_json_by_file_and_line(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    profile_path = repo / "profile.json"
+    profile_path.write_text(
+        _json(
+            {
+                "total_time": 2.0,
+                "functions": [
+                    {
+                        "filename": "sample.py",
+                        "line": 5,
+                        "call_count": 4,
+                        "cum_time": 0.5,
+                    },
+                    {
+                        "filename": "missing.py",
+                        "line": 1,
+                        "call_count": 1,
+                        "cum_time": 0.25,
+                    },
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    graph = _sample_graph_with_function()
+
+    result = ProfilerAnnotator(profile_path).annotate(graph, repo)
+
+    assert result.nodes_annotated == 1
+    attrs = graph.nodes["function"]
+    assert attrs["profile_cum_time"] == 0.5
+    assert attrs["profile_call_count"] == 4
+    assert attrs["cpu_pct"] == 0.25
+    assert attrs["hotpath_weight"] == 0.25
+    assert graph.graph["profile_total_time"] == 2.0
 
 
 def test_git_history_path_mapping_for_nested_repo_targets() -> None:
@@ -270,6 +311,22 @@ def test_detect_cyclic_dependencies_uses_calls_subgraph_only() -> None:
     assert sorted(finding.node_id for finding in findings) == ["a", "b"]
     assert {finding.kind for finding in findings} == {"cyclic_dependency"}
     assert all(finding.evidence["cycle_size"] == 2 for finding in findings)
+
+
+def test_detect_complex_hotspots_combines_cpu_complexity_and_coverage() -> None:
+    graph = nx.DiGraph()
+    graph.add_node("hot", type=NodeType.FUNCTION.value, cpu_pct=0.2, complexity=12, coverage_line=0.25)
+    graph.add_node("covered", type=NodeType.FUNCTION.value, cpu_pct=0.2, complexity=12, coverage_line=0.9)
+    graph.add_node("simple", type=NodeType.FUNCTION.value, cpu_pct=0.2, complexity=2, coverage_line=0.25)
+    graph.add_node("cold", type=NodeType.FUNCTION.value, cpu_pct=0.01, complexity=12, coverage_line=0.25)
+
+    findings = detect_complex_hotspots(graph, cpu_pct_threshold=0.05, complexity_threshold=10, coverage_threshold=0.5)
+
+    assert [finding.node_id for finding in findings] == ["hot"]
+    assert findings[0].kind == "complex_hotspot"
+    assert findings[0].evidence["cpu_pct"] == 0.2
+    assert findings[0].evidence["complexity"] == 12.0
+    assert findings[0].evidence["coverage"] == 0.25
 
 
 def test_detect_cross_signal_findings_runs_all_detectors() -> None:
@@ -470,6 +527,12 @@ def _sample_graph_with_function() -> nx.DiGraph:
         ),
     )
     return graph
+
+
+def _json(payload: dict) -> str:
+    import json
+
+    return json.dumps(payload)
 
 
 class _completed:
