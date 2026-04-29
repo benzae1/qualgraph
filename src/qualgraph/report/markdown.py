@@ -219,12 +219,15 @@ def _risk_hotspots(
         if attrs.get("type") not in {"Function", "Method"}:
             continue
         finding_count = findings_by_node[node_id]
-        coverage = attrs.get("coverage_line")
-        coverage_penalty = 0.0 if coverage is None else max(0.0, 1.0 - float(coverage)) * 5
-        complexity = float(attrs.get("complexity") or 0.0)
-        churn = float(attrs.get("churn") or 0.0)
-        structural = float(attrs.get("structural_score", attrs.get("centrality")) or 0.0)
-        score = finding_count + coverage_penalty + min(complexity / 5, 3.0) + min(churn / 10, 3.0) + structural
+        if attrs.get("risk_score") is not None:
+            score = float(attrs.get("risk_score") or 0.0)
+        else:
+            coverage = attrs.get("coverage_line")
+            coverage_penalty = 0.0 if coverage is None else max(0.0, 1.0 - float(coverage)) * 5
+            complexity = float(attrs.get("complexity") or 0.0)
+            churn = float(attrs.get("churn") or 0.0)
+            structural = float(attrs.get("structural_score", attrs.get("centrality")) or 0.0)
+            score = finding_count + coverage_penalty + min(complexity / 5, 3.0) + min(churn / 10, 3.0) + structural
         if score > 0:
             hotspots.append((score, attrs, finding_count))
     return sorted(hotspots, key=lambda item: item[0], reverse=True)[:limit]

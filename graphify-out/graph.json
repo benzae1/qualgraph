@@ -319,7 +319,7 @@
       "source_file": "",
       "source_location": "",
       "id": "str",
-      "community": 8,
+      "community": 6,
       "norm_label": "str"
     },
     {
@@ -328,7 +328,7 @@
       "source_file": "",
       "source_location": "",
       "id": "enum",
-      "community": 0,
+      "community": 5,
       "norm_label": "enum"
     },
     {
@@ -893,7 +893,7 @@
       "label": "main()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\cli.py",
-      "source_location": "L34",
+      "source_location": "L35",
       "id": "cli_main",
       "community": 1,
       "norm_label": "main()"
@@ -902,16 +902,16 @@
       "label": "build()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\cli.py",
-      "source_location": "L39",
+      "source_location": "L40",
       "id": "cli_build",
-      "community": 1,
+      "community": 4,
       "norm_label": "build()"
     },
     {
       "label": "annotate()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\cli.py",
-      "source_location": "L82",
+      "source_location": "L87",
       "id": "cli_annotate",
       "community": 1,
       "norm_label": "annotate()"
@@ -920,7 +920,7 @@
       "label": "report()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\cli.py",
-      "source_location": "L115",
+      "source_location": "L123",
       "id": "cli_report",
       "community": 1,
       "norm_label": "report()"
@@ -929,7 +929,7 @@
       "label": "_resolve_annotators()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\cli.py",
-      "source_location": "L127",
+      "source_location": "L135",
       "id": "cli_resolve_annotators",
       "community": 1,
       "norm_label": "_resolve_annotators()"
@@ -947,8 +947,8 @@
       "label": "Graph-aware code quality analysis for Python projects.",
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\cli.py",
-      "source_location": "L35",
-      "id": "cli_rationale_35",
+      "source_location": "L36",
+      "id": "cli_rationale_36",
       "community": 1,
       "norm_label": "graph-aware code quality analysis for python projects."
     },
@@ -956,17 +956,17 @@
       "label": "Build a Python code graph and write an annotated graph artifact.",
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\cli.py",
-      "source_location": "L46",
-      "id": "cli_rationale_46",
-      "community": 1,
+      "source_location": "L47",
+      "id": "cli_rationale_47",
+      "community": 4,
       "norm_label": "build a python code graph and write an annotated graph artifact."
     },
     {
       "label": "Run annotators over a graph, building the graph first if needed.",
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\cli.py",
-      "source_location": "L88",
-      "id": "cli_rationale_88",
+      "source_location": "L93",
+      "id": "cli_rationale_93",
       "community": 1,
       "norm_label": "run annotators over a graph, building the graph first if needed."
     },
@@ -974,8 +974,8 @@
       "label": "Render a Markdown report from an annotated graph JSON file.",
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\cli.py",
-      "source_location": "L119",
-      "id": "cli_rationale_119",
+      "source_location": "L127",
+      "id": "cli_rationale_127",
       "community": 1,
       "norm_label": "render a markdown report from an annotated graph json file."
     },
@@ -994,7 +994,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L1",
       "id": "src_qualgraph_logging_py",
-      "community": 1,
+      "community": 4,
       "norm_label": "logging.py"
     },
     {
@@ -1003,7 +1003,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L26",
       "id": "logging_utc_now_iso",
-      "community": 1,
+      "community": 4,
       "norm_label": "utc_now_iso()"
     },
     {
@@ -1012,7 +1012,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L30",
       "id": "logging_configure_console_logging",
-      "community": 1,
+      "community": 4,
       "norm_label": "configure_console_logging()"
     },
     {
@@ -1021,7 +1021,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L38",
       "id": "logging_llmusage",
-      "community": 1,
+      "community": 4,
       "norm_label": "llmusage"
     },
     {
@@ -1030,7 +1030,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L47",
       "id": "logging_runsummary",
-      "community": 1,
+      "community": 4,
       "norm_label": "runsummary"
     },
     {
@@ -1039,7 +1039,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L58",
       "id": "logging_runlogger",
-      "community": 1,
+      "community": 4,
       "norm_label": "runlogger"
     },
     {
@@ -1048,7 +1048,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L61",
       "id": "logging_runlogger_init",
-      "community": 1,
+      "community": 4,
       "norm_label": ".__init__()"
     },
     {
@@ -1057,7 +1057,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L82",
       "id": "logging_runlogger_log_event",
-      "community": 1,
+      "community": 4,
       "norm_label": ".log_event()"
     },
     {
@@ -1066,7 +1066,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L93",
       "id": "logging_span",
-      "community": 1,
+      "community": 4,
       "norm_label": "span()"
     },
     {
@@ -1075,7 +1075,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L113",
       "id": "logging_runlogger_log_annotator",
-      "community": 1,
+      "community": 4,
       "norm_label": ".log_annotator()"
     },
     {
@@ -1084,7 +1084,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L136",
       "id": "logging_runlogger_log_llm_call",
-      "community": 7,
+      "community": 4,
       "norm_label": ".log_llm_call()"
     },
     {
@@ -1093,7 +1093,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L174",
       "id": "logging_runlogger_finish",
-      "community": 1,
+      "community": 4,
       "norm_label": ".finish()"
     },
     {
@@ -1102,7 +1102,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L192",
       "id": "logging_graph_counts",
-      "community": 1,
+      "community": 4,
       "norm_label": "graph_counts()"
     },
     {
@@ -1111,7 +1111,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L198",
       "id": "logging_elapsed_ms",
-      "community": 1,
+      "community": 4,
       "norm_label": "_elapsed_ms()"
     },
     {
@@ -1120,7 +1120,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L202",
       "id": "logging_error_record",
-      "community": 1,
+      "community": 4,
       "norm_label": "_error_record()"
     },
     {
@@ -1129,7 +1129,7 @@
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L210",
       "id": "logging_json_safe",
-      "community": 1,
+      "community": 4,
       "norm_label": "_json_safe()"
     },
     {
@@ -1137,7 +1137,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L1",
-      "community": 1,
+      "community": 4,
       "norm_label": "structured run logging for qualgraph.  every cli run should create a jsonl event",
       "id": "logging_rationale_1"
     },
@@ -1146,7 +1146,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\logging.py",
       "source_location": "L59",
-      "community": 1,
+      "community": 4,
       "norm_label": "write structured jsonl events and aggregate per-run counters.",
       "id": "logging_rationale_59"
     },
@@ -1165,7 +1165,7 @@
       "source_file": "src\\qualgraph\\annotators\\bandit.py",
       "source_location": "L1",
       "id": "src_qualgraph_annotators_bandit_py",
-      "community": 4,
+      "community": 3,
       "norm_label": "bandit.py"
     },
     {
@@ -1201,7 +1201,7 @@
       "source_file": "src\\qualgraph\\annotators\\bandit.py",
       "source_location": "L26",
       "id": "bandit_banditannotator_annotate",
-      "community": 4,
+      "community": 3,
       "norm_label": ".annotate()"
     },
     {
@@ -1210,17 +1210,26 @@
       "source_file": "src\\qualgraph\\annotators\\bandit.py",
       "source_location": "L54",
       "id": "bandit_finding_payload",
-      "community": 4,
+      "community": 3,
       "norm_label": "_finding_payload()"
     },
     {
       "label": "_relative_to_repo()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\annotators\\bandit.py",
-      "source_location": "L67",
+      "source_location": "L68",
       "id": "bandit_relative_to_repo",
-      "community": 4,
+      "community": 3,
       "norm_label": "_relative_to_repo()"
+    },
+    {
+      "label": "_severity_num()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\annotators\\bandit.py",
+      "source_location": "L76",
+      "id": "bandit_severity_num",
+      "community": 3,
+      "norm_label": "_severity_num()"
     },
     {
       "label": "Bandit security annotator.",
@@ -1327,7 +1336,7 @@
       "source_file": "src\\qualgraph\\annotators\\coverage.py",
       "source_location": "L1",
       "id": "src_qualgraph_annotators_coverage_py",
-      "community": 8,
+      "community": 3,
       "norm_label": "coverage.py"
     },
     {
@@ -1354,7 +1363,7 @@
       "source_file": "src\\qualgraph\\annotators\\coverage.py",
       "source_location": "L23",
       "id": "coverage_coverageannotator_annotate",
-      "community": 8,
+      "community": 3,
       "norm_label": ".annotate()"
     },
     {
@@ -1363,7 +1372,7 @@
       "source_file": "src\\qualgraph\\annotators\\coverage.py",
       "source_location": "L63",
       "id": "coverage_has_tests",
-      "community": 8,
+      "community": 3,
       "norm_label": "_has_tests()"
     },
     {
@@ -1372,7 +1381,7 @@
       "source_file": "src\\qualgraph\\annotators\\coverage.py",
       "source_location": "L68",
       "id": "coverage_relative_to_repo",
-      "community": 8,
+      "community": 3,
       "norm_label": "_relative_to_repo()"
     },
     {
@@ -1390,7 +1399,7 @@
       "source_file": "src\\qualgraph\\annotators\\co_change.py",
       "source_location": "L1",
       "id": "src_qualgraph_annotators_co_change_py",
-      "community": 3,
+      "community": 5,
       "norm_label": "co_change.py"
     },
     {
@@ -1417,7 +1426,7 @@
       "source_file": "src\\qualgraph\\annotators\\co_change.py",
       "source_location": "L26",
       "id": "co_change_cochangeannotator_annotate",
-      "community": 3,
+      "community": 5,
       "norm_label": ".annotate()"
     },
     {
@@ -1426,7 +1435,7 @@
       "source_file": "src\\qualgraph\\annotators\\co_change.py",
       "source_location": "L78",
       "id": "co_change_module_node_for_file",
-      "community": 3,
+      "community": 5,
       "norm_label": "_module_node_for_file()"
     },
     {
@@ -1434,7 +1443,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\annotators\\co_change.py",
       "source_location": "L1",
-      "community": 3,
+      "community": 5,
       "norm_label": "git co-change annotator.",
       "id": "co_change_rationale_1"
     },
@@ -1444,7 +1453,7 @@
       "source_file": "src\\qualgraph\\annotators\\docstring.py",
       "source_location": "L1",
       "id": "src_qualgraph_annotators_docstring_py",
-      "community": 3,
+      "community": 1,
       "norm_label": "docstring.py"
     },
     {
@@ -1462,7 +1471,7 @@
       "source_file": "src\\qualgraph\\annotators\\docstring.py",
       "source_location": "L18",
       "id": "docstring_docstringannotator_annotate",
-      "community": 3,
+      "community": 1,
       "norm_label": ".annotate()"
     },
     {
@@ -1471,7 +1480,7 @@
       "source_file": "src\\qualgraph\\annotators\\docstring.py",
       "source_location": "L60",
       "id": "docstring_strip_docstring_quotes",
-      "community": 3,
+      "community": 1,
       "norm_label": "_strip_docstring_quotes()"
     },
     {
@@ -1479,7 +1488,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\annotators\\docstring.py",
       "source_location": "L1",
-      "community": 3,
+      "community": 1,
       "norm_label": "docstring coverage annotator.",
       "id": "docstring_rationale_1"
     },
@@ -1489,7 +1498,7 @@
       "source_file": "src\\qualgraph\\annotators\\findings.py",
       "source_location": "L1",
       "id": "src_qualgraph_annotators_findings_py",
-      "community": 4,
+      "community": 7,
       "norm_label": "findings.py"
     },
     {
@@ -1498,7 +1507,7 @@
       "source_file": "src\\qualgraph\\annotators\\findings.py",
       "source_location": "L11",
       "id": "findings_clear_findings_by_source",
-      "community": 4,
+      "community": 7,
       "norm_label": "clear_findings_by_source()"
     },
     {
@@ -1507,7 +1516,7 @@
       "source_file": "src\\qualgraph\\annotators\\findings.py",
       "source_location": "L23",
       "id": "findings_add_finding",
-      "community": 4,
+      "community": 7,
       "norm_label": "add_finding()"
     },
     {
@@ -1516,7 +1525,7 @@
       "source_file": "src\\qualgraph\\annotators\\findings.py",
       "source_location": "L35",
       "id": "findings_finding_key",
-      "community": 4,
+      "community": 7,
       "norm_label": "finding_key()"
     },
     {
@@ -1525,7 +1534,7 @@
       "source_file": "src\\qualgraph\\annotators\\findings.py",
       "source_location": "L50",
       "id": "findings_stable_json",
-      "community": 4,
+      "community": 7,
       "norm_label": "_stable_json()"
     },
     {
@@ -1533,7 +1542,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\annotators\\findings.py",
       "source_location": "L1",
-      "community": 4,
+      "community": 7,
       "norm_label": "helpers for attaching tool findings to graph nodes.",
       "id": "findings_rationale_1"
     },
@@ -1542,7 +1551,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\annotators\\findings.py",
       "source_location": "L12",
-      "community": 4,
+      "community": 7,
       "norm_label": "remove stale findings from a previous run of the same annotator.",
       "id": "findings_rationale_12"
     },
@@ -1551,7 +1560,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\annotators\\findings.py",
       "source_location": "L24",
-      "community": 4,
+      "community": 7,
       "norm_label": "attach ``finding`` if the same tool/code/location is not already present.",
       "id": "findings_rationale_24"
     },
@@ -1561,7 +1570,7 @@
       "source_file": "src\\qualgraph\\annotators\\git_history.py",
       "source_location": "L1",
       "id": "src_qualgraph_annotators_git_history_py",
-      "community": 3,
+      "community": 1,
       "norm_label": "git_history.py"
     },
     {
@@ -1579,7 +1588,7 @@
       "source_file": "src\\qualgraph\\annotators\\git_history.py",
       "source_location": "L22",
       "id": "git_history_githistoryannotator_annotate",
-      "community": 3,
+      "community": 1,
       "norm_label": ".annotate()"
     },
     {
@@ -1588,7 +1597,7 @@
       "source_file": "src\\qualgraph\\annotators\\git_history.py",
       "source_location": "L57",
       "id": "git_history_target_prefix",
-      "community": 3,
+      "community": 1,
       "norm_label": "_target_prefix()"
     },
     {
@@ -1597,7 +1606,7 @@
       "source_file": "src\\qualgraph\\annotators\\git_history.py",
       "source_location": "L66",
       "id": "git_history_relative_to_target",
-      "community": 3,
+      "community": 1,
       "norm_label": "_relative_to_target()"
     },
     {
@@ -1605,7 +1614,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\annotators\\git_history.py",
       "source_location": "L1",
-      "community": 3,
+      "community": 1,
       "norm_label": "git history annotator.",
       "id": "git_history_rationale_1"
     },
@@ -1615,7 +1624,7 @@
       "source_file": "src\\qualgraph\\annotators\\locations.py",
       "source_location": "L1",
       "id": "src_qualgraph_annotators_locations_py",
-      "community": 4,
+      "community": 11,
       "norm_label": "locations.py"
     },
     {
@@ -1624,7 +1633,7 @@
       "source_file": "src\\qualgraph\\annotators\\locations.py",
       "source_location": "L14",
       "id": "locations_find_node_for_location",
-      "community": 4,
+      "community": 11,
       "norm_label": "find_node_for_location()"
     },
     {
@@ -1633,7 +1642,7 @@
       "source_file": "src\\qualgraph\\annotators\\locations.py",
       "source_location": "L38",
       "id": "locations_nodes_for_file",
-      "community": 4,
+      "community": 11,
       "norm_label": "nodes_for_file()"
     },
     {
@@ -1642,7 +1651,7 @@
       "source_file": "src\\qualgraph\\annotators\\locations.py",
       "source_location": "L51",
       "id": "locations_build_location_index",
-      "community": 4,
+      "community": 11,
       "norm_label": "_build_location_index()"
     },
     {
@@ -1651,7 +1660,7 @@
       "source_file": "src\\qualgraph\\annotators\\locations.py",
       "source_location": "L67",
       "id": "locations_suffix_candidates",
-      "community": 4,
+      "community": 11,
       "norm_label": "_suffix_candidates()"
     },
     {
@@ -1660,7 +1669,7 @@
       "source_file": "src\\qualgraph\\annotators\\locations.py",
       "source_location": "L81",
       "id": "locations_normalize_path",
-      "community": 4,
+      "community": 11,
       "norm_label": "_normalize_path()"
     },
     {
@@ -1668,7 +1677,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\annotators\\locations.py",
       "source_location": "L1",
-      "community": 4,
+      "community": 11,
       "norm_label": "helpers for mapping file/line findings back to graph nodes.",
       "id": "locations_rationale_1"
     },
@@ -1677,7 +1686,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\annotators\\locations.py",
       "source_location": "L15",
-      "community": 4,
+      "community": 11,
       "norm_label": "return the smallest graph node containing ``file_path:line``.",
       "id": "locations_rationale_15"
     },
@@ -1705,7 +1714,7 @@
       "source_file": "",
       "source_location": "",
       "id": "protocol",
-      "community": 7,
+      "community": 4,
       "norm_label": "protocol"
     },
     {
@@ -1741,7 +1750,7 @@
       "source_file": "src\\qualgraph\\annotators\\pipeline.py",
       "source_location": "L29",
       "id": "pipeline_annotatorpipeline",
-      "community": 4,
+      "community": 3,
       "norm_label": "annotatorpipeline"
     },
     {
@@ -1750,7 +1759,7 @@
       "source_file": "src\\qualgraph\\annotators\\pipeline.py",
       "source_location": "L32",
       "id": "pipeline_annotatorpipeline_init",
-      "community": 4,
+      "community": 3,
       "norm_label": ".__init__()"
     },
     {
@@ -1759,7 +1768,7 @@
       "source_file": "src\\qualgraph\\annotators\\pipeline.py",
       "source_location": "L38",
       "id": "pipeline_annotatorpipeline_run",
-      "community": 4,
+      "community": 3,
       "norm_label": ".run()"
     },
     {
@@ -1804,7 +1813,7 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L1",
       "id": "src_qualgraph_annotators_pip_audit_py",
-      "community": 8,
+      "community": 7,
       "norm_label": "pip_audit.py"
     },
     {
@@ -1831,7 +1840,7 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L28",
       "id": "pip_audit_pipauditannotator_annotate",
-      "community": 8,
+      "community": 7,
       "norm_label": ".annotate()"
     },
     {
@@ -1840,7 +1849,7 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L65",
       "id": "pip_audit_vulnerable_dependencies",
-      "community": 8,
+      "community": 7,
       "norm_label": "_vulnerable_dependencies()"
     },
     {
@@ -1849,7 +1858,7 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L83",
       "id": "pip_audit_import_records",
-      "community": 8,
+      "community": 7,
       "norm_label": "_import_records()"
     },
     {
@@ -1858,7 +1867,7 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L108",
       "id": "pip_audit_match_vulnerable_dependency",
-      "community": 8,
+      "community": 7,
       "norm_label": "_match_vulnerable_dependency()"
     },
     {
@@ -1867,7 +1876,7 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L120",
       "id": "pip_audit_import_package_candidates",
-      "community": 8,
+      "community": 7,
       "norm_label": "_import_package_candidates()"
     },
     {
@@ -1876,7 +1885,7 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L128",
       "id": "pip_audit_ensure_dependency_node",
-      "community": 8,
+      "community": 7,
       "norm_label": "_ensure_dependency_node()"
     },
     {
@@ -1885,7 +1894,7 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L155",
       "id": "pip_audit_add_vulnerable_import_edge",
-      "community": 8,
+      "community": 7,
       "norm_label": "_add_vulnerable_import_edge()"
     },
     {
@@ -1894,7 +1903,7 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L188",
       "id": "pip_audit_finding_payload",
-      "community": 8,
+      "community": 7,
       "norm_label": "_finding_payload()"
     },
     {
@@ -1903,7 +1912,7 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L204",
       "id": "pip_audit_vulnerability_ids",
-      "community": 8,
+      "community": 7,
       "norm_label": "_vulnerability_ids()"
     },
     {
@@ -1912,7 +1921,7 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L216",
       "id": "pip_audit_clear_imports_vulnerable_edges",
-      "community": 8,
+      "community": 7,
       "norm_label": "_clear_imports_vulnerable_edges()"
     },
     {
@@ -1921,7 +1930,7 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L233",
       "id": "pip_audit_normalize_package",
-      "community": 8,
+      "community": 7,
       "norm_label": "_normalize_package()"
     },
     {
@@ -1929,9 +1938,9 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L1",
-      "id": "pip_audit_rationale_1",
-      "community": 3,
-      "norm_label": "pip-audit vulnerability annotator."
+      "community": 7,
+      "norm_label": "pip-audit vulnerability annotator.",
+      "id": "pip_audit_rationale_1"
     },
     {
       "label": "profiler.py",
@@ -1966,7 +1975,7 @@
       "source_file": "src\\qualgraph\\annotators\\radon.py",
       "source_location": "L19",
       "id": "radon_radonannotator_annotate",
-      "community": 3,
+      "community": 1,
       "norm_label": ".annotate()"
     },
     {
@@ -1984,7 +1993,7 @@
       "source_file": "src\\qualgraph\\annotators\\ruff.py",
       "source_location": "L1",
       "id": "src_qualgraph_annotators_ruff_py",
-      "community": 4,
+      "community": 1,
       "norm_label": "ruff.py"
     },
     {
@@ -2011,7 +2020,7 @@
       "source_file": "src\\qualgraph\\annotators\\ruff.py",
       "source_location": "L26",
       "id": "ruff_ruffannotator_annotate",
-      "community": 4,
+      "community": 1,
       "norm_label": ".annotate()"
     },
     {
@@ -2020,7 +2029,7 @@
       "source_file": "src\\qualgraph\\annotators\\ruff.py",
       "source_location": "L54",
       "id": "ruff_finding_payload",
-      "community": 4,
+      "community": 1,
       "norm_label": "_finding_payload()"
     },
     {
@@ -2029,7 +2038,7 @@
       "source_file": "src\\qualgraph\\annotators\\ruff.py",
       "source_location": "L65",
       "id": "ruff_relative_to_repo",
-      "community": 4,
+      "community": 1,
       "norm_label": "_relative_to_repo()"
     },
     {
@@ -2047,7 +2056,7 @@
       "source_file": "src\\qualgraph\\annotators\\test_linkage.py",
       "source_location": "L15",
       "id": "test_linkage_testlinkageannotator",
-      "community": 1,
+      "community": 5,
       "norm_label": "testlinkageannotator"
     },
     {
@@ -2119,7 +2128,7 @@
       "source_file": "src\\qualgraph\\annotators\\vulture.py",
       "source_location": "L1",
       "id": "src_qualgraph_annotators_vulture_py",
-      "community": 4,
+      "community": 1,
       "norm_label": "vulture.py"
     },
     {
@@ -2146,7 +2155,7 @@
       "source_file": "src\\qualgraph\\annotators\\vulture.py",
       "source_location": "L28",
       "id": "vulture_vultureannotator_annotate",
-      "community": 4,
+      "community": 1,
       "norm_label": ".annotate()"
     },
     {
@@ -2155,7 +2164,7 @@
       "source_file": "src\\qualgraph\\annotators\\vulture.py",
       "source_location": "L70",
       "id": "vulture_relative_to_repo",
-      "community": 4,
+      "community": 1,
       "norm_label": "_relative_to_repo()"
     },
     {
@@ -2163,7 +2172,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\annotators\\vulture.py",
       "source_location": "L1",
-      "community": 3,
+      "community": 1,
       "norm_label": "vulture dead-code annotator.",
       "id": "vulture_rationale_1"
     },
@@ -2200,7 +2209,7 @@
       "source_file": "src\\qualgraph\\findings\\cross_signal.py",
       "source_location": "L1",
       "id": "src_qualgraph_findings_cross_signal_py",
-      "community": 10,
+      "community": 9,
       "norm_label": "cross_signal.py"
     },
     {
@@ -2209,7 +2218,7 @@
       "source_file": "src\\qualgraph\\findings\\cross_signal.py",
       "source_location": "L11",
       "id": "cross_signal_detect_untested_hotspots",
-      "community": 10,
+      "community": 9,
       "norm_label": "detect_untested_hotspots()"
     },
     {
@@ -2218,7 +2227,7 @@
       "source_file": "src\\qualgraph\\findings\\cross_signal.py",
       "source_location": "L51",
       "id": "cross_signal_percentile",
-      "community": 10,
+      "community": 9,
       "norm_label": "_percentile()"
     },
     {
@@ -2226,7 +2235,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\findings\\cross_signal.py",
       "source_location": "L1",
-      "community": 10,
+      "community": 9,
       "norm_label": "cross-signal findings derived from the shared graph.",
       "id": "cross_signal_rationale_1"
     },
@@ -2236,7 +2245,7 @@
       "source_file": "src\\qualgraph\\findings\\model.py",
       "source_location": "L1",
       "id": "src_qualgraph_findings_model_py",
-      "community": 10,
+      "community": 9,
       "norm_label": "model.py"
     },
     {
@@ -2245,7 +2254,7 @@
       "source_file": "src\\qualgraph\\findings\\model.py",
       "source_location": "L10",
       "id": "model_finding",
-      "community": 10,
+      "community": 9,
       "norm_label": "finding"
     },
     {
@@ -2254,7 +2263,7 @@
       "source_file": "src\\qualgraph\\findings\\model.py",
       "source_location": "L18",
       "id": "model_finding_to_dict",
-      "community": 10,
+      "community": 9,
       "norm_label": ".to_dict()"
     },
     {
@@ -2262,7 +2271,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\findings\\model.py",
       "source_location": "L1",
-      "community": 10,
+      "community": 9,
       "norm_label": "typed findings produced by derived and llm analysis.",
       "id": "model_rationale_1"
     },
@@ -2505,7 +2514,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\graph\\builder.py",
       "source_location": "L1",
-      "community": 2,
+      "community": 5,
       "norm_label": "build a networkx code graph from python source files.  the builder intentionally",
       "id": "builder_rationale_1"
     },
@@ -2569,7 +2578,7 @@
       "source_file": "src\\qualgraph\\graph\\metrics.py",
       "source_location": "L1",
       "id": "src_qualgraph_graph_metrics_py",
-      "community": 9,
+      "community": 8,
       "norm_label": "metrics.py"
     },
     {
@@ -2578,7 +2587,7 @@
       "source_file": "src\\qualgraph\\graph\\metrics.py",
       "source_location": "L11",
       "id": "metrics_annotate_metrics",
-      "community": 9,
+      "community": 8,
       "norm_label": "annotate_metrics()"
     },
     {
@@ -2587,7 +2596,7 @@
       "source_file": "src\\qualgraph\\graph\\metrics.py",
       "source_location": "L43",
       "id": "metrics_annotate_cluster_roles",
-      "community": 9,
+      "community": 8,
       "norm_label": "annotate_cluster_roles()"
     },
     {
@@ -2596,7 +2605,7 @@
       "source_file": "src\\qualgraph\\graph\\metrics.py",
       "source_location": "L77",
       "id": "metrics_cluster_role",
-      "community": 9,
+      "community": 8,
       "norm_label": "_cluster_role()"
     },
     {
@@ -2605,7 +2614,7 @@
       "source_file": "src\\qualgraph\\graph\\metrics.py",
       "source_location": "L98",
       "id": "metrics_is_pipeline_node",
-      "community": 9,
+      "community": 8,
       "norm_label": "_is_pipeline_node()"
     },
     {
@@ -2614,7 +2623,7 @@
       "source_file": "src\\qualgraph\\graph\\metrics.py",
       "source_location": "L108",
       "id": "metrics_percentile",
-      "community": 9,
+      "community": 8,
       "norm_label": "_percentile()"
     },
     {
@@ -2623,7 +2632,7 @@
       "source_file": "src\\qualgraph\\graph\\metrics.py",
       "source_location": "L116",
       "id": "metrics_degree_centrality",
-      "community": 9,
+      "community": 8,
       "norm_label": "_degree_centrality()"
     },
     {
@@ -2632,7 +2641,7 @@
       "source_file": "src\\qualgraph\\graph\\metrics.py",
       "source_location": "L123",
       "id": "metrics_pagerank",
-      "community": 9,
+      "community": 8,
       "norm_label": "_pagerank()"
     },
     {
@@ -2641,7 +2650,7 @@
       "source_file": "src\\qualgraph\\graph\\metrics.py",
       "source_location": "L130",
       "id": "metrics_structural_scores",
-      "community": 9,
+      "community": 8,
       "norm_label": "_structural_scores()"
     },
     {
@@ -2650,7 +2659,7 @@
       "source_file": "src\\qualgraph\\graph\\metrics.py",
       "source_location": "L148",
       "id": "metrics_normalize",
-      "community": 9,
+      "community": 8,
       "norm_label": "_normalize()"
     },
     {
@@ -2658,7 +2667,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\graph\\metrics.py",
       "source_location": "L1",
-      "community": 9,
+      "community": 8,
       "norm_label": "structural metrics and cluster role heuristics.",
       "id": "metrics_rationale_1"
     },
@@ -2667,7 +2676,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\graph\\metrics.py",
       "source_location": "L12",
-      "community": 9,
+      "community": 8,
       "norm_label": "write centrality and degree metrics back onto graph nodes.",
       "id": "metrics_rationale_12"
     },
@@ -2676,7 +2685,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\graph\\metrics.py",
       "source_location": "L44",
-      "community": 9,
+      "community": 8,
       "norm_label": "classify each node's role within its cluster using simple topology.",
       "id": "metrics_rationale_44"
     },
@@ -2929,7 +2938,7 @@
       "source_file": "src\\qualgraph\\graph\\serialize.py",
       "source_location": "L1",
       "id": "src_qualgraph_graph_serialize_py",
-      "community": 11,
+      "community": 10,
       "norm_label": "serialize.py"
     },
     {
@@ -2938,7 +2947,7 @@
       "source_file": "src\\qualgraph\\graph\\serialize.py",
       "source_location": "L16",
       "id": "serialize_to_node_link_data",
-      "community": 11,
+      "community": 10,
       "norm_label": "to_node_link_data()"
     },
     {
@@ -2947,7 +2956,7 @@
       "source_file": "src\\qualgraph\\graph\\serialize.py",
       "source_location": "L27",
       "id": "serialize_write_json_graph",
-      "community": 11,
+      "community": 10,
       "norm_label": "write_json_graph()"
     },
     {
@@ -2965,7 +2974,7 @@
       "source_file": "src\\qualgraph\\graph\\serialize.py",
       "source_location": "L45",
       "id": "serialize_write_graphml_graph",
-      "community": 11,
+      "community": 10,
       "norm_label": "write_graphml_graph()"
     },
     {
@@ -2974,7 +2983,7 @@
       "source_file": "src\\qualgraph\\graph\\serialize.py",
       "source_location": "L52",
       "id": "serialize_graphml_safe_copy",
-      "community": 11,
+      "community": 10,
       "norm_label": "_graphml_safe_copy()"
     },
     {
@@ -2983,7 +2992,7 @@
       "source_file": "src\\qualgraph\\graph\\serialize.py",
       "source_location": "L63",
       "id": "serialize_json_safe",
-      "community": 11,
+      "community": 10,
       "norm_label": "_json_safe()"
     },
     {
@@ -2992,7 +3001,7 @@
       "source_file": "src\\qualgraph\\graph\\serialize.py",
       "source_location": "L77",
       "id": "serialize_graphml_value",
-      "community": 11,
+      "community": 10,
       "norm_label": "_graphml_value()"
     },
     {
@@ -3000,7 +3009,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\graph\\serialize.py",
       "source_location": "L1",
-      "community": 11,
+      "community": 10,
       "norm_label": "graph serialization helpers.",
       "id": "serialize_rationale_1"
     },
@@ -3019,7 +3028,7 @@
       "source_file": "src\\qualgraph\\llm\\analyzer.py",
       "source_location": "L1",
       "id": "src_qualgraph_llm_analyzer_py",
-      "community": 7,
+      "community": 4,
       "norm_label": "analyzer.py"
     },
     {
@@ -3028,7 +3037,7 @@
       "source_file": "src\\qualgraph\\llm\\analyzer.py",
       "source_location": "L12",
       "id": "analyzer_nodeanalysisrequest",
-      "community": 7,
+      "community": 4,
       "norm_label": "nodeanalysisrequest"
     },
     {
@@ -3037,7 +3046,7 @@
       "source_file": "src\\qualgraph\\llm\\analyzer.py",
       "source_location": "L17",
       "id": "analyzer_llmanalyzer",
-      "community": 7,
+      "community": 4,
       "norm_label": "llmanalyzer"
     },
     {
@@ -3046,7 +3055,7 @@
       "source_file": "src\\qualgraph\\llm\\analyzer.py",
       "source_location": "L18",
       "id": "analyzer_llmanalyzer_init",
-      "community": 7,
+      "community": 4,
       "norm_label": ".__init__()"
     },
     {
@@ -3055,7 +3064,7 @@
       "source_file": "src\\qualgraph\\llm\\analyzer.py",
       "source_location": "L21",
       "id": "analyzer_llmanalyzer_analyze_node",
-      "community": 7,
+      "community": 4,
       "norm_label": ".analyze_node()"
     },
     {
@@ -3064,7 +3073,7 @@
       "source_file": "src\\qualgraph\\llm\\analyzer.py",
       "source_location": "L30",
       "id": "analyzer_llmanalyzer_analyze_nodes",
-      "community": 7,
+      "community": 4,
       "norm_label": ".analyze_nodes()"
     },
     {
@@ -3072,7 +3081,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\llm\\analyzer.py",
       "source_location": "L1",
-      "community": 7,
+      "community": 4,
       "norm_label": "high-level llm analysis entry points.",
       "id": "analyzer_rationale_1"
     },
@@ -3082,7 +3091,7 @@
       "source_file": "src\\qualgraph\\llm\\client.py",
       "source_location": "L1",
       "id": "src_qualgraph_llm_client_py",
-      "community": 7,
+      "community": 4,
       "norm_label": "client.py"
     },
     {
@@ -3091,7 +3100,7 @@
       "source_file": "src\\qualgraph\\llm\\client.py",
       "source_location": "L13",
       "id": "client_llmrequest",
-      "community": 7,
+      "community": 4,
       "norm_label": "llmrequest"
     },
     {
@@ -3100,7 +3109,7 @@
       "source_file": "src\\qualgraph\\llm\\client.py",
       "source_location": "L23",
       "id": "client_llmresponse",
-      "community": 7,
+      "community": 4,
       "norm_label": "llmresponse"
     },
     {
@@ -3109,7 +3118,7 @@
       "source_file": "src\\qualgraph\\llm\\client.py",
       "source_location": "L34",
       "id": "client_llmprovider",
-      "community": 7,
+      "community": 4,
       "norm_label": "llmprovider"
     },
     {
@@ -3118,7 +3127,7 @@
       "source_file": "src\\qualgraph\\llm\\client.py",
       "source_location": "L38",
       "id": "client_llmprovider_complete",
-      "community": 7,
+      "community": 4,
       "norm_label": ".complete()"
     },
     {
@@ -3127,7 +3136,7 @@
       "source_file": "src\\qualgraph\\llm\\client.py",
       "source_location": "L42",
       "id": "client_llmclient",
-      "community": 7,
+      "community": 4,
       "norm_label": "llmclient"
     },
     {
@@ -3136,7 +3145,7 @@
       "source_file": "src\\qualgraph\\llm\\client.py",
       "source_location": "L43",
       "id": "client_llmclient_init",
-      "community": 7,
+      "community": 4,
       "norm_label": ".__init__()"
     },
     {
@@ -3145,7 +3154,7 @@
       "source_file": "src\\qualgraph\\llm\\client.py",
       "source_location": "L51",
       "id": "client_llmclient_complete",
-      "community": 7,
+      "community": 4,
       "norm_label": ".complete()"
     },
     {
@@ -3154,7 +3163,7 @@
       "source_file": "src\\qualgraph\\llm\\client.py",
       "source_location": "L83",
       "id": "client_elapsed_ms",
-      "community": 7,
+      "community": 4,
       "norm_label": "_elapsed_ms()"
     },
     {
@@ -3162,7 +3171,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\llm\\client.py",
       "source_location": "L1",
-      "community": 7,
+      "community": 4,
       "norm_label": "provider-agnostic llm client with built-in cost/timing logging.",
       "id": "client_rationale_1"
     },
@@ -3341,7 +3350,7 @@
       "label": "_test_linkage_lines()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\report\\markdown.py",
-      "source_location": "L233",
+      "source_location": "L236",
       "id": "markdown_test_linkage_lines",
       "community": 6,
       "norm_label": "_test_linkage_lines()"
@@ -3350,7 +3359,7 @@
       "label": "_git_history_lines()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\report\\markdown.py",
-      "source_location": "L256",
+      "source_location": "L259",
       "id": "markdown_git_history_lines",
       "community": 6,
       "norm_label": "_git_history_lines()"
@@ -3359,7 +3368,7 @@
       "label": "_co_change_lines()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\report\\markdown.py",
-      "source_location": "L277",
+      "source_location": "L280",
       "id": "markdown_co_change_lines",
       "community": 6,
       "norm_label": "_co_change_lines()"
@@ -3368,7 +3377,7 @@
       "label": "_is_test_node()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\report\\markdown.py",
-      "source_location": "L290",
+      "source_location": "L293",
       "id": "markdown_is_test_node",
       "community": 6,
       "norm_label": "_is_test_node()"
@@ -3377,7 +3386,7 @@
       "label": "_finding_code()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\report\\markdown.py",
-      "source_location": "L295",
+      "source_location": "L298",
       "id": "markdown_finding_code",
       "community": 6,
       "norm_label": "_finding_code()"
@@ -3386,7 +3395,7 @@
       "label": "_finding_line()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\report\\markdown.py",
-      "source_location": "L299",
+      "source_location": "L302",
       "id": "markdown_finding_line",
       "community": 6,
       "norm_label": "_finding_line()"
@@ -3395,7 +3404,7 @@
       "label": "_severity_text()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\report\\markdown.py",
-      "source_location": "L306",
+      "source_location": "L309",
       "id": "markdown_severity_text",
       "community": 6,
       "norm_label": "_severity_text()"
@@ -3404,7 +3413,7 @@
       "label": "_format_score()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\report\\markdown.py",
-      "source_location": "L316",
+      "source_location": "L319",
       "id": "markdown_format_score",
       "community": 6,
       "norm_label": "_format_score()"
@@ -3413,7 +3422,7 @@
       "label": "_format_small()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\report\\markdown.py",
-      "source_location": "L320",
+      "source_location": "L323",
       "id": "markdown_format_small",
       "community": 6,
       "norm_label": "_format_small()"
@@ -3422,7 +3431,7 @@
       "label": "_shorten()",
       "file_type": "code",
       "source_file": "src\\qualgraph\\report\\markdown.py",
-      "source_location": "L329",
+      "source_location": "L332",
       "id": "markdown_shorten",
       "community": 6,
       "norm_label": "_shorten()"
@@ -3451,8 +3460,71 @@
       "source_file": "src\\qualgraph\\scoring\\risk.py",
       "source_location": "L1",
       "id": "src_qualgraph_scoring_risk_py",
-      "community": 33,
+      "community": 5,
       "norm_label": "risk.py"
+    },
+    {
+      "label": "score()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\scoring\\risk.py",
+      "source_location": "L23",
+      "id": "risk_score",
+      "community": 5,
+      "norm_label": "score()"
+    },
+    {
+      "label": "top_risk_nodes()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\scoring\\risk.py",
+      "source_location": "L63",
+      "id": "risk_top_risk_nodes",
+      "community": 5,
+      "norm_label": "top_risk_nodes()"
+    },
+    {
+      "label": "_rankdata()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\scoring\\risk.py",
+      "source_location": "L74",
+      "id": "risk_rankdata",
+      "community": 5,
+      "norm_label": "_rankdata()"
+    },
+    {
+      "label": "_severity_num()",
+      "file_type": "code",
+      "source_file": "src\\qualgraph\\scoring\\risk.py",
+      "source_location": "L91",
+      "id": "risk_severity_num",
+      "community": 5,
+      "norm_label": "_severity_num()"
+    },
+    {
+      "label": "Composite risk scoring for LLM candidate selection.",
+      "file_type": "rationale",
+      "source_file": "src\\qualgraph\\scoring\\risk.py",
+      "source_location": "L1",
+      "id": "risk_rationale_1",
+      "community": 5,
+      "norm_label": "composite risk scoring for llm candidate selection."
+    },
+    {
+      "label": "Write composite risk scores onto function and method nodes.",
+      "file_type": "rationale",
+      "source_file": "src\\qualgraph\\scoring\\risk.py",
+      "source_location": "L24",
+      "id": "risk_rationale_24",
+      "community": 5,
+      "norm_label": "write composite risk scores onto function and method nodes."
+    },
+    {
+      "label": "Return the highest-risk function/method nodes after scoring.",
+      "file_type": "rationale",
+      "source_file": "src\\qualgraph\\scoring\\risk.py",
+      "source_location": "L64",
+      "id": "risk_rationale_64",
+      "community": 5,
+      "norm_label": "return the highest-risk function/method nodes after scoring."
     },
     {
       "label": "__init__.py",
@@ -3460,7 +3532,7 @@
       "source_file": "src\\qualgraph\\scoring\\__init__.py",
       "source_location": "L1",
       "id": "src_qualgraph_scoring_init_py",
-      "community": 34,
+      "community": 33,
       "norm_label": "__init__.py"
     },
     {
@@ -3548,7 +3620,7 @@
       "label": "test_find_node_for_location_prefers_smallest_containing_node()",
       "file_type": "code",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L21",
+      "source_location": "L22",
       "id": "test_static_annotators_test_find_node_for_location_prefers_smallest_containing_node",
       "community": 2,
       "norm_label": "test_find_node_for_location_prefers_smallest_containing_node()"
@@ -3557,7 +3629,7 @@
       "label": "test_radon_and_docstring_annotate_tiny_repo_nodes()",
       "file_type": "code",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L57",
+      "source_location": "L58",
       "id": "test_static_annotators_test_radon_and_docstring_annotate_tiny_repo_nodes",
       "community": 2,
       "norm_label": "test_radon_and_docstring_annotate_tiny_repo_nodes()"
@@ -3566,7 +3638,7 @@
       "label": "test_test_linkage_adds_static_tested_by_edges()",
       "file_type": "code",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L70",
+      "source_location": "L71",
       "id": "test_static_annotators_test_test_linkage_adds_static_tested_by_edges",
       "community": 2,
       "norm_label": "test_test_linkage_adds_static_tested_by_edges()"
@@ -3575,34 +3647,34 @@
       "label": "test_git_history_path_mapping_for_nested_repo_targets()",
       "file_type": "code",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L80",
+      "source_location": "L81",
       "id": "test_static_annotators_test_git_history_path_mapping_for_nested_repo_targets",
-      "community": 3,
+      "community": 1,
       "norm_label": "test_git_history_path_mapping_for_nested_repo_targets()"
     },
     {
       "label": "test_findings_helpers_dedupe_and_clear_by_source()",
       "file_type": "code",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L87",
+      "source_location": "L88",
       "id": "test_static_annotators_test_findings_helpers_dedupe_and_clear_by_source",
-      "community": 4,
+      "community": 7,
       "norm_label": "test_findings_helpers_dedupe_and_clear_by_source()"
     },
     {
       "label": "test_detect_untested_hotspots_combines_complexity_centrality_and_coverage()",
       "file_type": "code",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L102",
+      "source_location": "L103",
       "id": "test_static_annotators_test_detect_untested_hotspots_combines_complexity_centrality_and_coverage",
-      "community": 10,
+      "community": 9,
       "norm_label": "test_detect_untested_hotspots_combines_complexity_centrality_and_coverage()"
     },
     {
       "label": "test_pip_audit_adds_vulnerable_import_edges_to_importing_node()",
       "file_type": "code",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L141",
+      "source_location": "L142",
       "id": "test_static_annotators_test_pip_audit_adds_vulnerable_import_edges_to_importing_node",
       "community": 2,
       "norm_label": "test_pip_audit_adds_vulnerable_import_edges_to_importing_node()"
@@ -3611,16 +3683,25 @@
       "label": "test_detect_secrets_attaches_conservative_low_severity_findings()",
       "file_type": "code",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L175",
+      "source_location": "L176",
       "id": "test_static_annotators_test_detect_secrets_attaches_conservative_low_severity_findings",
       "community": 2,
       "norm_label": "test_detect_secrets_attaches_conservative_low_severity_findings()"
     },
     {
+      "label": "test_risk_score_writes_weighted_components_for_llm_selection()",
+      "file_type": "code",
+      "source_file": "tests\\unit\\test_static_annotators.py",
+      "source_location": "L201",
+      "id": "test_static_annotators_test_risk_score_writes_weighted_components_for_llm_selection",
+      "community": 5,
+      "norm_label": "test_risk_score_writes_weighted_components_for_llm_selection()"
+    },
+    {
       "label": "test_report_surfaces_deduped_rules_hotspots_and_readable_centrality()",
       "file_type": "code",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L200",
+      "source_location": "L237",
       "id": "test_static_annotators_test_report_surfaces_deduped_rules_hotspots_and_readable_centrality",
       "community": 2,
       "norm_label": "test_report_surfaces_deduped_rules_hotspots_and_readable_centrality()"
@@ -3629,7 +3710,7 @@
       "label": "_sample_graph_with_function()",
       "file_type": "code",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L248",
+      "source_location": "L285",
       "id": "test_static_annotators_sample_graph_with_function",
       "community": 2,
       "norm_label": "_sample_graph_with_function()"
@@ -3638,7 +3719,7 @@
       "label": "_completed",
       "file_type": "code",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L281",
+      "source_location": "L318",
       "id": "test_static_annotators_completed",
       "community": 2,
       "norm_label": "_completed"
@@ -3647,10 +3728,46 @@
       "label": ".__init__()",
       "file_type": "code",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L282",
+      "source_location": "L319",
       "id": "test_static_annotators_completed_init",
       "community": 2,
       "norm_label": ".__init__()"
+    },
+    {
+      "label": "Graph-aware code quality analysis for Python projects.",
+      "file_type": "rationale",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L35",
+      "community": 1,
+      "norm_label": "graph-aware code quality analysis for python projects.",
+      "id": "cli_rationale_35"
+    },
+    {
+      "label": "Build a Python code graph and write an annotated graph artifact.",
+      "file_type": "rationale",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L46",
+      "community": 1,
+      "norm_label": "build a python code graph and write an annotated graph artifact.",
+      "id": "cli_rationale_46"
+    },
+    {
+      "label": "Run annotators over a graph, building the graph first if needed.",
+      "file_type": "rationale",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L88",
+      "community": 1,
+      "norm_label": "run annotators over a graph, building the graph first if needed.",
+      "id": "cli_rationale_88"
+    },
+    {
+      "label": "Render a Markdown report from an annotated graph JSON file.",
+      "file_type": "rationale",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L119",
+      "community": 1,
+      "norm_label": "render a markdown report from an annotated graph json file.",
+      "id": "cli_rationale_119"
     },
     {
       "label": "Build a Python code graph and write an annotated graph artifact.",
@@ -3693,7 +3810,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\graph\\metrics.py",
       "source_location": "L33",
-      "community": 35,
+      "community": 34,
       "norm_label": "classify each node's role within its cluster using simple topology.",
       "id": "metrics_rationale_33"
     },
@@ -3702,7 +3819,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\graph\\schema.py",
       "source_location": "L110",
-      "community": 36,
+      "community": 35,
       "norm_label": "return the stable node id used by graph building and caching.      convention: `",
       "id": "schema_rationale_110"
     },
@@ -3711,7 +3828,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L22",
-      "community": 1,
+      "community": 4,
       "norm_label": "graph-aware code quality analysis for python projects.",
       "id": "cli_rationale_22"
     },
@@ -3720,7 +3837,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\annotators\\base.py",
       "source_location": "L36",
-      "community": 1,
+      "community": 4,
       "norm_label": "mutate ``graph`` with this annotator's signal.",
       "id": "base_rationale_36"
     },
@@ -3729,7 +3846,7 @@
       "file_type": "rationale",
       "source_file": "src\\qualgraph\\graph\\schema.py",
       "source_location": "L106",
-      "community": 37,
+      "community": 36,
       "norm_label": "return the stable node id used by graph building and caching.      convention: `",
       "id": "schema_rationale_106"
     },
@@ -5049,6 +5166,18 @@
       "relation": "calls",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
+      "source_file": "src\\qualgraph\\annotators\\bandit.py",
+      "source_location": "L81",
+      "weight": 1.0,
+      "_src": "bandit_severity_num",
+      "_tgt": "str",
+      "source": "str",
+      "target": "bandit_severity_num"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
       "source_file": "src\\qualgraph\\annotators\\coverage.py",
       "source_location": "L37",
       "weight": 1.0,
@@ -5088,8 +5217,8 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L71",
       "weight": 1.0,
-      "_src": "pip_audit_vulnerable_dependencies",
-      "_tgt": "str",
+      "_src": "str",
+      "_tgt": "pip_audit_vulnerable_dependencies",
       "source": "str",
       "target": "pip_audit_vulnerable_dependencies"
     },
@@ -5100,8 +5229,8 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L121",
       "weight": 1.0,
-      "_src": "pip_audit_import_package_candidates",
-      "_tgt": "str",
+      "_src": "str",
+      "_tgt": "pip_audit_import_package_candidates",
       "source": "str",
       "target": "pip_audit_import_package_candidates"
     },
@@ -5112,8 +5241,8 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L209",
       "weight": 1.0,
-      "_src": "pip_audit_vulnerability_ids",
-      "_tgt": "str",
+      "_src": "str",
+      "_tgt": "pip_audit_vulnerability_ids",
       "source": "str",
       "target": "pip_audit_vulnerability_ids"
     },
@@ -5124,8 +5253,8 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L226",
       "weight": 1.0,
-      "_src": "pip_audit_clear_imports_vulnerable_edges",
-      "_tgt": "str",
+      "_src": "str",
+      "_tgt": "pip_audit_clear_imports_vulnerable_edges",
       "source": "str",
       "target": "pip_audit_clear_imports_vulnerable_edges"
     },
@@ -5212,6 +5341,18 @@
       "_tgt": "markdown_shorten",
       "source": "str",
       "target": "markdown_shorten"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src\\qualgraph\\scoring\\risk.py",
+      "source_location": "L99",
+      "weight": 1.0,
+      "_src": "risk_severity_num",
+      "_tgt": "str",
+      "source": "str",
+      "target": "risk_severity_num"
     },
     {
       "relation": "inherits",
@@ -6957,7 +7098,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\cli.py",
-      "source_location": "L34",
+      "source_location": "L35",
       "weight": 1.0,
       "_src": "src_qualgraph_cli_py",
       "_tgt": "cli_main",
@@ -6969,7 +7110,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\cli.py",
-      "source_location": "L39",
+      "source_location": "L40",
       "weight": 1.0,
       "_src": "src_qualgraph_cli_py",
       "_tgt": "cli_build",
@@ -6981,7 +7122,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\cli.py",
-      "source_location": "L82",
+      "source_location": "L87",
       "weight": 1.0,
       "_src": "src_qualgraph_cli_py",
       "_tgt": "cli_annotate",
@@ -6993,7 +7134,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\cli.py",
-      "source_location": "L115",
+      "source_location": "L123",
       "weight": 1.0,
       "_src": "src_qualgraph_cli_py",
       "_tgt": "cli_report",
@@ -7005,7 +7146,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\cli.py",
-      "source_location": "L127",
+      "source_location": "L135",
       "weight": 1.0,
       "_src": "src_qualgraph_cli_py",
       "_tgt": "cli_resolve_annotators",
@@ -7029,24 +7170,24 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\cli.py",
-      "source_location": "L35",
+      "source_location": "L36",
       "weight": 1.0,
-      "_src": "cli_rationale_35",
+      "_src": "cli_rationale_36",
       "_tgt": "cli_main",
       "source": "cli_main",
-      "target": "cli_rationale_35",
+      "target": "cli_rationale_36",
       "confidence_score": 1.0
     },
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\cli.py",
-      "source_location": "L46",
+      "source_location": "L47",
       "weight": 1.0,
-      "_src": "cli_rationale_46",
+      "_src": "cli_rationale_47",
       "_tgt": "cli_build",
       "source": "cli_build",
-      "target": "cli_rationale_46",
+      "target": "cli_rationale_47",
       "confidence_score": 1.0
     },
     {
@@ -7149,7 +7290,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\cli.py",
-      "source_location": "L101",
+      "source_location": "L106",
       "weight": 1.0,
       "_src": "cli_annotate",
       "_tgt": "cli_resolve_annotators",
@@ -7161,12 +7302,12 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\cli.py",
-      "source_location": "L88",
+      "source_location": "L93",
       "weight": 1.0,
-      "_src": "cli_rationale_88",
+      "_src": "cli_rationale_93",
       "_tgt": "cli_annotate",
       "source": "cli_annotate",
-      "target": "cli_rationale_88",
+      "target": "cli_rationale_93",
       "confidence_score": 1.0
     },
     {
@@ -7281,12 +7422,12 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\cli.py",
-      "source_location": "L119",
+      "source_location": "L127",
       "weight": 1.0,
-      "_src": "cli_rationale_119",
+      "_src": "cli_rationale_127",
       "_tgt": "cli_report",
       "source": "cli_report",
-      "target": "cli_rationale_119",
+      "target": "cli_rationale_127",
       "confidence_score": 1.0
     },
     {
@@ -7381,9 +7522,9 @@
       "weight": 0.8,
       "_src": "cli_rationale_1",
       "_tgt": "pip_audit_pipauditannotator",
+      "confidence_score": 0.5,
       "source": "cli_rationale_1",
-      "target": "pip_audit_pipauditannotator",
-      "confidence_score": 0.5
+      "target": "pip_audit_pipauditannotator"
     },
     {
       "relation": "uses",
@@ -7451,9 +7592,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L10",
       "weight": 0.8,
-      "_src": "cli_rationale_35",
+      "_src": "cli_rationale_36",
       "_tgt": "bandit_banditannotator",
-      "source": "cli_rationale_35",
+      "source": "cli_rationale_36",
       "target": "bandit_banditannotator",
       "confidence_score": 0.5
     },
@@ -7463,9 +7604,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L11",
       "weight": 0.8,
-      "_src": "cli_rationale_35",
+      "_src": "cli_rationale_36",
       "_tgt": "co_change_cochangeannotator",
-      "source": "cli_rationale_35",
+      "source": "cli_rationale_36",
       "target": "co_change_cochangeannotator",
       "confidence_score": 0.5
     },
@@ -7475,9 +7616,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L12",
       "weight": 0.8,
-      "_src": "cli_rationale_35",
+      "_src": "cli_rationale_36",
       "_tgt": "coverage_coverageannotator",
-      "source": "cli_rationale_35",
+      "source": "cli_rationale_36",
       "target": "coverage_coverageannotator",
       "confidence_score": 0.5
     },
@@ -7487,9 +7628,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L13",
       "weight": 0.8,
-      "_src": "cli_rationale_35",
+      "_src": "cli_rationale_36",
       "_tgt": "docstring_docstringannotator",
-      "source": "cli_rationale_35",
+      "source": "cli_rationale_36",
       "target": "docstring_docstringannotator",
       "confidence_score": 0.5
     },
@@ -7499,9 +7640,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L14",
       "weight": 0.8,
-      "_src": "cli_rationale_35",
+      "_src": "cli_rationale_36",
       "_tgt": "git_history_githistoryannotator",
-      "source": "cli_rationale_35",
+      "source": "cli_rationale_36",
       "target": "git_history_githistoryannotator",
       "confidence_score": 0.5
     },
@@ -7511,9 +7652,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L16",
       "weight": 0.8,
-      "_src": "cli_rationale_35",
+      "_src": "cli_rationale_36",
       "_tgt": "pip_audit_pipauditannotator",
-      "source": "cli_rationale_35",
+      "source": "cli_rationale_36",
       "target": "pip_audit_pipauditannotator",
       "confidence_score": 0.5
     },
@@ -7523,9 +7664,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L17",
       "weight": 0.8,
-      "_src": "cli_rationale_35",
+      "_src": "cli_rationale_36",
       "_tgt": "radon_radonannotator",
-      "source": "cli_rationale_35",
+      "source": "cli_rationale_36",
       "target": "radon_radonannotator",
       "confidence_score": 0.5
     },
@@ -7535,9 +7676,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L18",
       "weight": 0.8,
-      "_src": "cli_rationale_35",
+      "_src": "cli_rationale_36",
       "_tgt": "ruff_ruffannotator",
-      "source": "cli_rationale_35",
+      "source": "cli_rationale_36",
       "target": "ruff_ruffannotator",
       "confidence_score": 0.5
     },
@@ -7547,9 +7688,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L20",
       "weight": 0.8,
-      "_src": "cli_rationale_35",
+      "_src": "cli_rationale_36",
       "_tgt": "test_linkage_testlinkageannotator",
-      "source": "cli_rationale_35",
+      "source": "cli_rationale_36",
       "target": "test_linkage_testlinkageannotator",
       "confidence_score": 0.5
     },
@@ -7559,9 +7700,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L21",
       "weight": 0.8,
-      "_src": "cli_rationale_35",
+      "_src": "cli_rationale_36",
       "_tgt": "vulture_vultureannotator",
-      "source": "cli_rationale_35",
+      "source": "cli_rationale_36",
       "target": "vulture_vultureannotator",
       "confidence_score": 0.5
     },
@@ -7571,9 +7712,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L26",
       "weight": 0.8,
-      "_src": "cli_rationale_35",
+      "_src": "cli_rationale_36",
       "_tgt": "logging_runlogger",
-      "source": "cli_rationale_35",
+      "source": "cli_rationale_36",
       "target": "logging_runlogger",
       "confidence_score": 0.5
     },
@@ -7583,9 +7724,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L10",
       "weight": 0.8,
-      "_src": "cli_rationale_46",
+      "_src": "cli_rationale_47",
       "_tgt": "bandit_banditannotator",
-      "source": "cli_rationale_46",
+      "source": "cli_rationale_47",
       "target": "bandit_banditannotator",
       "confidence_score": 0.5
     },
@@ -7595,9 +7736,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L11",
       "weight": 0.8,
-      "_src": "cli_rationale_46",
+      "_src": "cli_rationale_47",
       "_tgt": "co_change_cochangeannotator",
-      "source": "cli_rationale_46",
+      "source": "cli_rationale_47",
       "target": "co_change_cochangeannotator",
       "confidence_score": 0.5
     },
@@ -7607,9 +7748,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L12",
       "weight": 0.8,
-      "_src": "cli_rationale_46",
+      "_src": "cli_rationale_47",
       "_tgt": "coverage_coverageannotator",
-      "source": "cli_rationale_46",
+      "source": "cli_rationale_47",
       "target": "coverage_coverageannotator",
       "confidence_score": 0.5
     },
@@ -7619,9 +7760,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L13",
       "weight": 0.8,
-      "_src": "cli_rationale_46",
+      "_src": "cli_rationale_47",
       "_tgt": "docstring_docstringannotator",
-      "source": "cli_rationale_46",
+      "source": "cli_rationale_47",
       "target": "docstring_docstringannotator",
       "confidence_score": 0.5
     },
@@ -7631,9 +7772,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L14",
       "weight": 0.8,
-      "_src": "cli_rationale_46",
+      "_src": "cli_rationale_47",
       "_tgt": "git_history_githistoryannotator",
-      "source": "cli_rationale_46",
+      "source": "cli_rationale_47",
       "target": "git_history_githistoryannotator",
       "confidence_score": 0.5
     },
@@ -7643,9 +7784,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L16",
       "weight": 0.8,
-      "_src": "cli_rationale_46",
+      "_src": "cli_rationale_47",
       "_tgt": "pip_audit_pipauditannotator",
-      "source": "cli_rationale_46",
+      "source": "cli_rationale_47",
       "target": "pip_audit_pipauditannotator",
       "confidence_score": 0.5
     },
@@ -7655,9 +7796,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L17",
       "weight": 0.8,
-      "_src": "cli_rationale_46",
+      "_src": "cli_rationale_47",
       "_tgt": "radon_radonannotator",
-      "source": "cli_rationale_46",
+      "source": "cli_rationale_47",
       "target": "radon_radonannotator",
       "confidence_score": 0.5
     },
@@ -7667,9 +7808,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L18",
       "weight": 0.8,
-      "_src": "cli_rationale_46",
+      "_src": "cli_rationale_47",
       "_tgt": "ruff_ruffannotator",
-      "source": "cli_rationale_46",
+      "source": "cli_rationale_47",
       "target": "ruff_ruffannotator",
       "confidence_score": 0.5
     },
@@ -7679,9 +7820,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L20",
       "weight": 0.8,
-      "_src": "cli_rationale_46",
+      "_src": "cli_rationale_47",
       "_tgt": "test_linkage_testlinkageannotator",
-      "source": "cli_rationale_46",
+      "source": "cli_rationale_47",
       "target": "test_linkage_testlinkageannotator",
       "confidence_score": 0.5
     },
@@ -7691,9 +7832,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L21",
       "weight": 0.8,
-      "_src": "cli_rationale_46",
+      "_src": "cli_rationale_47",
       "_tgt": "vulture_vultureannotator",
-      "source": "cli_rationale_46",
+      "source": "cli_rationale_47",
       "target": "vulture_vultureannotator",
       "confidence_score": 0.5
     },
@@ -7703,9 +7844,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L26",
       "weight": 0.8,
-      "_src": "cli_rationale_46",
+      "_src": "cli_rationale_47",
       "_tgt": "logging_runlogger",
-      "source": "cli_rationale_46",
+      "source": "cli_rationale_47",
       "target": "logging_runlogger",
       "confidence_score": 0.5
     },
@@ -7715,9 +7856,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L10",
       "weight": 0.8,
-      "_src": "cli_rationale_88",
+      "_src": "cli_rationale_93",
       "_tgt": "bandit_banditannotator",
-      "source": "cli_rationale_88",
+      "source": "cli_rationale_93",
       "target": "bandit_banditannotator",
       "confidence_score": 0.5
     },
@@ -7727,9 +7868,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L11",
       "weight": 0.8,
-      "_src": "cli_rationale_88",
+      "_src": "cli_rationale_93",
       "_tgt": "co_change_cochangeannotator",
-      "source": "cli_rationale_88",
+      "source": "cli_rationale_93",
       "target": "co_change_cochangeannotator",
       "confidence_score": 0.5
     },
@@ -7739,9 +7880,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L12",
       "weight": 0.8,
-      "_src": "cli_rationale_88",
+      "_src": "cli_rationale_93",
       "_tgt": "coverage_coverageannotator",
-      "source": "cli_rationale_88",
+      "source": "cli_rationale_93",
       "target": "coverage_coverageannotator",
       "confidence_score": 0.5
     },
@@ -7751,9 +7892,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L13",
       "weight": 0.8,
-      "_src": "cli_rationale_88",
+      "_src": "cli_rationale_93",
       "_tgt": "docstring_docstringannotator",
-      "source": "cli_rationale_88",
+      "source": "cli_rationale_93",
       "target": "docstring_docstringannotator",
       "confidence_score": 0.5
     },
@@ -7763,9 +7904,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L14",
       "weight": 0.8,
-      "_src": "cli_rationale_88",
+      "_src": "cli_rationale_93",
       "_tgt": "git_history_githistoryannotator",
-      "source": "cli_rationale_88",
+      "source": "cli_rationale_93",
       "target": "git_history_githistoryannotator",
       "confidence_score": 0.5
     },
@@ -7775,9 +7916,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L16",
       "weight": 0.8,
-      "_src": "cli_rationale_88",
+      "_src": "cli_rationale_93",
       "_tgt": "pip_audit_pipauditannotator",
-      "source": "cli_rationale_88",
+      "source": "cli_rationale_93",
       "target": "pip_audit_pipauditannotator",
       "confidence_score": 0.5
     },
@@ -7787,9 +7928,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L17",
       "weight": 0.8,
-      "_src": "cli_rationale_88",
+      "_src": "cli_rationale_93",
       "_tgt": "radon_radonannotator",
-      "source": "cli_rationale_88",
+      "source": "cli_rationale_93",
       "target": "radon_radonannotator",
       "confidence_score": 0.5
     },
@@ -7799,9 +7940,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L18",
       "weight": 0.8,
-      "_src": "cli_rationale_88",
+      "_src": "cli_rationale_93",
       "_tgt": "ruff_ruffannotator",
-      "source": "cli_rationale_88",
+      "source": "cli_rationale_93",
       "target": "ruff_ruffannotator",
       "confidence_score": 0.5
     },
@@ -7811,9 +7952,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L20",
       "weight": 0.8,
-      "_src": "cli_rationale_88",
+      "_src": "cli_rationale_93",
       "_tgt": "test_linkage_testlinkageannotator",
-      "source": "cli_rationale_88",
+      "source": "cli_rationale_93",
       "target": "test_linkage_testlinkageannotator",
       "confidence_score": 0.5
     },
@@ -7823,9 +7964,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L21",
       "weight": 0.8,
-      "_src": "cli_rationale_88",
+      "_src": "cli_rationale_93",
       "_tgt": "vulture_vultureannotator",
-      "source": "cli_rationale_88",
+      "source": "cli_rationale_93",
       "target": "vulture_vultureannotator",
       "confidence_score": 0.5
     },
@@ -7835,9 +7976,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L26",
       "weight": 0.8,
-      "_src": "cli_rationale_88",
+      "_src": "cli_rationale_93",
       "_tgt": "logging_runlogger",
-      "source": "cli_rationale_88",
+      "source": "cli_rationale_93",
       "target": "logging_runlogger",
       "confidence_score": 0.5
     },
@@ -7847,9 +7988,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L10",
       "weight": 0.8,
-      "_src": "cli_rationale_119",
+      "_src": "cli_rationale_127",
       "_tgt": "bandit_banditannotator",
-      "source": "cli_rationale_119",
+      "source": "cli_rationale_127",
       "target": "bandit_banditannotator",
       "confidence_score": 0.5
     },
@@ -7859,9 +8000,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L11",
       "weight": 0.8,
-      "_src": "cli_rationale_119",
+      "_src": "cli_rationale_127",
       "_tgt": "co_change_cochangeannotator",
-      "source": "cli_rationale_119",
+      "source": "cli_rationale_127",
       "target": "co_change_cochangeannotator",
       "confidence_score": 0.5
     },
@@ -7871,9 +8012,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L12",
       "weight": 0.8,
-      "_src": "cli_rationale_119",
+      "_src": "cli_rationale_127",
       "_tgt": "coverage_coverageannotator",
-      "source": "cli_rationale_119",
+      "source": "cli_rationale_127",
       "target": "coverage_coverageannotator",
       "confidence_score": 0.5
     },
@@ -7883,9 +8024,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L13",
       "weight": 0.8,
-      "_src": "cli_rationale_119",
+      "_src": "cli_rationale_127",
       "_tgt": "docstring_docstringannotator",
-      "source": "cli_rationale_119",
+      "source": "cli_rationale_127",
       "target": "docstring_docstringannotator",
       "confidence_score": 0.5
     },
@@ -7895,9 +8036,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L14",
       "weight": 0.8,
-      "_src": "cli_rationale_119",
+      "_src": "cli_rationale_127",
       "_tgt": "git_history_githistoryannotator",
-      "source": "cli_rationale_119",
+      "source": "cli_rationale_127",
       "target": "git_history_githistoryannotator",
       "confidence_score": 0.5
     },
@@ -7907,9 +8048,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L16",
       "weight": 0.8,
-      "_src": "cli_rationale_119",
+      "_src": "cli_rationale_127",
       "_tgt": "pip_audit_pipauditannotator",
-      "source": "cli_rationale_119",
+      "source": "cli_rationale_127",
       "target": "pip_audit_pipauditannotator",
       "confidence_score": 0.5
     },
@@ -7919,9 +8060,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L17",
       "weight": 0.8,
-      "_src": "cli_rationale_119",
+      "_src": "cli_rationale_127",
       "_tgt": "radon_radonannotator",
-      "source": "cli_rationale_119",
+      "source": "cli_rationale_127",
       "target": "radon_radonannotator",
       "confidence_score": 0.5
     },
@@ -7931,9 +8072,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L18",
       "weight": 0.8,
-      "_src": "cli_rationale_119",
+      "_src": "cli_rationale_127",
       "_tgt": "ruff_ruffannotator",
-      "source": "cli_rationale_119",
+      "source": "cli_rationale_127",
       "target": "ruff_ruffannotator",
       "confidence_score": 0.5
     },
@@ -7943,9 +8084,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L20",
       "weight": 0.8,
-      "_src": "cli_rationale_119",
+      "_src": "cli_rationale_127",
       "_tgt": "test_linkage_testlinkageannotator",
-      "source": "cli_rationale_119",
+      "source": "cli_rationale_127",
       "target": "test_linkage_testlinkageannotator",
       "confidence_score": 0.5
     },
@@ -7955,9 +8096,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L21",
       "weight": 0.8,
-      "_src": "cli_rationale_119",
+      "_src": "cli_rationale_127",
       "_tgt": "vulture_vultureannotator",
-      "source": "cli_rationale_119",
+      "source": "cli_rationale_127",
       "target": "vulture_vultureannotator",
       "confidence_score": 0.5
     },
@@ -7967,9 +8108,9 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L26",
       "weight": 0.8,
-      "_src": "cli_rationale_119",
+      "_src": "cli_rationale_127",
       "_tgt": "logging_runlogger",
-      "source": "cli_rationale_119",
+      "source": "cli_rationale_127",
       "target": "logging_runlogger",
       "confidence_score": 0.5
     },
@@ -8337,10 +8478,58 @@
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L26",
+      "weight": 0.8,
+      "_src": "cli_rationale_35",
+      "_tgt": "logging_runlogger",
+      "confidence_score": 0.5,
+      "source": "logging_runlogger",
+      "target": "cli_rationale_35"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L26",
+      "weight": 0.8,
+      "_src": "cli_rationale_46",
+      "_tgt": "logging_runlogger",
+      "confidence_score": 0.5,
+      "source": "logging_runlogger",
+      "target": "cli_rationale_46"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L26",
+      "weight": 0.8,
+      "_src": "cli_rationale_88",
+      "_tgt": "logging_runlogger",
+      "confidence_score": 0.5,
+      "source": "logging_runlogger",
+      "target": "cli_rationale_88"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L26",
+      "weight": 0.8,
+      "_src": "cli_rationale_119",
+      "_tgt": "logging_runlogger",
+      "confidence_score": 0.5,
+      "source": "logging_runlogger",
+      "target": "cli_rationale_119"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L14",
       "weight": 0.8,
-      "_src": "cli_rationale_33",
-      "_tgt": "logging_runlogger",
+      "_src": "logging_runlogger",
+      "_tgt": "cli_rationale_33",
       "confidence_score": 0.5,
       "source": "logging_runlogger",
       "target": "cli_rationale_33"
@@ -8351,8 +8540,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L24",
       "weight": 0.8,
-      "_src": "cli_rationale_44",
-      "_tgt": "logging_runlogger",
+      "_src": "logging_runlogger",
+      "_tgt": "cli_rationale_44",
       "confidence_score": 0.5,
       "source": "logging_runlogger",
       "target": "cli_rationale_44"
@@ -8363,8 +8552,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L24",
       "weight": 0.8,
-      "_src": "cli_rationale_86",
-      "_tgt": "logging_runlogger",
+      "_src": "logging_runlogger",
+      "_tgt": "cli_rationale_86",
       "confidence_score": 0.5,
       "source": "logging_runlogger",
       "target": "cli_rationale_86"
@@ -8375,8 +8564,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L24",
       "weight": 0.8,
-      "_src": "cli_rationale_117",
-      "_tgt": "logging_runlogger",
+      "_src": "logging_runlogger",
+      "_tgt": "cli_rationale_117",
       "confidence_score": 0.5,
       "source": "logging_runlogger",
       "target": "cli_rationale_117"
@@ -8661,12 +8850,24 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\annotators\\bandit.py",
-      "source_location": "L67",
+      "source_location": "L68",
       "weight": 1.0,
       "_src": "src_qualgraph_annotators_bandit_py",
       "_tgt": "bandit_relative_to_repo",
       "source": "src_qualgraph_annotators_bandit_py",
       "target": "bandit_relative_to_repo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\annotators\\bandit.py",
+      "source_location": "L76",
+      "weight": 1.0,
+      "_src": "src_qualgraph_annotators_bandit_py",
+      "_tgt": "bandit_severity_num",
+      "source": "src_qualgraph_annotators_bandit_py",
+      "target": "bandit_severity_num",
       "confidence_score": 1.0
     },
     {
@@ -8747,8 +8948,56 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L10",
       "weight": 0.8,
-      "_src": "cli_rationale_33",
+      "_src": "cli_rationale_35",
       "_tgt": "bandit_banditannotator",
+      "confidence_score": 0.5,
+      "source": "bandit_banditannotator",
+      "target": "cli_rationale_35"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L10",
+      "weight": 0.8,
+      "_src": "cli_rationale_46",
+      "_tgt": "bandit_banditannotator",
+      "confidence_score": 0.5,
+      "source": "bandit_banditannotator",
+      "target": "cli_rationale_46"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L10",
+      "weight": 0.8,
+      "_src": "cli_rationale_88",
+      "_tgt": "bandit_banditannotator",
+      "confidence_score": 0.5,
+      "source": "bandit_banditannotator",
+      "target": "cli_rationale_88"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L10",
+      "weight": 0.8,
+      "_src": "cli_rationale_119",
+      "_tgt": "bandit_banditannotator",
+      "confidence_score": 0.5,
+      "source": "bandit_banditannotator",
+      "target": "cli_rationale_119"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L10",
+      "weight": 0.8,
+      "_src": "bandit_banditannotator",
+      "_tgt": "cli_rationale_33",
       "confidence_score": 0.5,
       "source": "bandit_banditannotator",
       "target": "cli_rationale_33"
@@ -8759,8 +9008,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L10",
       "weight": 0.8,
-      "_src": "cli_rationale_44",
-      "_tgt": "bandit_banditannotator",
+      "_src": "bandit_banditannotator",
+      "_tgt": "cli_rationale_44",
       "confidence_score": 0.5,
       "source": "bandit_banditannotator",
       "target": "cli_rationale_44"
@@ -8771,8 +9020,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L10",
       "weight": 0.8,
-      "_src": "cli_rationale_86",
-      "_tgt": "bandit_banditannotator",
+      "_src": "bandit_banditannotator",
+      "_tgt": "cli_rationale_86",
       "confidence_score": 0.5,
       "source": "bandit_banditannotator",
       "target": "cli_rationale_86"
@@ -8783,8 +9032,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L10",
       "weight": 0.8,
-      "_src": "cli_rationale_117",
-      "_tgt": "bandit_banditannotator",
+      "_src": "bandit_banditannotator",
+      "_tgt": "cli_rationale_117",
       "confidence_score": 0.5,
       "source": "bandit_banditannotator",
       "target": "cli_rationale_117"
@@ -8992,6 +9241,18 @@
       "_tgt": "base_annotatorresult",
       "source": "bandit_banditannotator_annotate",
       "target": "base_annotatorresult"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\annotators\\bandit.py",
+      "source_location": "L59",
+      "weight": 1.0,
+      "_src": "bandit_finding_payload",
+      "_tgt": "bandit_severity_num",
+      "source": "bandit_finding_payload",
+      "target": "bandit_severity_num",
+      "confidence_score": 1.0
     },
     {
       "relation": "uses",
@@ -9239,11 +9500,11 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L15",
       "weight": 0.8,
-      "_src": "pip_audit_pipauditannotator",
-      "_tgt": "base_annotatorresult",
+      "_src": "base_annotatorresult",
+      "_tgt": "pip_audit_pipauditannotator",
+      "confidence_score": 0.5,
       "source": "base_annotatorresult",
-      "target": "pip_audit_pipauditannotator",
-      "confidence_score": 0.5
+      "target": "pip_audit_pipauditannotator"
     },
     {
       "relation": "uses",
@@ -9251,11 +9512,11 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L15",
       "weight": 0.8,
-      "_src": "pip_audit_rationale_1",
-      "_tgt": "base_annotatorresult",
+      "_src": "base_annotatorresult",
+      "_tgt": "pip_audit_rationale_1",
+      "confidence_score": 0.5,
       "source": "base_annotatorresult",
-      "target": "pip_audit_rationale_1",
-      "confidence_score": 0.5
+      "target": "pip_audit_rationale_1"
     },
     {
       "relation": "uses",
@@ -9444,8 +9705,8 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L45",
       "weight": 1.0,
-      "_src": "pip_audit_pipauditannotator_annotate",
-      "_tgt": "base_annotatorresult",
+      "_src": "base_annotatorresult",
+      "_tgt": "pip_audit_pipauditannotator_annotate",
       "source": "base_annotatorresult",
       "target": "pip_audit_pipauditannotator_annotate"
     },
@@ -9695,11 +9956,11 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L15",
       "weight": 0.8,
-      "_src": "pip_audit_pipauditannotator",
-      "_tgt": "base_baseannotator",
+      "_src": "base_baseannotator",
+      "_tgt": "pip_audit_pipauditannotator",
+      "confidence_score": 0.5,
       "source": "base_baseannotator",
-      "target": "pip_audit_pipauditannotator",
-      "confidence_score": 0.5
+      "target": "pip_audit_pipauditannotator"
     },
     {
       "relation": "uses",
@@ -9707,11 +9968,11 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L15",
       "weight": 0.8,
-      "_src": "pip_audit_rationale_1",
-      "_tgt": "base_baseannotator",
+      "_src": "base_baseannotator",
+      "_tgt": "pip_audit_rationale_1",
+      "confidence_score": 0.5,
       "source": "base_baseannotator",
-      "target": "pip_audit_rationale_1",
-      "confidence_score": 0.5
+      "target": "pip_audit_rationale_1"
     },
     {
       "relation": "uses",
@@ -9923,8 +10184,56 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L12",
       "weight": 0.8,
-      "_src": "cli_rationale_33",
+      "_src": "cli_rationale_35",
       "_tgt": "coverage_coverageannotator",
+      "confidence_score": 0.5,
+      "source": "coverage_coverageannotator",
+      "target": "cli_rationale_35"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L12",
+      "weight": 0.8,
+      "_src": "cli_rationale_46",
+      "_tgt": "coverage_coverageannotator",
+      "confidence_score": 0.5,
+      "source": "coverage_coverageannotator",
+      "target": "cli_rationale_46"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L12",
+      "weight": 0.8,
+      "_src": "cli_rationale_88",
+      "_tgt": "coverage_coverageannotator",
+      "confidence_score": 0.5,
+      "source": "coverage_coverageannotator",
+      "target": "cli_rationale_88"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L12",
+      "weight": 0.8,
+      "_src": "cli_rationale_119",
+      "_tgt": "coverage_coverageannotator",
+      "confidence_score": 0.5,
+      "source": "coverage_coverageannotator",
+      "target": "cli_rationale_119"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L12",
+      "weight": 0.8,
+      "_src": "coverage_coverageannotator",
+      "_tgt": "cli_rationale_33",
       "confidence_score": 0.5,
       "source": "coverage_coverageannotator",
       "target": "cli_rationale_33"
@@ -9935,8 +10244,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L12",
       "weight": 0.8,
-      "_src": "cli_rationale_44",
-      "_tgt": "coverage_coverageannotator",
+      "_src": "coverage_coverageannotator",
+      "_tgt": "cli_rationale_44",
       "confidence_score": 0.5,
       "source": "coverage_coverageannotator",
       "target": "cli_rationale_44"
@@ -9947,8 +10256,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L12",
       "weight": 0.8,
-      "_src": "cli_rationale_86",
-      "_tgt": "coverage_coverageannotator",
+      "_src": "coverage_coverageannotator",
+      "_tgt": "cli_rationale_86",
       "confidence_score": 0.5,
       "source": "coverage_coverageannotator",
       "target": "cli_rationale_86"
@@ -9959,8 +10268,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L12",
       "weight": 0.8,
-      "_src": "cli_rationale_117",
-      "_tgt": "coverage_coverageannotator",
+      "_src": "coverage_coverageannotator",
+      "_tgt": "cli_rationale_117",
       "confidence_score": 0.5,
       "source": "coverage_coverageannotator",
       "target": "cli_rationale_117"
@@ -10103,8 +10412,56 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L11",
       "weight": 0.8,
-      "_src": "cli_rationale_33",
+      "_src": "cli_rationale_35",
       "_tgt": "co_change_cochangeannotator",
+      "confidence_score": 0.5,
+      "source": "co_change_cochangeannotator",
+      "target": "cli_rationale_35"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L11",
+      "weight": 0.8,
+      "_src": "cli_rationale_46",
+      "_tgt": "co_change_cochangeannotator",
+      "confidence_score": 0.5,
+      "source": "co_change_cochangeannotator",
+      "target": "cli_rationale_46"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L11",
+      "weight": 0.8,
+      "_src": "cli_rationale_88",
+      "_tgt": "co_change_cochangeannotator",
+      "confidence_score": 0.5,
+      "source": "co_change_cochangeannotator",
+      "target": "cli_rationale_88"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L11",
+      "weight": 0.8,
+      "_src": "cli_rationale_119",
+      "_tgt": "co_change_cochangeannotator",
+      "confidence_score": 0.5,
+      "source": "co_change_cochangeannotator",
+      "target": "cli_rationale_119"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L11",
+      "weight": 0.8,
+      "_src": "co_change_cochangeannotator",
+      "_tgt": "cli_rationale_33",
       "confidence_score": 0.5,
       "source": "co_change_cochangeannotator",
       "target": "cli_rationale_33"
@@ -10115,8 +10472,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L11",
       "weight": 0.8,
-      "_src": "cli_rationale_44",
-      "_tgt": "co_change_cochangeannotator",
+      "_src": "co_change_cochangeannotator",
+      "_tgt": "cli_rationale_44",
       "confidence_score": 0.5,
       "source": "co_change_cochangeannotator",
       "target": "cli_rationale_44"
@@ -10127,8 +10484,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L11",
       "weight": 0.8,
-      "_src": "cli_rationale_86",
-      "_tgt": "co_change_cochangeannotator",
+      "_src": "co_change_cochangeannotator",
+      "_tgt": "cli_rationale_86",
       "confidence_score": 0.5,
       "source": "co_change_cochangeannotator",
       "target": "cli_rationale_86"
@@ -10139,8 +10496,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L11",
       "weight": 0.8,
-      "_src": "cli_rationale_117",
-      "_tgt": "co_change_cochangeannotator",
+      "_src": "co_change_cochangeannotator",
+      "_tgt": "cli_rationale_117",
       "confidence_score": 0.5,
       "source": "co_change_cochangeannotator",
       "target": "cli_rationale_117"
@@ -10319,11 +10676,11 @@
       "source_file": "tests\\unit\\test_static_annotators.py",
       "source_location": "L6",
       "weight": 0.8,
-      "_src": "test_static_annotators_completed",
-      "_tgt": "docstring_docstringannotator",
+      "_src": "docstring_docstringannotator",
+      "_tgt": "test_static_annotators_completed",
+      "confidence_score": 0.5,
       "source": "docstring_docstringannotator",
-      "target": "test_static_annotators_completed",
-      "confidence_score": 0.5
+      "target": "test_static_annotators_completed"
     },
     {
       "relation": "calls",
@@ -10343,8 +10700,56 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L13",
       "weight": 0.8,
-      "_src": "cli_rationale_33",
+      "_src": "cli_rationale_35",
       "_tgt": "docstring_docstringannotator",
+      "confidence_score": 0.5,
+      "source": "docstring_docstringannotator",
+      "target": "cli_rationale_35"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L13",
+      "weight": 0.8,
+      "_src": "cli_rationale_46",
+      "_tgt": "docstring_docstringannotator",
+      "confidence_score": 0.5,
+      "source": "docstring_docstringannotator",
+      "target": "cli_rationale_46"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L13",
+      "weight": 0.8,
+      "_src": "cli_rationale_88",
+      "_tgt": "docstring_docstringannotator",
+      "confidence_score": 0.5,
+      "source": "docstring_docstringannotator",
+      "target": "cli_rationale_88"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L13",
+      "weight": 0.8,
+      "_src": "cli_rationale_119",
+      "_tgt": "docstring_docstringannotator",
+      "confidence_score": 0.5,
+      "source": "docstring_docstringannotator",
+      "target": "cli_rationale_119"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L13",
+      "weight": 0.8,
+      "_src": "docstring_docstringannotator",
+      "_tgt": "cli_rationale_33",
       "confidence_score": 0.5,
       "source": "docstring_docstringannotator",
       "target": "cli_rationale_33"
@@ -10355,8 +10760,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L13",
       "weight": 0.8,
-      "_src": "cli_rationale_44",
-      "_tgt": "docstring_docstringannotator",
+      "_src": "docstring_docstringannotator",
+      "_tgt": "cli_rationale_44",
       "confidence_score": 0.5,
       "source": "docstring_docstringannotator",
       "target": "cli_rationale_44"
@@ -10367,8 +10772,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L13",
       "weight": 0.8,
-      "_src": "cli_rationale_86",
-      "_tgt": "docstring_docstringannotator",
+      "_src": "docstring_docstringannotator",
+      "_tgt": "cli_rationale_86",
       "confidence_score": 0.5,
       "source": "docstring_docstringannotator",
       "target": "cli_rationale_86"
@@ -10379,8 +10784,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L13",
       "weight": 0.8,
-      "_src": "cli_rationale_117",
-      "_tgt": "docstring_docstringannotator",
+      "_src": "docstring_docstringannotator",
+      "_tgt": "cli_rationale_117",
       "confidence_score": 0.5,
       "source": "docstring_docstringannotator",
       "target": "cli_rationale_117"
@@ -10488,8 +10893,8 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L29",
       "weight": 1.0,
-      "_src": "pip_audit_pipauditannotator_annotate",
-      "_tgt": "findings_clear_findings_by_source",
+      "_src": "findings_clear_findings_by_source",
+      "_tgt": "pip_audit_pipauditannotator_annotate",
       "source": "findings_clear_findings_by_source",
       "target": "pip_audit_pipauditannotator_annotate"
     },
@@ -10560,8 +10965,8 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L59",
       "weight": 1.0,
-      "_src": "pip_audit_pipauditannotator_annotate",
-      "_tgt": "findings_add_finding",
+      "_src": "findings_add_finding",
+      "_tgt": "pip_audit_pipauditannotator_annotate",
       "source": "findings_add_finding",
       "target": "pip_audit_pipauditannotator_annotate"
     },
@@ -10691,8 +11096,56 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L14",
       "weight": 0.8,
-      "_src": "cli_rationale_33",
+      "_src": "cli_rationale_35",
       "_tgt": "git_history_githistoryannotator",
+      "confidence_score": 0.5,
+      "source": "git_history_githistoryannotator",
+      "target": "cli_rationale_35"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L14",
+      "weight": 0.8,
+      "_src": "cli_rationale_46",
+      "_tgt": "git_history_githistoryannotator",
+      "confidence_score": 0.5,
+      "source": "git_history_githistoryannotator",
+      "target": "cli_rationale_46"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L14",
+      "weight": 0.8,
+      "_src": "cli_rationale_88",
+      "_tgt": "git_history_githistoryannotator",
+      "confidence_score": 0.5,
+      "source": "git_history_githistoryannotator",
+      "target": "cli_rationale_88"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L14",
+      "weight": 0.8,
+      "_src": "cli_rationale_119",
+      "_tgt": "git_history_githistoryannotator",
+      "confidence_score": 0.5,
+      "source": "git_history_githistoryannotator",
+      "target": "cli_rationale_119"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L14",
+      "weight": 0.8,
+      "_src": "git_history_githistoryannotator",
+      "_tgt": "cli_rationale_33",
       "confidence_score": 0.5,
       "source": "git_history_githistoryannotator",
       "target": "cli_rationale_33"
@@ -10703,8 +11156,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L14",
       "weight": 0.8,
-      "_src": "cli_rationale_44",
-      "_tgt": "git_history_githistoryannotator",
+      "_src": "git_history_githistoryannotator",
+      "_tgt": "cli_rationale_44",
       "confidence_score": 0.5,
       "source": "git_history_githistoryannotator",
       "target": "cli_rationale_44"
@@ -10715,8 +11168,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L14",
       "weight": 0.8,
-      "_src": "cli_rationale_86",
-      "_tgt": "git_history_githistoryannotator",
+      "_src": "git_history_githistoryannotator",
+      "_tgt": "cli_rationale_86",
       "confidence_score": 0.5,
       "source": "git_history_githistoryannotator",
       "target": "cli_rationale_86"
@@ -10727,8 +11180,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L14",
       "weight": 0.8,
-      "_src": "cli_rationale_117",
-      "_tgt": "git_history_githistoryannotator",
+      "_src": "git_history_githistoryannotator",
+      "_tgt": "cli_rationale_117",
       "confidence_score": 0.5,
       "source": "git_history_githistoryannotator",
       "target": "cli_rationale_117"
@@ -10896,8 +11349,8 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L53",
       "weight": 1.0,
-      "_src": "pip_audit_pipauditannotator_annotate",
-      "_tgt": "locations_find_node_for_location",
+      "_src": "locations_find_node_for_location",
+      "_tgt": "pip_audit_pipauditannotator_annotate",
       "source": "locations_find_node_for_location",
       "target": "pip_audit_pipauditannotator_annotate"
     },
@@ -11196,8 +11649,8 @@
       "source_file": "src\\qualgraph\\annotators\\pip_audit.py",
       "source_location": "L32",
       "weight": 1.0,
-      "_src": "pip_audit_pipauditannotator_annotate",
-      "_tgt": "pipeline_annotatorpipeline_run",
+      "_src": "pipeline_annotatorpipeline_run",
+      "_tgt": "pip_audit_pipauditannotator_annotate",
       "source": "pipeline_annotatorpipeline_run",
       "target": "pip_audit_pipauditannotator_annotate"
     },
@@ -11461,9 +11914,9 @@
       "weight": 0.8,
       "_src": "pip_audit_pipauditannotator",
       "_tgt": "schema_edgeattrs",
+      "confidence_score": 0.5,
       "source": "pip_audit_pipauditannotator",
-      "target": "schema_edgeattrs",
-      "confidence_score": 0.5
+      "target": "schema_edgeattrs"
     },
     {
       "relation": "uses",
@@ -11473,9 +11926,9 @@
       "weight": 0.8,
       "_src": "pip_audit_pipauditannotator",
       "_tgt": "schema_edgetype",
+      "confidence_score": 0.5,
       "source": "pip_audit_pipauditannotator",
-      "target": "schema_edgetype",
-      "confidence_score": 0.5
+      "target": "schema_edgetype"
     },
     {
       "relation": "uses",
@@ -11483,11 +11936,11 @@
       "source_file": "tests\\unit\\test_static_annotators.py",
       "source_location": "L10",
       "weight": 0.8,
-      "_src": "test_static_annotators_completed",
-      "_tgt": "pip_audit_pipauditannotator",
+      "_src": "pip_audit_pipauditannotator",
+      "_tgt": "test_static_annotators_completed",
+      "confidence_score": 0.5,
       "source": "pip_audit_pipauditannotator",
-      "target": "test_static_annotators_completed",
-      "confidence_score": 0.5
+      "target": "test_static_annotators_completed"
     },
     {
       "relation": "calls",
@@ -11496,10 +11949,58 @@
       "source_file": "tests\\unit\\test_static_annotators.py",
       "source_location": "L163",
       "weight": 1.0,
-      "_src": "test_static_annotators_test_pip_audit_adds_vulnerable_import_edges_to_importing_node",
-      "_tgt": "pip_audit_pipauditannotator",
+      "_src": "pip_audit_pipauditannotator",
+      "_tgt": "test_static_annotators_test_pip_audit_adds_vulnerable_import_edges_to_importing_node",
       "source": "pip_audit_pipauditannotator",
       "target": "test_static_annotators_test_pip_audit_adds_vulnerable_import_edges_to_importing_node"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L16",
+      "weight": 0.8,
+      "_src": "cli_rationale_35",
+      "_tgt": "pip_audit_pipauditannotator",
+      "confidence_score": 0.5,
+      "source": "pip_audit_pipauditannotator",
+      "target": "cli_rationale_35"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L16",
+      "weight": 0.8,
+      "_src": "cli_rationale_46",
+      "_tgt": "pip_audit_pipauditannotator",
+      "confidence_score": 0.5,
+      "source": "pip_audit_pipauditannotator",
+      "target": "cli_rationale_46"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L16",
+      "weight": 0.8,
+      "_src": "cli_rationale_88",
+      "_tgt": "pip_audit_pipauditannotator",
+      "confidence_score": 0.5,
+      "source": "pip_audit_pipauditannotator",
+      "target": "cli_rationale_88"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L16",
+      "weight": 0.8,
+      "_src": "cli_rationale_119",
+      "_tgt": "pip_audit_pipauditannotator",
+      "confidence_score": 0.5,
+      "source": "pip_audit_pipauditannotator",
+      "target": "cli_rationale_119"
     },
     {
       "relation": "calls",
@@ -11713,9 +12214,9 @@
       "weight": 0.8,
       "_src": "pip_audit_rationale_1",
       "_tgt": "schema_edgeattrs",
+      "confidence_score": 0.5,
       "source": "pip_audit_rationale_1",
-      "target": "schema_edgeattrs",
-      "confidence_score": 0.5
+      "target": "schema_edgeattrs"
     },
     {
       "relation": "uses",
@@ -11725,9 +12226,9 @@
       "weight": 0.8,
       "_src": "pip_audit_rationale_1",
       "_tgt": "schema_edgetype",
+      "confidence_score": 0.5,
       "source": "pip_audit_rationale_1",
-      "target": "schema_edgetype",
-      "confidence_score": 0.5
+      "target": "schema_edgetype"
     },
     {
       "relation": "contains",
@@ -11783,11 +12284,11 @@
       "source_file": "tests\\unit\\test_static_annotators.py",
       "source_location": "L11",
       "weight": 0.8,
-      "_src": "test_static_annotators_completed",
-      "_tgt": "radon_radonannotator",
+      "_src": "radon_radonannotator",
+      "_tgt": "test_static_annotators_completed",
+      "confidence_score": 0.5,
       "source": "radon_radonannotator",
-      "target": "test_static_annotators_completed",
-      "confidence_score": 0.5
+      "target": "test_static_annotators_completed"
     },
     {
       "relation": "calls",
@@ -11805,10 +12306,58 @@
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L17",
+      "weight": 0.8,
+      "_src": "cli_rationale_35",
+      "_tgt": "radon_radonannotator",
+      "confidence_score": 0.5,
+      "source": "radon_radonannotator",
+      "target": "cli_rationale_35"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L17",
+      "weight": 0.8,
+      "_src": "cli_rationale_46",
+      "_tgt": "radon_radonannotator",
+      "confidence_score": 0.5,
+      "source": "radon_radonannotator",
+      "target": "cli_rationale_46"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L17",
+      "weight": 0.8,
+      "_src": "cli_rationale_88",
+      "_tgt": "radon_radonannotator",
+      "confidence_score": 0.5,
+      "source": "radon_radonannotator",
+      "target": "cli_rationale_88"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L17",
+      "weight": 0.8,
+      "_src": "cli_rationale_119",
+      "_tgt": "radon_radonannotator",
+      "confidence_score": 0.5,
+      "source": "radon_radonannotator",
+      "target": "cli_rationale_119"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L16",
       "weight": 0.8,
-      "_src": "cli_rationale_33",
-      "_tgt": "radon_radonannotator",
+      "_src": "radon_radonannotator",
+      "_tgt": "cli_rationale_33",
       "confidence_score": 0.5,
       "source": "radon_radonannotator",
       "target": "cli_rationale_33"
@@ -11819,8 +12368,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L16",
       "weight": 0.8,
-      "_src": "cli_rationale_44",
-      "_tgt": "radon_radonannotator",
+      "_src": "radon_radonannotator",
+      "_tgt": "cli_rationale_44",
       "confidence_score": 0.5,
       "source": "radon_radonannotator",
       "target": "cli_rationale_44"
@@ -11831,8 +12380,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L16",
       "weight": 0.8,
-      "_src": "cli_rationale_86",
-      "_tgt": "radon_radonannotator",
+      "_src": "radon_radonannotator",
+      "_tgt": "cli_rationale_86",
       "confidence_score": 0.5,
       "source": "radon_radonannotator",
       "target": "cli_rationale_86"
@@ -11843,8 +12392,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L16",
       "weight": 0.8,
-      "_src": "cli_rationale_117",
-      "_tgt": "radon_radonannotator",
+      "_src": "radon_radonannotator",
+      "_tgt": "cli_rationale_117",
       "confidence_score": 0.5,
       "source": "radon_radonannotator",
       "target": "cli_rationale_117"
@@ -11925,10 +12474,58 @@
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L18",
+      "weight": 0.8,
+      "_src": "cli_rationale_35",
+      "_tgt": "ruff_ruffannotator",
+      "confidence_score": 0.5,
+      "source": "ruff_ruffannotator",
+      "target": "cli_rationale_35"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L18",
+      "weight": 0.8,
+      "_src": "cli_rationale_46",
+      "_tgt": "ruff_ruffannotator",
+      "confidence_score": 0.5,
+      "source": "ruff_ruffannotator",
+      "target": "cli_rationale_46"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L18",
+      "weight": 0.8,
+      "_src": "cli_rationale_88",
+      "_tgt": "ruff_ruffannotator",
+      "confidence_score": 0.5,
+      "source": "ruff_ruffannotator",
+      "target": "cli_rationale_88"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L18",
+      "weight": 0.8,
+      "_src": "cli_rationale_119",
+      "_tgt": "ruff_ruffannotator",
+      "confidence_score": 0.5,
+      "source": "ruff_ruffannotator",
+      "target": "cli_rationale_119"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L17",
       "weight": 0.8,
-      "_src": "cli_rationale_33",
-      "_tgt": "ruff_ruffannotator",
+      "_src": "ruff_ruffannotator",
+      "_tgt": "cli_rationale_33",
       "confidence_score": 0.5,
       "source": "ruff_ruffannotator",
       "target": "cli_rationale_33"
@@ -11939,8 +12536,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L17",
       "weight": 0.8,
-      "_src": "cli_rationale_44",
-      "_tgt": "ruff_ruffannotator",
+      "_src": "ruff_ruffannotator",
+      "_tgt": "cli_rationale_44",
       "confidence_score": 0.5,
       "source": "ruff_ruffannotator",
       "target": "cli_rationale_44"
@@ -11951,8 +12548,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L17",
       "weight": 0.8,
-      "_src": "cli_rationale_86",
-      "_tgt": "ruff_ruffannotator",
+      "_src": "ruff_ruffannotator",
+      "_tgt": "cli_rationale_86",
       "confidence_score": 0.5,
       "source": "ruff_ruffannotator",
       "target": "cli_rationale_86"
@@ -11963,8 +12560,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L17",
       "weight": 0.8,
-      "_src": "cli_rationale_117",
-      "_tgt": "ruff_ruffannotator",
+      "_src": "ruff_ruffannotator",
+      "_tgt": "cli_rationale_117",
       "confidence_score": 0.5,
       "source": "ruff_ruffannotator",
       "target": "cli_rationale_117"
@@ -12119,11 +12716,11 @@
       "source_file": "tests\\unit\\test_static_annotators.py",
       "source_location": "L13",
       "weight": 0.8,
-      "_src": "test_static_annotators_completed",
-      "_tgt": "test_linkage_testlinkageannotator",
+      "_src": "test_linkage_testlinkageannotator",
+      "_tgt": "test_static_annotators_completed",
+      "confidence_score": 0.5,
       "source": "test_linkage_testlinkageannotator",
-      "target": "test_static_annotators_completed",
-      "confidence_score": 0.5
+      "target": "test_static_annotators_completed"
     },
     {
       "relation": "calls",
@@ -12141,10 +12738,58 @@
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L20",
+      "weight": 0.8,
+      "_src": "cli_rationale_35",
+      "_tgt": "test_linkage_testlinkageannotator",
+      "confidence_score": 0.5,
+      "source": "test_linkage_testlinkageannotator",
+      "target": "cli_rationale_35"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L20",
+      "weight": 0.8,
+      "_src": "cli_rationale_46",
+      "_tgt": "test_linkage_testlinkageannotator",
+      "confidence_score": 0.5,
+      "source": "test_linkage_testlinkageannotator",
+      "target": "cli_rationale_46"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L20",
+      "weight": 0.8,
+      "_src": "cli_rationale_88",
+      "_tgt": "test_linkage_testlinkageannotator",
+      "confidence_score": 0.5,
+      "source": "test_linkage_testlinkageannotator",
+      "target": "cli_rationale_88"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L20",
+      "weight": 0.8,
+      "_src": "cli_rationale_119",
+      "_tgt": "test_linkage_testlinkageannotator",
+      "confidence_score": 0.5,
+      "source": "test_linkage_testlinkageannotator",
+      "target": "cli_rationale_119"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L18",
       "weight": 0.8,
-      "_src": "cli_rationale_33",
-      "_tgt": "test_linkage_testlinkageannotator",
+      "_src": "test_linkage_testlinkageannotator",
+      "_tgt": "cli_rationale_33",
       "confidence_score": 0.5,
       "source": "test_linkage_testlinkageannotator",
       "target": "cli_rationale_33"
@@ -12155,8 +12800,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L18",
       "weight": 0.8,
-      "_src": "cli_rationale_44",
-      "_tgt": "test_linkage_testlinkageannotator",
+      "_src": "test_linkage_testlinkageannotator",
+      "_tgt": "cli_rationale_44",
       "confidence_score": 0.5,
       "source": "test_linkage_testlinkageannotator",
       "target": "cli_rationale_44"
@@ -12167,8 +12812,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L18",
       "weight": 0.8,
-      "_src": "cli_rationale_86",
-      "_tgt": "test_linkage_testlinkageannotator",
+      "_src": "test_linkage_testlinkageannotator",
+      "_tgt": "cli_rationale_86",
       "confidence_score": 0.5,
       "source": "test_linkage_testlinkageannotator",
       "target": "cli_rationale_86"
@@ -12179,8 +12824,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L18",
       "weight": 0.8,
-      "_src": "cli_rationale_117",
-      "_tgt": "test_linkage_testlinkageannotator",
+      "_src": "test_linkage_testlinkageannotator",
+      "_tgt": "cli_rationale_117",
       "confidence_score": 0.5,
       "source": "test_linkage_testlinkageannotator",
       "target": "cli_rationale_117"
@@ -12381,10 +13026,58 @@
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L21",
+      "weight": 0.8,
+      "_src": "cli_rationale_35",
+      "_tgt": "vulture_vultureannotator",
+      "confidence_score": 0.5,
+      "source": "vulture_vultureannotator",
+      "target": "cli_rationale_35"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L21",
+      "weight": 0.8,
+      "_src": "cli_rationale_46",
+      "_tgt": "vulture_vultureannotator",
+      "confidence_score": 0.5,
+      "source": "vulture_vultureannotator",
+      "target": "cli_rationale_46"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L21",
+      "weight": 0.8,
+      "_src": "cli_rationale_88",
+      "_tgt": "vulture_vultureannotator",
+      "confidence_score": 0.5,
+      "source": "vulture_vultureannotator",
+      "target": "cli_rationale_88"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
+      "source_location": "L21",
+      "weight": 0.8,
+      "_src": "cli_rationale_119",
+      "_tgt": "vulture_vultureannotator",
+      "confidence_score": 0.5,
+      "source": "vulture_vultureannotator",
+      "target": "cli_rationale_119"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L19",
       "weight": 0.8,
-      "_src": "cli_rationale_33",
-      "_tgt": "vulture_vultureannotator",
+      "_src": "vulture_vultureannotator",
+      "_tgt": "cli_rationale_33",
       "confidence_score": 0.5,
       "source": "vulture_vultureannotator",
       "target": "cli_rationale_33"
@@ -12395,8 +13088,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L19",
       "weight": 0.8,
-      "_src": "cli_rationale_44",
-      "_tgt": "vulture_vultureannotator",
+      "_src": "vulture_vultureannotator",
+      "_tgt": "cli_rationale_44",
       "confidence_score": 0.5,
       "source": "vulture_vultureannotator",
       "target": "cli_rationale_44"
@@ -12407,8 +13100,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L19",
       "weight": 0.8,
-      "_src": "cli_rationale_86",
-      "_tgt": "vulture_vultureannotator",
+      "_src": "vulture_vultureannotator",
+      "_tgt": "cli_rationale_86",
       "confidence_score": 0.5,
       "source": "vulture_vultureannotator",
       "target": "cli_rationale_86"
@@ -12419,8 +13112,8 @@
       "source_file": "src\\qualgraph\\cli.py",
       "source_location": "L19",
       "weight": 0.8,
-      "_src": "cli_rationale_117",
-      "_tgt": "vulture_vultureannotator",
+      "_src": "vulture_vultureannotator",
+      "_tgt": "cli_rationale_117",
       "confidence_score": 0.5,
       "source": "vulture_vultureannotator",
       "target": "cli_rationale_117"
@@ -14384,14 +15077,50 @@
     {
       "relation": "uses",
       "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\scoring\\risk.py",
+      "source_location": "L9",
+      "weight": 0.8,
+      "_src": "risk_rationale_1",
+      "_tgt": "schema_nodetype",
+      "source": "schema_nodetype",
+      "target": "risk_rationale_1",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\scoring\\risk.py",
+      "source_location": "L9",
+      "weight": 0.8,
+      "_src": "risk_rationale_24",
+      "_tgt": "schema_nodetype",
+      "source": "schema_nodetype",
+      "target": "risk_rationale_24",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src\\qualgraph\\scoring\\risk.py",
+      "source_location": "L9",
+      "weight": 0.8,
+      "_src": "risk_rationale_64",
+      "_tgt": "schema_nodetype",
+      "source": "schema_nodetype",
+      "target": "risk_rationale_64",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
       "source_file": "tests\\unit\\test_static_annotators.py",
       "source_location": "L17",
       "weight": 0.8,
-      "_src": "test_static_annotators_completed",
-      "_tgt": "schema_nodetype",
+      "_src": "schema_nodetype",
+      "_tgt": "test_static_annotators_completed",
+      "confidence_score": 0.5,
       "source": "schema_nodetype",
-      "target": "test_static_annotators_completed",
-      "confidence_score": 0.5
+      "target": "test_static_annotators_completed"
     },
     {
       "relation": "calls",
@@ -14411,11 +15140,11 @@
       "source_file": "tests\\unit\\test_static_annotators.py",
       "source_location": "L17",
       "weight": 0.8,
-      "_src": "test_static_annotators_completed",
-      "_tgt": "schema_nodeattrs",
+      "_src": "schema_nodeattrs",
+      "_tgt": "test_static_annotators_completed",
+      "confidence_score": 0.5,
       "source": "schema_nodeattrs",
-      "target": "test_static_annotators_completed",
-      "confidence_score": 0.5
+      "target": "test_static_annotators_completed"
     },
     {
       "relation": "calls",
@@ -14448,8 +15177,8 @@
       "source_file": "tests\\unit\\test_static_annotators.py",
       "source_location": "L253",
       "weight": 1.0,
-      "_src": "test_static_annotators_sample_graph_with_function",
-      "_tgt": "schema_nodeattrs",
+      "_src": "schema_nodeattrs",
+      "_tgt": "test_static_annotators_sample_graph_with_function",
       "source": "schema_nodeattrs",
       "target": "test_static_annotators_sample_graph_with_function"
     },
@@ -14496,8 +15225,8 @@
       "source_file": "tests\\unit\\test_static_annotators.py",
       "source_location": "L252",
       "weight": 1.0,
-      "_src": "test_static_annotators_sample_graph_with_function",
-      "_tgt": "schema_node_attrs_to_graph",
+      "_src": "schema_node_attrs_to_graph",
+      "_tgt": "test_static_annotators_sample_graph_with_function",
       "source": "schema_node_attrs_to_graph",
       "target": "test_static_annotators_sample_graph_with_function"
     },
@@ -15117,7 +15846,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\report\\markdown.py",
-      "source_location": "L233",
+      "source_location": "L236",
       "weight": 1.0,
       "_src": "src_qualgraph_report_markdown_py",
       "_tgt": "markdown_test_linkage_lines",
@@ -15129,7 +15858,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\report\\markdown.py",
-      "source_location": "L256",
+      "source_location": "L259",
       "weight": 1.0,
       "_src": "src_qualgraph_report_markdown_py",
       "_tgt": "markdown_git_history_lines",
@@ -15141,7 +15870,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\report\\markdown.py",
-      "source_location": "L277",
+      "source_location": "L280",
       "weight": 1.0,
       "_src": "src_qualgraph_report_markdown_py",
       "_tgt": "markdown_co_change_lines",
@@ -15153,7 +15882,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\report\\markdown.py",
-      "source_location": "L290",
+      "source_location": "L293",
       "weight": 1.0,
       "_src": "src_qualgraph_report_markdown_py",
       "_tgt": "markdown_is_test_node",
@@ -15165,7 +15894,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\report\\markdown.py",
-      "source_location": "L295",
+      "source_location": "L298",
       "weight": 1.0,
       "_src": "src_qualgraph_report_markdown_py",
       "_tgt": "markdown_finding_code",
@@ -15177,7 +15906,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\report\\markdown.py",
-      "source_location": "L299",
+      "source_location": "L302",
       "weight": 1.0,
       "_src": "src_qualgraph_report_markdown_py",
       "_tgt": "markdown_finding_line",
@@ -15189,7 +15918,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\report\\markdown.py",
-      "source_location": "L306",
+      "source_location": "L309",
       "weight": 1.0,
       "_src": "src_qualgraph_report_markdown_py",
       "_tgt": "markdown_severity_text",
@@ -15201,7 +15930,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\report\\markdown.py",
-      "source_location": "L316",
+      "source_location": "L319",
       "weight": 1.0,
       "_src": "src_qualgraph_report_markdown_py",
       "_tgt": "markdown_format_score",
@@ -15213,7 +15942,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\report\\markdown.py",
-      "source_location": "L320",
+      "source_location": "L323",
       "weight": 1.0,
       "_src": "src_qualgraph_report_markdown_py",
       "_tgt": "markdown_format_small",
@@ -15225,7 +15954,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\report\\markdown.py",
-      "source_location": "L329",
+      "source_location": "L332",
       "weight": 1.0,
       "_src": "src_qualgraph_report_markdown_py",
       "_tgt": "markdown_shorten",
@@ -15549,13 +16278,145 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "src\\qualgraph\\report\\markdown.py",
-      "source_location": "L237",
+      "source_location": "L240",
       "weight": 1.0,
       "_src": "markdown_test_linkage_lines",
       "_tgt": "markdown_is_test_node",
       "source": "markdown_test_linkage_lines",
       "target": "markdown_is_test_node",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\scoring\\risk.py",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_src": "src_qualgraph_scoring_risk_py",
+      "_tgt": "risk_score",
+      "source": "src_qualgraph_scoring_risk_py",
+      "target": "risk_score",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\scoring\\risk.py",
+      "source_location": "L63",
+      "weight": 1.0,
+      "_src": "src_qualgraph_scoring_risk_py",
+      "_tgt": "risk_top_risk_nodes",
+      "source": "src_qualgraph_scoring_risk_py",
+      "target": "risk_top_risk_nodes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\scoring\\risk.py",
+      "source_location": "L74",
+      "weight": 1.0,
+      "_src": "src_qualgraph_scoring_risk_py",
+      "_tgt": "risk_rankdata",
+      "source": "src_qualgraph_scoring_risk_py",
+      "target": "risk_rankdata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\scoring\\risk.py",
+      "source_location": "L91",
+      "weight": 1.0,
+      "_src": "src_qualgraph_scoring_risk_py",
+      "_tgt": "risk_severity_num",
+      "source": "src_qualgraph_scoring_risk_py",
+      "target": "risk_severity_num",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\scoring\\risk.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_src": "risk_rationale_1",
+      "_tgt": "src_qualgraph_scoring_risk_py",
+      "source": "src_qualgraph_scoring_risk_py",
+      "target": "risk_rationale_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\scoring\\risk.py",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_src": "risk_score",
+      "_tgt": "risk_rankdata",
+      "source": "risk_score",
+      "target": "risk_rankdata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\scoring\\risk.py",
+      "source_location": "L43",
+      "weight": 1.0,
+      "_src": "risk_score",
+      "_tgt": "risk_severity_num",
+      "source": "risk_score",
+      "target": "risk_severity_num",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\scoring\\risk.py",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_src": "risk_rationale_24",
+      "_tgt": "risk_score",
+      "source": "risk_score",
+      "target": "risk_rationale_24",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests\\unit\\test_static_annotators.py",
+      "source_location": "L221",
+      "weight": 1.0,
+      "_src": "test_static_annotators_test_risk_score_writes_weighted_components_for_llm_selection",
+      "_tgt": "risk_score",
+      "source": "risk_score",
+      "target": "test_static_annotators_test_risk_score_writes_weighted_components_for_llm_selection"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src\\qualgraph\\scoring\\risk.py",
+      "source_location": "L64",
+      "weight": 1.0,
+      "_src": "risk_rationale_64",
+      "_tgt": "risk_top_risk_nodes",
+      "source": "risk_top_risk_nodes",
+      "target": "risk_rationale_64",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "tests\\unit\\test_static_annotators.py",
+      "source_location": "L234",
+      "weight": 1.0,
+      "_src": "test_static_annotators_test_risk_score_writes_weighted_components_for_llm_selection",
+      "_tgt": "risk_top_risk_nodes",
+      "source": "risk_top_risk_nodes",
+      "target": "test_static_annotators_test_risk_score_writes_weighted_components_for_llm_selection"
     },
     {
       "relation": "contains",
@@ -15732,8 +16593,8 @@
       "source_file": "tests\\unit\\test_static_annotators.py",
       "source_location": "L163",
       "weight": 1.0,
-      "_src": "test_static_annotators_test_pip_audit_adds_vulnerable_import_edges_to_importing_node",
-      "_tgt": "test_annotator_pipeline_failingannotator_annotate",
+      "_src": "test_annotator_pipeline_failingannotator_annotate",
+      "_tgt": "test_static_annotators_test_pip_audit_adds_vulnerable_import_edges_to_importing_node",
       "source": "test_annotator_pipeline_failingannotator_annotate",
       "target": "test_static_annotators_test_pip_audit_adds_vulnerable_import_edges_to_importing_node"
     },
@@ -15744,8 +16605,8 @@
       "source_file": "tests\\unit\\test_static_annotators.py",
       "source_location": "L191",
       "weight": 1.0,
-      "_src": "test_static_annotators_test_detect_secrets_attaches_conservative_low_severity_findings",
-      "_tgt": "test_annotator_pipeline_failingannotator_annotate",
+      "_src": "test_annotator_pipeline_failingannotator_annotate",
+      "_tgt": "test_static_annotators_test_detect_secrets_attaches_conservative_low_severity_findings",
       "source": "test_annotator_pipeline_failingannotator_annotate",
       "target": "test_static_annotators_test_detect_secrets_attaches_conservative_low_severity_findings"
     },
@@ -15753,7 +16614,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0,
       "_src": "tests_unit_test_static_annotators_py",
       "_tgt": "test_static_annotators_test_find_node_for_location_prefers_smallest_containing_node",
@@ -15765,7 +16626,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L57",
+      "source_location": "L58",
       "weight": 1.0,
       "_src": "tests_unit_test_static_annotators_py",
       "_tgt": "test_static_annotators_test_radon_and_docstring_annotate_tiny_repo_nodes",
@@ -15777,7 +16638,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L70",
+      "source_location": "L71",
       "weight": 1.0,
       "_src": "tests_unit_test_static_annotators_py",
       "_tgt": "test_static_annotators_test_test_linkage_adds_static_tested_by_edges",
@@ -15789,7 +16650,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L80",
+      "source_location": "L81",
       "weight": 1.0,
       "_src": "tests_unit_test_static_annotators_py",
       "_tgt": "test_static_annotators_test_git_history_path_mapping_for_nested_repo_targets",
@@ -15801,7 +16662,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L87",
+      "source_location": "L88",
       "weight": 1.0,
       "_src": "tests_unit_test_static_annotators_py",
       "_tgt": "test_static_annotators_test_findings_helpers_dedupe_and_clear_by_source",
@@ -15813,7 +16674,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L102",
+      "source_location": "L103",
       "weight": 1.0,
       "_src": "tests_unit_test_static_annotators_py",
       "_tgt": "test_static_annotators_test_detect_untested_hotspots_combines_complexity_centrality_and_coverage",
@@ -15825,7 +16686,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L141",
+      "source_location": "L142",
       "weight": 1.0,
       "_src": "tests_unit_test_static_annotators_py",
       "_tgt": "test_static_annotators_test_pip_audit_adds_vulnerable_import_edges_to_importing_node",
@@ -15837,7 +16698,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L175",
+      "source_location": "L176",
       "weight": 1.0,
       "_src": "tests_unit_test_static_annotators_py",
       "_tgt": "test_static_annotators_test_detect_secrets_attaches_conservative_low_severity_findings",
@@ -15849,7 +16710,19 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L200",
+      "source_location": "L201",
+      "weight": 1.0,
+      "_src": "tests_unit_test_static_annotators_py",
+      "_tgt": "test_static_annotators_test_risk_score_writes_weighted_components_for_llm_selection",
+      "source": "tests_unit_test_static_annotators_py",
+      "target": "test_static_annotators_test_risk_score_writes_weighted_components_for_llm_selection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests\\unit\\test_static_annotators.py",
+      "source_location": "L237",
       "weight": 1.0,
       "_src": "tests_unit_test_static_annotators_py",
       "_tgt": "test_static_annotators_test_report_surfaces_deduped_rules_hotspots_and_readable_centrality",
@@ -15861,7 +16734,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L248",
+      "source_location": "L285",
       "weight": 1.0,
       "_src": "tests_unit_test_static_annotators_py",
       "_tgt": "test_static_annotators_sample_graph_with_function",
@@ -15873,7 +16746,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L281",
+      "source_location": "L318",
       "weight": 1.0,
       "_src": "tests_unit_test_static_annotators_py",
       "_tgt": "test_static_annotators_completed",
@@ -15885,7 +16758,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L142",
+      "source_location": "L143",
       "weight": 1.0,
       "_src": "test_static_annotators_test_pip_audit_adds_vulnerable_import_edges_to_importing_node",
       "_tgt": "test_static_annotators_sample_graph_with_function",
@@ -15897,7 +16770,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L162",
+      "source_location": "L163",
       "weight": 1.0,
       "_src": "test_static_annotators_test_pip_audit_adds_vulnerable_import_edges_to_importing_node",
       "_tgt": "test_static_annotators_completed",
@@ -15909,7 +16782,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L176",
+      "source_location": "L177",
       "weight": 1.0,
       "_src": "test_static_annotators_test_detect_secrets_attaches_conservative_low_severity_findings",
       "_tgt": "test_static_annotators_sample_graph_with_function",
@@ -15921,7 +16794,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L190",
+      "source_location": "L191",
       "weight": 1.0,
       "_src": "test_static_annotators_test_detect_secrets_attaches_conservative_low_severity_findings",
       "_tgt": "test_static_annotators_completed",
@@ -15933,7 +16806,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests\\unit\\test_static_annotators.py",
-      "source_location": "L282",
+      "source_location": "L319",
       "weight": 1.0,
       "_src": "test_static_annotators_completed",
       "_tgt": "test_static_annotators_completed_init",

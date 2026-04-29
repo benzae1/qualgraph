@@ -56,6 +56,7 @@ def _finding_payload(finding: dict[str, Any]) -> dict[str, Any]:
     return {
         "source": "bandit",
         "severity": finding.get("issue_severity"),
+        "severity_num": _severity_num(finding.get("issue_severity")),
         "confidence": finding.get("issue_confidence"),
         "cwe": issue_cwe.get("id"),
         "message": finding.get("issue_text"),
@@ -70,3 +71,11 @@ def _relative_to_repo(repo_path: Path, filename: str) -> str:
         return path.resolve().relative_to(repo_path.resolve()).as_posix()
     except ValueError:
         return path.as_posix()
+
+
+def _severity_num(severity: Any) -> float:
+    return {
+        "HIGH": 1.0,
+        "MEDIUM": 0.66,
+        "LOW": 0.33,
+    }.get(str(severity or "").upper(), 0.0)

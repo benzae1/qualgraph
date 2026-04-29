@@ -16,6 +16,7 @@ from qualgraph.graph.builder import build_graph
 from qualgraph.graph.metrics import annotate_metrics
 from qualgraph.graph.schema import NodeAttrs, NodeType, node_attrs_to_graph
 from qualgraph.report.markdown import render_markdown_report
+from qualgraph.scoring.risk import score, top_risk_nodes
 
 
 def test_find_node_for_location_prefers_smallest_containing_node() -> None:
@@ -195,6 +196,42 @@ def test_detect_secrets_attaches_conservative_low_severity_findings() -> None:
     assert finding["source"] == "detect-secrets"
     assert finding["severity"] == "LOW"
     assert finding["confidence"] == "AMBIGUOUS"
+
+
+def test_risk_score_writes_weighted_components_for_llm_selection() -> None:
+    graph = nx.DiGraph()
+    graph.add_node(
+        "low",
+        type=NodeType.FUNCTION.value,
+        centrality=0.1,
+        complexity=1,
+        churn=0,
+        coverage_line=1.0,
+    )
+    graph.add_node(
+        "high",
+        type=NodeType.METHOD.value,
+        centrality=0.9,
+        complexity=12,
+        churn=8,
+        coverage_line=0.25,
+        findings=[{"source": "bandit", "severity_num": 1.0}],
+    )
+
+    score(graph, {"w1": 1, "w2": 2, "w3": 3, "w4": 4, "w5": 5, "w6": 6, "w7": 7})
+
+    components = graph.nodes["high"]["risk_components"]
+    assert components == {
+        "centrality": 1.0,
+        "complexity": 2.0,
+        "churn": 3.0,
+        "coverage_gap": 3.0,
+        "security": 5.0,
+        "llm": 0.0,
+        "hotpath": 0.0,
+    }
+    assert graph.nodes["high"]["risk_score"] == 14.0
+    assert [node_id for node_id, _attrs in top_risk_nodes(graph, limit=1)] == ["high"]
 
 
 def test_report_surfaces_deduped_rules_hotspots_and_readable_centrality() -> None:

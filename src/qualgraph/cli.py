@@ -25,6 +25,7 @@ from qualgraph.graph.metrics import annotate_metrics
 from qualgraph.graph.serialize import read_json_graph, write_graphml_graph, write_json_graph
 from qualgraph.logging import RunLogger
 from qualgraph.report.markdown import write_markdown_report
+from qualgraph.scoring.risk import score as score_risk
 
 
 app = typer.Typer(help="Graph-aware code quality analysis for Python projects.")
@@ -59,6 +60,10 @@ def build(
 
         with run_logger.span("annotate_metrics") as span:
             annotate_metrics(graph)
+            span["nodes"] = graph.number_of_nodes()
+
+        with run_logger.span("score_risk") as span:
+            score_risk(graph)
             span["nodes"] = graph.number_of_nodes()
 
         with run_logger.span("write_json_graph", output=output):
@@ -100,6 +105,9 @@ def annotate(
 
         selected = _resolve_annotators(annotators)
         results = run_pipeline(graph, repo, selected, logger=run_logger)
+        with run_logger.span("score_risk") as span:
+            score_risk(graph)
+            span["nodes"] = graph.number_of_nodes()
         with run_logger.span("write_json_graph", output=output):
             write_json_graph(graph, output)
     finally:
