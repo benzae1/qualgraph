@@ -1,12 +1,12 @@
 # Graph Report - analytify  (2026-04-29)
 
 ## Corpus Check
-- 62 files · ~20,281 words
+- 62 files · ~21,148 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 601 nodes · 2063 edges · 18 communities detected
-- Extraction: 39% EXTRACTED · 61% INFERRED · 0% AMBIGUOUS · INFERRED: 1258 edges (avg confidence: 0.6)
+- 634 nodes · 2286 edges · 17 communities detected
+- Extraction: 37% EXTRACTED · 63% INFERRED · 0% AMBIGUOUS · INFERRED: 1436 edges (avg confidence: 0.59)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -21,37 +21,36 @@
 - [[_COMMUNITY_Community 8|Community 8]]
 - [[_COMMUNITY_Community 9|Community 9]]
 - [[_COMMUNITY_Community 10|Community 10]]
-- [[_COMMUNITY_Community 11|Community 11]]
-- [[_COMMUNITY_Community 14|Community 14]]
+- [[_COMMUNITY_Community 13|Community 13]]
+- [[_COMMUNITY_Community 23|Community 23]]
+- [[_COMMUNITY_Community 24|Community 24]]
 - [[_COMMUNITY_Community 25|Community 25]]
 - [[_COMMUNITY_Community 26|Community 26]]
 - [[_COMMUNITY_Community 27|Community 27]]
-- [[_COMMUNITY_Community 28|Community 28]]
-- [[_COMMUNITY_Community 29|Community 29]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `RunLogger` - 73 edges
-2. `TestLinkageAnnotator` - 50 edges
-3. `CoChangeAnnotator` - 49 edges
-4. `AnnotatorResult` - 48 edges
-5. `DocstringAnnotator` - 48 edges
-6. `RadonAnnotator` - 48 edges
-7. `BanditAnnotator` - 46 edges
-8. `CoverageAnnotator` - 46 edges
-9. `PipAuditAnnotator` - 46 edges
-10. `RuffAnnotator` - 46 edges
+1. `RunLogger` - 82 edges
+2. `TestLinkageAnnotator` - 59 edges
+3. `CoChangeAnnotator` - 58 edges
+4. `DocstringAnnotator` - 57 edges
+5. `RadonAnnotator` - 57 edges
+6. `BanditAnnotator` - 55 edges
+7. `CoverageAnnotator` - 55 edges
+8. `PipAuditAnnotator` - 55 edges
+9. `RuffAnnotator` - 55 edges
+10. `VultureAnnotator` - 55 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `RunLogger` --uses--> `Provider-agnostic LLM client with built-in cost/timing logging.`  [INFERRED]
   src\qualgraph\logging.py → src\qualgraph\llm\client.py
 - `RunLogger` --uses--> `Base interface for graph annotators.`  [INFERRED]
   src\qualgraph\logging.py → src\qualgraph\annotators\base.py
-- `parse_analysis_response()` --calls--> `test_parse_analysis_response_discards_findings_without_source_evidence()`  [INFERRED]
-  src\qualgraph\llm\parser.py → tests\unit\test_llm_tasks.py
-- `build()` --calls--> `RunLogger`  [INFERRED]
-  src\qualgraph\cli.py → src\qualgraph\logging.py
-- `build()` --calls--> `build_graph()`  [INFERRED]
-  src\qualgraph\cli.py → src\qualgraph\graph\builder.py
+- `NodeType` --uses--> `Composite risk scoring for LLM candidate selection.`  [INFERRED]
+  src\qualgraph\graph\schema.py → src\qualgraph\scoring\risk.py
+- `NodeType` --uses--> `Write composite risk scores onto function and method nodes.`  [INFERRED]
+  src\qualgraph\graph\schema.py → src\qualgraph\scoring\risk.py
+- `NodeType` --uses--> `Return the highest-risk function/method nodes after scoring.`  [INFERRED]
+  src\qualgraph\graph\schema.py → src\qualgraph\scoring\risk.py
 
 ## Hyperedges (group relationships)
 - **Annotator Plugin Architecture** — annotator_base, annotator_pipeline, annotator_bandit, annotator_ruff, annotator_radon [INFERRED 0.80]
@@ -65,108 +64,104 @@
 
 ### Community 0 - "Community 0"
 Cohesion: 0.06
-Nodes (32): Enum, Tiny order-processing package used as a qualgraph benchmark fixture., Inventory, Inventory storage and reservation logic., StockItem, Customer, CustomerTier, LineItem (+24 more)
+Nodes (80): build_context(), build_node_analysis_prompt(), evidence_corpus(), _node_summary(), Build graph-aware LLM prompts., render_analysis_prompt(), _template_env(), _truncate() (+72 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.2
-Nodes (66): High-level LLM analysis entry points., Analyze the highest-risk nodes with cache-first, evidence-validated LLM calls., Anthropic LLM provider., BanditAnnotator, Mutate ``graph`` with this annotator's signal., BaseAnnotator, _DryRunProvider, _NoopCache (+58 more)
+Cohesion: 0.04
+Nodes (53): ABC, _finding_payload(), Bandit security annotator., _relative_to_repo(), _severity_num(), AnnotatorResult, BaseAnnotator, Base interface for graph annotators. (+45 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.05
-Nodes (46): ABC, _finding_payload(), Bandit security annotator., _relative_to_repo(), _severity_num(), AnnotatorResult, BaseAnnotator, Base interface for graph annotators. (+38 more)
+Cohesion: 0.06
+Nodes (31): Tiny order-processing package used as a qualgraph benchmark fixture., Inventory, Inventory storage and reservation logic., StockItem, Customer, CustomerTier, LineItem, Order (+23 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.07
-Nodes (59): AnalysisSummary, analyze_top_n(), _attach_findings(), build_request(), _cache_key(), _finding_payload(), _grammar_version(), parse_response() (+51 more)
+Cohesion: 0.21
+Nodes (74): High-level LLM analysis entry points., Analyze the highest-risk nodes with cache-first, evidence-validated LLM calls., Anthropic LLM provider., BanditAnnotator, Mutate ``graph`` with this annotator's signal., BaseAnnotator, _DryRunProvider, _NoopCache (+66 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.07
-Nodes (58): Git co-change annotator., _calls_from_node(), _calls_matching_package(), detect_complex_hotspots(), detect_cross_signal_findings(), detect_cyclic_dependencies(), detect_god_nodes(), detect_hidden_coupling() (+50 more)
+Cohesion: 0.05
+Nodes (44): AnalysisSummary, analyze_top_n(), _attach_findings(), build_request(), _cache_key(), _finding_payload(), _grammar_version(), LLMAnalyzer (+36 more)
 
 ### Community 5 - "Community 5"
-Cohesion: 0.07
-Nodes (27): LLMAnalyzer, NodeAnalysisRequest, AnthropicProvider, _cost(), _message_text(), _system_blocks(), TokenPricing, _resolve_provider() (+19 more)
+Cohesion: 0.06
+Nodes (65): Definition, Build a NetworkX code graph from Python source files.  The builder intentionally, Git co-change annotator., _calls_from_node(), _calls_matching_package(), detect_complex_hotspots(), detect_cross_signal_findings(), detect_cyclic_dependencies() (+57 more)
 
 ### Community 6 - "Community 6"
-Cohesion: 0.08
-Nodes (32): annotate(), build(), _default_llm_task_dir(), _default_model(), llm_analyze(), llm_export_tasks(), llm_import_results(), main() (+24 more)
+Cohesion: 0.07
+Nodes (41): annotate(), build(), _default_llm_task_dir(), _default_model(), _echo_verbose_run(), export_json(), llm_analyze(), llm_export_tasks() (+33 more)
 
 ### Community 7 - "Community 7"
-Cohesion: 0.11
-Nodes (40): _aliased_import_parts(), build_graph(), _call_name(), _class_base_names(), _class_definition_nodes(), _collect_python_files(), Definition, _docstring() (+32 more)
+Cohesion: 0.15
+Nodes (30): _add_edge(), _aliased_import_parts(), build_graph(), _call_name(), _class_base_names(), _class_definition_nodes(), _collect_python_files(), _docstring() (+22 more)
 
 ### Community 8 - "Community 8"
-Cohesion: 0.09
-Nodes (31): _add_edge(), _module_node_for_file(), Git history annotator., _relative_to_target(), _target_prefix(), _add_vulnerable_import_edge(), _clear_imports_vulnerable_edges(), _ensure_dependency_node() (+23 more)
+Cohesion: 0.24
+Nodes (11): _add_edge(), _candidate_names(), _dedupe(), _matches_suffix(), resolve_calls(), _resolve_name(), edge_attrs_to_graph(), _add_dynamic_context_edges() (+3 more)
 
 ### Community 9 - "Community 9"
 Cohesion: 0.26
 Nodes (12): annotate_cluster_roles(), annotate_metrics(), _cluster_role(), _degree_centrality(), _is_pipeline_node(), _normalize(), _pagerank(), _percentile() (+4 more)
 
 ### Community 10 - "Community 10"
-Cohesion: 0.27
-Nodes (8): cache_key(), normalized_function_body(), SQLite-backed content-addressed cache., Normalize source for cache identity without semantic reformatting., _strip_comments(), test_cache_key_uses_exact_ordered_fields(), test_normalized_function_body_can_strip_comments_without_black_formatting(), test_normalized_function_body_preserves_format_but_normalizes_line_endings_and_trailing_space()
-
-### Community 11 - "Community 11"
 Cohesion: 1.0
 Nodes (2): CHANGELOG, README
 
-### Community 14 - "Community 14"
+### Community 13 - "Community 13"
 Cohesion: 1.0
 Nodes (1): Mutate ``graph`` with this annotator's signal.
 
-### Community 25 - "Community 25"
+### Community 23 - "Community 23"
 Cohesion: 1.0
 Nodes (1): Return the stable node id used by graph building and caching.      Convention: `
 
-### Community 26 - "Community 26"
+### Community 24 - "Community 24"
 Cohesion: 1.0
 Nodes (1): Write structured JSONL events and aggregate per-run counters.
 
-### Community 27 - "Community 27"
+### Community 25 - "Community 25"
 Cohesion: 1.0
 Nodes (1): Classify each node's role within its cluster using simple topology.
 
-### Community 28 - "Community 28"
+### Community 26 - "Community 26"
 Cohesion: 1.0
 Nodes (1): Return the stable node id used by graph building and caching.      Convention: `
 
-### Community 29 - "Community 29"
+### Community 27 - "Community 27"
 Cohesion: 1.0
 Nodes (1): Return the stable node id used by graph building and caching.      Convention: `
 
 ## Knowledge Gaps
 - **34 isolated node(s):** `Domain models for the tiny shop benchmark.`, `LLMUsage`, `Structured run logging for qualgraph.  Every CLI run should create a JSONL event`, `Write structured JSONL events and aggregate per-run counters.`, `Mutate ``graph`` with this annotator's signal.` (+29 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 11`** (2 nodes): `CHANGELOG`, `README`
+- **Thin community `Community 10`** (2 nodes): `CHANGELOG`, `README`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 14`** (1 nodes): `Mutate ``graph`` with this annotator's signal.`
+- **Thin community `Community 13`** (1 nodes): `Mutate ``graph`` with this annotator's signal.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 25`** (1 nodes): `Return the stable node id used by graph building and caching.      Convention: ``
+- **Thin community `Community 23`** (1 nodes): `Return the stable node id used by graph building and caching.      Convention: ``
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 26`** (1 nodes): `Write structured JSONL events and aggregate per-run counters.`
+- **Thin community `Community 24`** (1 nodes): `Write structured JSONL events and aggregate per-run counters.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 27`** (1 nodes): `Classify each node's role within its cluster using simple topology.`
+- **Thin community `Community 25`** (1 nodes): `Classify each node's role within its cluster using simple topology.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 28`** (1 nodes): `Return the stable node id used by graph building and caching.      Convention: ``
+- **Thin community `Community 26`** (1 nodes): `Return the stable node id used by graph building and caching.      Convention: ``
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 29`** (1 nodes): `Return the stable node id used by graph building and caching.      Convention: ``
+- **Thin community `Community 27`** (1 nodes): `Return the stable node id used by graph building and caching.      Convention: ``
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `RunLogger` connect `Community 1` to `Community 2`, `Community 3`, `Community 5`, `Community 6`?**
-  _High betweenness centrality (0.085) - this node is a cross-community bridge._
-- **Why does `Cache` connect `Community 1` to `Community 10`, `Community 3`, `Community 5`, `Community 6`?**
-  _High betweenness centrality (0.067) - this node is a cross-community bridge._
-- **Why does `NodeType` connect `Community 4` to `Community 0`, `Community 1`, `Community 2`, `Community 3`, `Community 5`, `Community 7`, `Community 8`?**
-  _High betweenness centrality (0.066) - this node is a cross-community bridge._
-- **Are the 66 inferred relationships involving `RunLogger` (e.g. with `_DryRunProvider` and `_NoopCache`) actually correct?**
-  _`RunLogger` has 66 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 47 inferred relationships involving `TestLinkageAnnotator` (e.g. with `_DryRunProvider` and `_NoopCache`) actually correct?**
-  _`TestLinkageAnnotator` has 47 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 45 inferred relationships involving `CoChangeAnnotator` (e.g. with `_DryRunProvider` and `_NoopCache`) actually correct?**
-  _`CoChangeAnnotator` has 45 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 46 inferred relationships involving `AnnotatorResult` (e.g. with `BanditAnnotator` and `Bandit security annotator.`) actually correct?**
-  _`AnnotatorResult` has 46 INFERRED edges - model-reasoned connections that need verification._
+- **Why does `RunLogger` connect `Community 3` to `Community 1`, `Community 4`, `Community 6`?**
+  _High betweenness centrality (0.083) - this node is a cross-community bridge._
+- **Why does `Cache` connect `Community 3` to `Community 0`, `Community 4`, `Community 6`?**
+  _High betweenness centrality (0.073) - this node is a cross-community bridge._
+- **Why does `NodeType` connect `Community 5` to `Community 0`, `Community 1`, `Community 3`, `Community 4`?**
+  _High betweenness centrality (0.062) - this node is a cross-community bridge._
+- **Are the 75 inferred relationships involving `RunLogger` (e.g. with `_DryRunProvider` and `_NoopCache`) actually correct?**
+  _`RunLogger` has 75 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 56 inferred relationships involving `TestLinkageAnnotator` (e.g. with `_DryRunProvider` and `_NoopCache`) actually correct?**
+  _`TestLinkageAnnotator` has 56 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 54 inferred relationships involving `CoChangeAnnotator` (e.g. with `_DryRunProvider` and `_NoopCache`) actually correct?**
+  _`CoChangeAnnotator` has 54 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 54 inferred relationships involving `DocstringAnnotator` (e.g. with `_DryRunProvider` and `_NoopCache`) actually correct?**
+  _`DocstringAnnotator` has 54 INFERRED edges - model-reasoned connections that need verification._

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
@@ -34,6 +35,7 @@ from qualgraph.llm.providers import AnthropicProvider, OllamaProvider, OpenAIPro
 from qualgraph.llm.tasks import export_tasks as export_llm_tasks
 from qualgraph.llm.tasks import import_results as import_llm_results
 from qualgraph.logging import RunLogger
+from qualgraph.report.json_export import write_json_export
 from qualgraph.report.markdown import write_markdown_report
 from qualgraph.scoring.risk import score as score_risk
 
@@ -55,6 +57,7 @@ def build(
     graphml: Optional[Path] = typer.Option(None, "--graphml", help="Optional GraphML export path."),
     exclude: list[str] = typer.Option([], "--exclude", "-x", help="Additional glob to exclude."),
     resolution: float = typer.Option(1.0, "--resolution", help="Leiden clustering resolution."),
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="Print per-stage timings from the run log."),
 ) -> None:
     """Build a Python code graph and write an annotated graph artifact."""
 
@@ -93,6 +96,8 @@ def build(
         f"{graph.graph.get('cluster_count', 0)} clusters). "
         f"Run log: {summary.run_id}"
     )
+    if verbose:
+        _echo_verbose_run(run_logger)
 
 
 @app.command()
@@ -102,6 +107,7 @@ def annotate(
     output: Optional[Path] = typer.Option(None, "--output", "-o", help="Annotated graph JSON path."),
     annotators: str = typer.Option("radon,ruff,coverage,git", "--annotators", help="Comma-separated annotator names."),
     profile_json: Optional[Path] = typer.Option(None, "--profile-json", help="cProfile JSON artifact for the profiler annotator."),
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="Print per-stage timings from the run log."),
 ) -> None:
     """Run annotators over a graph, building the graph first if needed."""
 
@@ -117,7 +123,7 @@ def annotate(
             annotate_metrics(graph)
 
         selected = _resolve_annotators(annotators, profile_json=profile_json)
-        results = run_pipeline(graph, repo, selected, logger=run_logger)
+        results = run_pipeline(graph, repo, selected, logger=run_logger, show_progress=True)
         with run_logger.span("score_risk") as span:
             score_risk(graph)
             span["nodes"] = graph.number_of_nodes()
@@ -130,19 +136,42 @@ def annotate(
         f"Annotated {output} with {len(results)} result(s). "
         f"Run log: {summary.run_id}"
     )
+    if verbose:
+        _echo_verbose_run(run_logger)
 
 
 @app.command()
 def report(
     graph: Path = typer.Argument(..., exists=True, file_okay=True, dir_okay=False, readable=True),
     output: Optional[Path] = typer.Option(None, "--output", "-o", help="Markdown report path."),
+    top_n: int = typer.Option(10, "--top-n", min=1, help="Number of risk nodes to include."),
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="Print report-generation details."),
 ) -> None:
     """Render a Markdown report from an annotated graph JSON file."""
 
     output = output or graph.with_suffix(".report.md")
     code_graph = read_json_graph(graph)
-    write_markdown_report(code_graph, output)
+    write_markdown_report(code_graph, output, top_n=top_n)
     typer.echo(f"Wrote {output}")
+    if verbose:
+        typer.echo(f"Report source: {graph}")
+        typer.echo(f"Top-N risk nodes: {top_n}")
+
+
+@app.command("export-json")
+def export_json(
+    graph: Path = typer.Argument(..., exists=True, file_okay=True, dir_okay=False, readable=True),
+    output: Optional[Path] = typer.Option(None, "--output", "-o", help="Versioned JSON export path."),
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="Print export metadata."),
+) -> None:
+    """Write a versioned JSON integration export for dashboards, IDEs, and CI."""
+
+    output = output or graph.with_suffix(".export.json")
+    code_graph = read_json_graph(graph)
+    write_json_export(code_graph, output)
+    typer.echo(f"Wrote {output}")
+    if verbose:
+        typer.echo(f"Export source: {graph}")
 
 
 @llm_app.command("export-tasks")
@@ -334,3 +363,15 @@ class _NoopCache:
 
     def put(self, _key: str, _response: object) -> None:
         return None
+
+
+def _echo_verbose_run(run_logger: RunLogger) -> None:
+    typer.echo("Stage timings:")
+    if not run_logger.events_path.exists():
+        typer.echo("- no run events available")
+        return
+    for line in run_logger.events_path.read_text(encoding="utf-8").splitlines():
+        record = json.loads(line)
+        if record.get("duration_ms") is None:
+            continue
+        typer.echo(f"- {record.get('event')}: {record['duration_ms']} ms")

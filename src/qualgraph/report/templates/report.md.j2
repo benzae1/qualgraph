@@ -1,0 +1,185 @@
+# Qualgraph Report
+
+## Executive Summary
+
+- Nodes: {{ summary.nodes }}
+- Edges: {{ summary.edges }}
+- Clusters: {{ summary.clusters }}
+- Findings: {{ summary.findings }}
+- Total LLM cost: ${{ "%.4f"|format(summary.llm_cost_usd) }}
+{% if summary.duration_ms is not none %}
+- Runtime: {{ "%.1f"|format(summary.duration_ms) }} ms
+{% else %}
+- Runtime: unknown
+{% endif %}
+{% if summary.avg_coverage is not none %}
+- Average line coverage: {{ format_percent(summary.avg_coverage) }}
+{% endif %}
+
+Top findings:
+{% if summary.top_findings %}
+{% for record in summary.top_findings %}
+- {{ record.node.qualified_name }}: {{ record.finding.source }} {{ record.code }} {{ severity_text(record.finding) }}- {{ shorten(record.finding.message) }} ({{ record.node.file_path }}:{{ record.line }})
+{% endfor %}
+{% else %}
+- none
+{% endif %}
+
+## Per-Cluster Overview
+
+{% if clusters %}
+{% for cluster in clusters %}
+- {{ cluster.name }}: {{ cluster.size }} node(s); roles: {% if cluster.role_counts %}{% for role, count in cluster.role_counts %}{{ role }}={{ count }}{% if not loop.last %}, {% endif %}{% endfor %}{% else %}unknown{% endif %}
+  Key issues: {% if cluster.issues %}{% for issue in cluster.issues %}{{ issue.source }} {{ issue.code }} ({{ issue.count }}){% if not loop.last %}, {% endif %}{% endfor %}{% else %}none{% endif %}
+  Top risk: {% if cluster.top_risk %}{% for risk in cluster.top_risk %}{{ risk.node.qualified_name }} ({{ "%.1f"|format(risk.score) }}){% if not loop.last %}, {% endif %}{% endfor %}{% else %}none{% endif %}{{ "\n" }}
+{% endfor %}
+{% else %}
+- none
+{% endif %}
+
+## Top-N Risk Nodes
+
+{% if risk_nodes %}
+{% for item in risk_nodes %}
+### {{ loop.index }}. {{ item.node.qualified_name }}
+
+- Location: {{ item.node.file_path }}:{{ item.node.line_start }}-{{ item.node.line_end }}
+- Risk score: {{ "%.2f"|format(item.score) }}
+- Coverage: {{ format_percent(item.node.coverage_line) }}
+- Complexity: {{ item.node.complexity or "n/a" }}
+- Churn: {{ item.node.churn or 0 }}
+{% if item.risk_components %}
+- Risk score breakdown: {% for name, value in item.risk_components.items() %}{{ name }}={{ "%.2f"|format(value) }}{% if not loop.last %}, {% endif %}{% endfor %}{{ "\n" }}
+{% endif %}
+- Findings:
+{% if item.findings %}
+{% for record in item.findings %}
+  - {{ record.finding.source }} {{ record.code }} {{ severity_text(record.finding) }}- {{ shorten(record.finding.message) }}
+    Evidence: {{ shorten(record.finding.evidence, 180) }}
+{% endfor %}
+{% else %}
+  - none
+{% endif %}
+{% endfor %}
+{% else %}
+- none
+{% endif %}
+
+## Cross-Signal Findings
+
+{% if cross_signal_findings %}
+{% for record in cross_signal_findings %}
+- {{ record.node.qualified_name }}: {{ record.code }} {{ severity_text(record.finding) }}- {{ shorten(record.finding.message) }}
+  Evidence: {{ shorten(record.finding.evidence, 180) }}
+{% endfor %}
+{% else %}
+- none
+{% endif %}
+
+## Per-Dimension Scorecards
+
+{% for card in dimension_scorecards %}
+- {{ card.dimension }}: {{ card.count }} finding(s); severity: {% if card.severity_counts %}{% for severity, count in card.severity_counts %}{{ severity }}={{ count }}{% if not loop.last %}, {% endif %}{% endfor %}{% else %}none{% endif %}
+  Worst offenders: {% if card.worst_offenders %}{% for item in card.worst_offenders %}{{ item.node.qualified_name }} ({{ "%.1f"|format(item.score) }}){% if not loop.last %}, {% endif %}{% endfor %}{% else %}none{% endif %}{{ "\n" }}
+{% endfor %}
+
+## Node Types
+
+{% for node_type, count in node_types %}
+- {{ node_type }}: {{ count }}
+{% endfor %}
+
+## Edge Types
+
+{% for edge_type, count in edge_types %}
+- {{ edge_type }}: {{ count }}
+{% endfor %}
+
+## Top Structural Nodes
+
+{% for node_id, attrs in top_structural_nodes %}
+- {{ attrs.qualified_name or attrs.name }} ({{ attrs.type }}, score={{ format_score(attrs.structural_score or attrs.centrality) }}, degree={{ (attrs.in_degree or 0) + (attrs.out_degree or 0) }} in/out={{ attrs.in_degree or 0 }}/{{ attrs.out_degree or 0 }}, betweenness={{ format_small(attrs.betweenness_centrality or attrs.centrality) }}, role={{ attrs.cluster_role or "unknown" }})
+{% endfor %}
+
+## Findings By Tool
+
+_Deduped by node, tool, rule, location, and message._
+
+{% if findings_by_tool %}
+{% for item in findings_by_tool %}
+- {{ item.tool }}: {{ item.count }} total ({{ item.production }} production, {{ item.test }} test); top rules: {{ item.top_rules }}
+{% endfor %}
+{% else %}
+- none
+{% endif %}
+
+## Top Finding Rules
+
+{% if top_rules %}
+{% for rule in top_rules %}
+- {{ rule.source }} {{ rule.code }}: {{ rule.count }} - {{ shorten(rule.message) }}
+{% endfor %}
+{% else %}
+- none
+{% endif %}
+
+## Priority Findings
+
+{% if priority_findings %}
+{% for record in priority_findings %}
+- {{ record.node.qualified_name }}: {{ record.finding.source }} {{ record.code }} {{ severity_text(record.finding) }}- {{ shorten(record.finding.message) }} ({{ record.node.file_path }}:{{ record.line }})
+{% endfor %}
+{% else %}
+- none
+{% endif %}
+
+## Risk Hotspots
+
+{% if risk_nodes %}
+{% for item in risk_nodes %}
+- {{ item.node.qualified_name }}: score={{ "%.1f"|format(item.score) }}, findings={{ item.finding_count }}, coverage={{ format_percent(item.node.coverage_line) }}, complexity={{ item.node.complexity or "n/a" }}, churn={{ item.node.churn or 0 }} ({{ item.node.file_path }}:{{ item.node.line_start }})
+{% endfor %}
+{% else %}
+- none
+{% endif %}
+
+## Coverage Gaps
+
+{% if coverage_gaps %}
+{% for attrs in coverage_gaps %}
+- {{ attrs.qualified_name }}: {{ format_percent(attrs.coverage_line) }} ({{ attrs.file_path }}:{{ attrs.line_start }})
+{% endfor %}
+{% else %}
+- none
+{% endif %}
+
+## Test Linkage
+
+- Tested production functions/methods: {{ test_linkage.tested }}/{{ test_linkage.production }}
+{% if test_linkage.untested %}
+{% for attrs in test_linkage.untested %}
+- Untested/weakly tested: {{ attrs.qualified_name }} ({{ format_percent(attrs.coverage_line) }}, {{ attrs.file_path }}:{{ attrs.line_start }})
+{% endfor %}
+{% else %}
+- No untested production functions with low coverage.
+{% endif %}
+
+## Git History
+
+{% if git_history %}
+{% for item in git_history %}
+- {{ item.file_path }}: churn={{ item.churn }}, authors={{ item.author_count }}, bugfix commits={{ item.bug_fix_keywords }}
+{% endfor %}
+{% else %}
+- No git history annotations available.
+{% endif %}
+
+## Co-Change
+
+{% if co_changes %}
+{% for item in co_changes %}
+- {{ item.source }} <-> {{ item.target }}: count={{ item.co_change_count }}, rate={{ format_percent(item.co_change_rate) }}
+{% endfor %}
+{% else %}
+- No co-change pairs met the configured threshold.
+{% endif %}

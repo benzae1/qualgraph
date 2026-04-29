@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from json import JSONDecodeError
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -37,7 +38,10 @@ class ProfilerAnnotator(BaseAnnotator):
         if not path.exists():
             return AnnotatorResult(name=self.name, errors=[f"profile JSON not found: {path}"])
 
-        payload = json.loads(path.read_text(encoding="utf-8-sig"))
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8-sig"))
+        except JSONDecodeError as exc:
+            raise ValueError(f"invalid profile JSON in {path}:{exc.lineno}:{exc.colno}: {exc.msg}") from exc
         records = _profile_records(payload)
         total = _total_time(payload, records)
         index = _node_location_index(graph, repo_path)

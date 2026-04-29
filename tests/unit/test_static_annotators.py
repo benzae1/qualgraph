@@ -26,6 +26,7 @@ from qualgraph.findings.cross_signal import (
 from qualgraph.graph.builder import build_graph
 from qualgraph.graph.metrics import annotate_metrics
 from qualgraph.graph.schema import NodeAttrs, NodeType, node_attrs_to_graph
+from qualgraph.report.json_export import EXPORT_SCHEMA_VERSION, export_json_data
 from qualgraph.report.markdown import render_markdown_report
 from qualgraph.scoring.risk import score, top_risk_nodes
 
@@ -489,11 +490,31 @@ def test_report_surfaces_deduped_rules_hotspots_and_readable_centrality() -> Non
     report = render_markdown_report(graph)
 
     assert "- Findings: 1" in report
+    assert "## Executive Summary" in report
+    assert "## Per-Cluster Overview" in report
+    assert "## Top-N Risk Nodes" in report
+    assert "## Cross-Signal Findings" in report
+    assert "## Per-Dimension Scorecards" in report
     assert "## Top Finding Rules" in report
     assert "ruff E501: 1" in report
     assert "## Risk Hotspots" in report
     assert "score=" in report
     assert "betweenness=" in report
+
+
+def test_json_export_wraps_node_link_data_with_versioned_metadata() -> None:
+    graph = nx.DiGraph()
+    graph.graph["config"] = {"annotators": ["radon"]}
+    graph.add_node("node", type=NodeType.FUNCTION.value)
+
+    payload = export_json_data(graph, run_timestamp="2026-04-29T00:00:00+00:00")
+
+    assert payload["schema_version"] == EXPORT_SCHEMA_VERSION
+    assert payload["metadata"]["run_timestamp"] == "2026-04-29T00:00:00+00:00"
+    assert payload["metadata"]["config_hash"]
+    assert payload["metadata"]["annotator_versions"]["radon"] == "1.0"
+    assert payload["graph"]["schema_version"]
+    assert payload["graph"]["nodes"][0]["id"] == "node"
 
 
 def _sample_graph_with_function() -> nx.DiGraph:

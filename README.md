@@ -133,7 +133,8 @@ Important node attributes:
 ```powershell
 qualgraph build <repo> --output .qualgraph/graph.json
 qualgraph annotate <repo> --graph .qualgraph/graph.json --output .qualgraph/annotated.graph.json --annotators radon,ruff,coverage,git,security
-qualgraph report .qualgraph/annotated.graph.json --output .qualgraph/report.md
+qualgraph report .qualgraph/annotated.graph.json --output .qualgraph/report.md --top-n 10
+qualgraph export-json .qualgraph/annotated.graph.json --output .qualgraph/export.json
 ```
 
 LLM agent-file workflow:
@@ -337,7 +338,11 @@ CREATE TABLE IF NOT EXISTS llm_cache(
 
 The Markdown report currently includes:
 
-- summary counts
+- executive summary with counts, top findings, LLM cost, and runtime
+- per-cluster overview
+- top-N risk nodes with score breakdowns and evidence trails
+- cross-signal findings
+- per-dimension scorecards
 - node type counts
 - edge type counts
 - top structural nodes
@@ -349,6 +354,14 @@ The Markdown report currently includes:
 - test linkage summary
 - git history summary
 - co-change summary
+
+The versioned JSON export is the stable integration surface for IDE plugins, dashboards, CI, and hosted product experiments. It contains:
+
+- `schema_version`
+- `metadata.run_timestamp`
+- `metadata.config_hash`
+- `metadata.annotator_versions`
+- `graph`: NetworkX node-link data
 
 Important note for agents: `qualgraph build` alone creates a sparse structural report. Findings, coverage, git, and security sections populate only after `qualgraph annotate` has run. LLM findings appear only after `llm export-tasks`, agent result completion, and `llm import-results`.
 
