@@ -13,8 +13,10 @@ from qualgraph.annotators.coverage import CoverageAnnotator
 from qualgraph.annotators.docstring import DocstringAnnotator
 from qualgraph.annotators.git_history import GitHistoryAnnotator
 from qualgraph.annotators.pipeline import run_pipeline
+from qualgraph.annotators.pip_audit import PipAuditAnnotator
 from qualgraph.annotators.radon import RadonAnnotator
 from qualgraph.annotators.ruff import RuffAnnotator
+from qualgraph.annotators.secrets import SecretsAnnotator
 from qualgraph.annotators.test_linkage import TestLinkageAnnotator
 from qualgraph.annotators.vulture import VultureAnnotator
 from qualgraph.graph.builder import build_graph
@@ -133,6 +135,10 @@ def _resolve_annotators(names: str) -> list:
         "coverage_only": CoverageAnnotator,
         "test_linkage": TestLinkageAnnotator,
         "tests": TestLinkageAnnotator,
+        "pip_audit": PipAuditAnnotator,
+        "pipaudit": PipAuditAnnotator,
+        "secrets": SecretsAnnotator,
+        "security": (BanditAnnotator, PipAuditAnnotator, SecretsAnnotator),
         "git": (GitHistoryAnnotator, CoChangeAnnotator),
         "git_history": GitHistoryAnnotator,
         "co_change": CoChangeAnnotator,

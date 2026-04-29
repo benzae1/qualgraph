@@ -1,4 +1,5 @@
 from pathlib import Path
+from unittest.mock import patch
 
 import networkx as nx
 
@@ -6,7 +7,9 @@ from qualgraph.annotators.docstring import DocstringAnnotator
 from qualgraph.annotators.findings import add_finding, clear_findings_by_source
 from qualgraph.annotators.git_history import _relative_to_target
 from qualgraph.annotators.locations import find_node_for_location
+from qualgraph.annotators.pip_audit import PipAuditAnnotator
 from qualgraph.annotators.radon import RadonAnnotator
+from qualgraph.annotators.secrets import SecretsAnnotator
 from qualgraph.annotators.test_linkage import TestLinkageAnnotator
 from qualgraph.findings.cross_signal import detect_untested_hotspots
 from qualgraph.graph.builder import build_graph
@@ -135,6 +138,65 @@ def test_detect_untested_hotspots_combines_complexity_centrality_and_coverage() 
     assert findings[0].evidence == {"complexity": 12.0, "centrality": 0.9, "coverage": 0.0}
 
 
+def test_pip_audit_adds_vulnerable_import_edges_to_importing_node() -> None:
+    graph = _sample_graph_with_function()
+    graph.graph["pending_imports"] = [
+        {
+            "source": "module",
+            "name": "requests",
+            "alias": "requests",
+            "file_path": "sample.py",
+            "line_start": 6,
+        }
+    ]
+    payload = {
+        "dependencies": [
+            {
+                "name": "requests",
+                "version": "2.19.0",
+                "vulns": [{"id": "PYSEC-1", "aliases": ["CVE-2024-0001"]}],
+            }
+        ]
+    }
+
+    with patch("qualgraph.annotators.pip_audit.subprocess.run", return_value=_completed(payload)):
+        result = PipAuditAnnotator().annotate(graph, Path("."))
+
+    assert result.edges_added == 1
+    assert result.nodes_annotated == 1
+    assert graph.has_edge("function", "dependency::requests")
+    edge = graph.edges["function", "dependency::requests"]
+    assert edge["type"] == "imports_vulnerable"
+    assert edge["package"] == "requests"
+    assert edge["vulnerability_ids"] == ["CVE-2024-0001", "PYSEC-1"]
+    assert graph.nodes["function"]["findings"][0]["source"] == "pip-audit"
+
+
+def test_detect_secrets_attaches_conservative_low_severity_findings() -> None:
+    graph = _sample_graph_with_function()
+    payload = {
+        "results": {
+            "sample.py": [
+                {
+                    "type": "Secret Keyword",
+                    "line_number": 6,
+                    "hashed_secret": "abc123",
+                    "is_verified": False,
+                }
+            ]
+        }
+    }
+
+    with patch("qualgraph.annotators.secrets.subprocess.run", return_value=_completed(payload)):
+        result = SecretsAnnotator().annotate(graph, Path("."))
+
+    assert result.nodes_annotated == 1
+    finding = graph.nodes["function"]["findings"][0]
+    assert finding["source"] == "detect-secrets"
+    assert finding["severity"] == "LOW"
+    assert finding["confidence"] == "AMBIGUOUS"
+
+
 def test_report_surfaces_deduped_rules_hotspots_and_readable_centrality() -> None:
     graph = nx.DiGraph()
     graph.add_node(
@@ -181,3 +243,45 @@ def test_report_surfaces_deduped_rules_hotspots_and_readable_centrality() -> Non
     assert "## Risk Hotspots" in report
     assert "score=" in report
     assert "betweenness=" in report
+
+
+def _sample_graph_with_function() -> nx.DiGraph:
+    graph = nx.DiGraph()
+    graph.add_node(
+        "module",
+        **node_attrs_to_graph(
+            NodeAttrs(
+                id="module",
+                type=NodeType.MODULE,
+                name="sample",
+                qualified_name="sample",
+                file_path="sample.py",
+                line_start=1,
+                line_end=20,
+            )
+        ),
+    )
+    graph.add_node(
+        "function",
+        **node_attrs_to_graph(
+            NodeAttrs(
+                id="function",
+                type=NodeType.FUNCTION,
+                name="work",
+                qualified_name="sample.work",
+                file_path="sample.py",
+                line_start=5,
+                line_end=8,
+            )
+        ),
+    )
+    return graph
+
+
+class _completed:
+    def __init__(self, payload: dict) -> None:
+        import json
+
+        self.returncode = 0
+        self.stdout = json.dumps(payload)
+        self.stderr = ""
