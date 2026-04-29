@@ -143,6 +143,13 @@ qualgraph llm import-results .qualgraph/runs/<run_id> --graph .qualgraph/annotat
 qualgraph report .qualgraph/final.graph.json --output .qualgraph/report.md
 ```
 
+API-backed LLM workflow:
+
+```powershell
+qualgraph llm analyze .qualgraph/annotated.graph.json --max-llm-calls 20 --provider ollama --dry-run
+qualgraph llm analyze .qualgraph/annotated.graph.json --max-llm-calls 20 --provider openai --model gpt-4o-mini --output .qualgraph/final.graph.json
+```
+
 The intended future command is:
 
 ```powershell
@@ -396,6 +403,7 @@ Implemented:
 - LLM telemetry
 - agent-file LLM workflow
 - SQLite LLM cache
+- API-backed LLM analyzer with `--max-llm-calls` and `--dry-run`
 - Markdown report generation
 - repo-local Qualgraph skill scaffold
 - tiny benchmark repo and unit tests

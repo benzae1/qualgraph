@@ -2,7 +2,11 @@ import json
 from pathlib import Path
 from types import SimpleNamespace
 
-from qualgraph.llm.analyzer import LLMAnalyzer, NodeAnalysisRequest
+import networkx as nx
+
+from qualgraph.cache.sqlite import Cache
+from qualgraph.graph.schema import NodeAttrs, NodeType, node_attrs_to_graph
+from qualgraph.llm.analyzer import LLMAnalyzer, NodeAnalysisRequest, analyze_top_n
 from qualgraph.llm.client import LLMClient, LLMProvider, LLMRequest, LLMResponse
 from qualgraph.llm.providers.anthropic import AnthropicProvider, TokenPricing as AnthropicPricing
 from qualgraph.llm.providers.ollama import OllamaProvider
@@ -23,6 +27,40 @@ class FakeProvider(LLMProvider):
             cached_input_tokens=3,
             model_id=self.model_id,
             cost_usd=0.012,
+        )
+
+
+class FindingProvider(LLMProvider):
+    def __init__(self) -> None:
+        self.calls = 0
+
+    @property
+    def model_id(self) -> str:
+        return "finding-model"
+
+    def complete(self, req: LLMRequest) -> LLMResponse:
+        self.calls += 1
+        return LLMResponse(
+            text=json.dumps(
+                {
+                    "findings": [
+                        {
+                            "dimension": "reliability",
+                            "severity": "high",
+                            "confidence": "INFERRED",
+                            "title": "Unhandled risky call",
+                            "description": "The risky call is returned without local handling.",
+                            "evidence": "return risky()",
+                            "suggested_action": "Handle the error or document propagation.",
+                        }
+                    ]
+                }
+            ),
+            input_tokens=20,
+            output_tokens=10,
+            cached_input_tokens=5,
+            model_id=self.model_id,
+            cost_usd=0.01,
         )
 
 
@@ -66,6 +104,51 @@ def test_analyzer_builds_node_analysis_request() -> None:
 
     assert "careful code quality analyst" in response.text
     assert "inspect me" in response.text
+
+
+def test_analyze_top_n_calls_provider_caches_and_attaches_findings(tmp_path: Path) -> None:
+    graph = _graph_with_risky_function()
+    provider = FindingProvider()
+    logger = RunLogger(repo_path=Path("."), artifacts_dir=tmp_path / "runs", run_id="run-1")
+    cache = Cache(tmp_path / "cache.db")
+
+    summary = analyze_top_n(graph, top_n=1, provider=provider, cache=cache, logger=logger)
+    logger.finish()
+
+    assert summary.analyzed == 1
+    assert summary.llm_calls == 1
+    assert summary.cache_hits == 0
+    assert summary.findings_added == 1
+    assert provider.calls == 1
+    assert graph.nodes["function"]["llm_findings"][0]["dimension"] == "reliability"
+    assert graph.nodes["function"]["llm_severity_max"] == 0.85
+    assert graph.nodes["function"]["risk_components"]["llm"] == 0.85
+    assert graph.nodes["function"]["findings"][0]["source"] == "llm"
+    rows = [json.loads(line) for line in (tmp_path / "runs" / "run-1" / "llm_calls.jsonl").read_text().splitlines()]
+    assert rows[0]["prompt_template"] == "analysis-v1"
+
+    cached_summary = analyze_top_n(graph, top_n=1, provider=provider, cache=cache)
+
+    assert cached_summary.cache_hits == 1
+    assert cached_summary.llm_calls == 0
+    assert provider.calls == 1
+    cache.close()
+
+
+def test_analyze_top_n_dry_run_returns_prompts_without_provider_call(tmp_path: Path) -> None:
+    graph = _graph_with_risky_function()
+    provider = FindingProvider()
+    cache = Cache(tmp_path / "cache.db")
+
+    summary = analyze_top_n(graph, top_n=1, provider=provider, cache=cache, dry_run=True)
+
+    assert summary.dry_run is True
+    assert summary.ranked == 1
+    assert summary.dry_run_tasks[0]["node_id"] == "function"
+    assert "return risky()" in summary.dry_run_tasks[0]["user"]
+    assert provider.calls == 0
+    assert "llm_findings" not in graph.nodes["function"]
+    cache.close()
 
 
 def test_anthropic_provider_uses_ephemeral_system_cache_block() -> None:
@@ -152,3 +235,24 @@ def test_ollama_provider_posts_to_local_chat_api(monkeypatch) -> None:
     assert captured["json"]["stream"] is False
     assert response.text == "ok"
     assert response.cost_usd == 0.0
+
+
+def _graph_with_risky_function() -> nx.DiGraph:
+    graph = nx.DiGraph()
+    graph.add_node(
+        "function",
+        **node_attrs_to_graph(
+            NodeAttrs(
+                id="function",
+                type=NodeType.FUNCTION,
+                name="work",
+                qualified_name="sample.work",
+                file_path="sample.py",
+                line_start=1,
+                line_end=2,
+                source="def work():\n    return risky()\n",
+                risk_score=2.0,
+            )
+        ),
+    )
+    return graph

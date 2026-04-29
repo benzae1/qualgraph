@@ -21,10 +21,14 @@ from qualgraph.annotators.ruff import RuffAnnotator
 from qualgraph.annotators.secrets import SecretsAnnotator
 from qualgraph.annotators.test_linkage import TestLinkageAnnotator
 from qualgraph.annotators.vulture import VultureAnnotator
+from qualgraph.cache.sqlite import Cache
 from qualgraph.graph.builder import build_graph
 from qualgraph.graph.clustering import annotate_clusters
 from qualgraph.graph.metrics import annotate_metrics
 from qualgraph.graph.serialize import read_json_graph, write_graphml_graph, write_json_graph
+from qualgraph.llm.analyzer import analyze_top_n
+from qualgraph.llm.client import LLMProvider, LLMRequest, LLMResponse
+from qualgraph.llm.providers import AnthropicProvider, OllamaProvider, OpenAIProvider
 from qualgraph.llm.tasks import export_tasks as export_llm_tasks
 from qualgraph.llm.tasks import import_results as import_llm_results
 from qualgraph.logging import RunLogger
@@ -175,6 +179,59 @@ def llm_import_results(
     )
 
 
+@llm_app.command("analyze")
+def llm_analyze(
+    graph: Path = typer.Argument(..., exists=True, file_okay=True, dir_okay=False, readable=True),
+    output: Optional[Path] = typer.Option(None, "--output", "-o", help="Graph path to write after analysis."),
+    max_llm_calls: int = typer.Option(20, "--max-llm-calls", min=0, help="Maximum top-risk nodes to analyze."),
+    dry_run: bool = typer.Option(False, "--dry-run", help="Print prompts without calling an LLM or writing output."),
+    provider_name: str = typer.Option("ollama", "--provider", help="Provider: ollama, openai, or anthropic."),
+    model: Optional[str] = typer.Option(None, "--model", help="Provider model id override."),
+    cache_path: Path = typer.Option(Path(".qualgraph/cache.sqlite"), "--cache", help="SQLite LLM cache path."),
+) -> None:
+    """Run provider-backed LLM analysis over the highest-risk graph nodes."""
+
+    code_graph = read_json_graph(graph)
+    provider = _resolve_provider(provider_name, model, dry_run=dry_run)
+    run_logger = RunLogger(repo_path=Path("."))
+    try:
+        if dry_run:
+            summary = analyze_top_n(
+                code_graph,
+                top_n=max_llm_calls,
+                provider=provider,
+                cache=_NoopCache(),
+                logger=run_logger,
+                dry_run=dry_run,
+            )
+            _print_dry_run(summary.dry_run_tasks)
+        else:
+            with Cache(cache_path) as cache:
+                summary = analyze_top_n(
+                    code_graph,
+                    top_n=max_llm_calls,
+                    provider=provider,
+                    cache=cache,
+                    logger=run_logger,
+                )
+            output = output or graph
+            write_json_graph(code_graph, output)
+    finally:
+        run_summary = run_logger.finish()
+
+    if dry_run:
+        typer.echo(
+            f"Dry run printed {summary.ranked} LLM prompt(s). "
+            f"No provider calls made. Run log: {run_summary.run_id}"
+        )
+    else:
+        typer.echo(
+            f"Analyzed {summary.analyzed} node(s): {summary.llm_calls} LLM call(s), "
+            f"{summary.cache_hits} cache hit(s), {summary.findings_added} finding(s). "
+            f"Wrote {output}. Run log: {run_summary.run_id}"
+        )
+
+
 def _resolve_annotators(names: str) -> list:
     registry = {
         "radon": RadonAnnotator,
@@ -212,3 +269,58 @@ def _resolve_annotators(names: str) -> list:
 def _default_llm_task_dir() -> Path:
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid4().hex[:8]
     return Path(".qualgraph") / "runs" / run_id / "llm_tasks"
+
+
+def _resolve_provider(name: str, model: str | None, dry_run: bool = False) -> LLMProvider:
+    normalized = name.strip().lower()
+    if dry_run:
+        return _DryRunProvider(_default_model(normalized, model))
+    if normalized == "ollama":
+        return OllamaProvider(model=model or "llama3.1")
+    if normalized == "openai":
+        return OpenAIProvider(model=model or "gpt-4o-mini")
+    if normalized == "anthropic":
+        return AnthropicProvider(model=model or "claude-3-5-sonnet-latest")
+    raise typer.BadParameter(f"unknown LLM provider: {name}")
+
+
+def _default_model(provider_name: str, model: str | None) -> str:
+    if model:
+        return model
+    return {
+        "ollama": "llama3.1",
+        "openai": "gpt-4o-mini",
+        "anthropic": "claude-3-5-sonnet-latest",
+    }.get(provider_name, provider_name or "dry-run")
+
+
+def _print_dry_run(tasks: list[dict]) -> None:
+    for index, task in enumerate(tasks, start=1):
+        typer.echo(f"\n--- LLM dry run task {index}: {task['node_id']} ---")
+        typer.echo(f"model: {task['model']}")
+        typer.echo(f"risk_score: {task['risk_score']}")
+        typer.echo(f"cache_key: {task['cache_key']}")
+        typer.echo("\nSYSTEM:\n")
+        typer.echo(task["system"])
+        typer.echo("\nUSER:\n")
+        typer.echo(task["user"])
+
+
+class _DryRunProvider(LLMProvider):
+    def __init__(self, model_id: str) -> None:
+        self._model_id = model_id
+
+    @property
+    def model_id(self) -> str:
+        return self._model_id
+
+    def complete(self, req: LLMRequest) -> LLMResponse:
+        raise RuntimeError("dry-run provider must not be called")
+
+
+class _NoopCache:
+    def get(self, _key: str) -> None:
+        return None
+
+    def put(self, _key: str, _response: object) -> None:
+        return None
