@@ -119,6 +119,8 @@ def analyze_top_n(
             summary.llm_calls += 1
 
         graph.nodes[node_id]["llm_findings"] = findings
+        graph.nodes[node_id]["llm_analyzed"] = True
+        graph.nodes[node_id]["llm_no_findings"] = not findings
         summary.findings_added += _attach_findings(graph.nodes[node_id], findings)
         summary.analyzed += 1
 

@@ -24,17 +24,28 @@ class CoverageAnnotator(BaseAnnotator):
         if not _has_tests(repo_path):
             return AnnotatorResult(name=self.name)
 
+        coverage_file = repo_path / ".coverage"
         completed = subprocess.run(
-            [sys.executable, "-m", "coverage", "run", "--branch", "-m", "pytest"],
+            [
+                sys.executable,
+                "-m",
+                "coverage",
+                "run",
+                "--branch",
+                "-m",
+                "pytest",
+                "--continue-on-collection-errors",
+            ],
             cwd=repo_path,
             capture_output=True,
             text=True,
             check=False,
         )
-        if completed.returncode != 0:
-            raise RuntimeError(completed.stderr.strip() or completed.stdout.strip() or "coverage run failed")
+        error = completed.stderr.strip() or completed.stdout.strip()
+        if completed.returncode != 0 and not coverage_file.exists():
+            raise RuntimeError(error or "coverage run failed")
 
-        cov = coverage.Coverage(data_file=str(repo_path / ".coverage"))
+        cov = coverage.Coverage(data_file=str(coverage_file))
         cov.load()
         nodes_annotated = 0
 
@@ -57,7 +68,8 @@ class CoverageAnnotator(BaseAnnotator):
                 attrs["coverage_line"] = 1 - (len(missing_in_node) / len(executable_in_node))
                 nodes_annotated += 1
 
-        return AnnotatorResult(name=self.name, nodes_annotated=nodes_annotated)
+        errors = [error] if completed.returncode != 0 and error else []
+        return AnnotatorResult(name=self.name, nodes_annotated=nodes_annotated, errors=errors)
 
 
 def _has_tests(repo_path: Path) -> bool:

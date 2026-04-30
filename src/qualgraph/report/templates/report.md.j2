@@ -5,7 +5,7 @@
 - Nodes: {{ summary.nodes }}
 - Edges: {{ summary.edges }}
 - Clusters: {{ summary.clusters }}
-- Findings: {{ summary.findings }}
+- Findings: {{ summary.findings }} actionable production ({{ summary.total_findings }} total)
 - Total LLM cost: ${{ "%.4f"|format(summary.llm_cost_usd) }}
 {% if summary.duration_ms is not none %}
 - Runtime: {{ "%.1f"|format(summary.duration_ms) }} ms
@@ -30,6 +30,7 @@ Top findings:
 {% if clusters %}
 {% for cluster in clusters %}
 - {{ cluster.name }}: {{ cluster.size }} node(s); roles: {% if cluster.role_counts %}{% for role, count in cluster.role_counts %}{{ role }}={{ count }}{% if not loop.last %}, {% endif %}{% endfor %}{% else %}unknown{% endif %}
+  Summary: {{ cluster.description }}
   Key issues: {% if cluster.issues %}{% for issue in cluster.issues %}{{ issue.source }} {{ issue.code }} ({{ issue.count }}){% if not loop.last %}, {% endif %}{% endfor %}{% else %}none{% endif %}
   Top risk: {% if cluster.top_risk %}{% for risk in cluster.top_risk %}{{ risk.node.qualified_name }} ({{ "%.1f"|format(risk.score) }}){% if not loop.last %}, {% endif %}{% endfor %}{% else %}none{% endif %}{{ "\n" }}
 {% endfor %}
@@ -55,10 +56,16 @@ Top findings:
 {% if item.findings %}
 {% for record in item.findings %}
   - {{ record.finding.source }} {{ record.code }} {{ severity_text(record.finding) }}- {{ shorten(record.finding.message) }}
-    Evidence: {{ shorten(record.finding.evidence, 180) }}
+    Evidence: {{ shorten(format_evidence(record.finding.evidence), 180) }}
+{% if record.finding.suggested_action %}
+    Suggested action: {{ shorten(record.finding.suggested_action, 180) }}
+{% endif %}
 {% endfor %}
 {% else %}
   - none
+{% if item.node.llm_analyzed and item.node.llm_no_findings %}
+  - llm analysis - no significant issues found
+{% endif %}
 {% endif %}
 {% endfor %}
 {% else %}
@@ -70,7 +77,7 @@ Top findings:
 {% if cross_signal_findings %}
 {% for record in cross_signal_findings %}
 - {{ record.node.qualified_name }}: {{ record.code }} {{ severity_text(record.finding) }}- {{ shorten(record.finding.message) }}
-  Evidence: {{ shorten(record.finding.evidence, 180) }}
+  Evidence: {{ shorten(format_evidence(record.finding.evidence), 180) }}
 {% endfor %}
 {% else %}
 - none
@@ -155,7 +162,7 @@ _Deduped by node, tool, rule, location, and message._
 
 ## Test Linkage
 
-- Tested production functions/methods: {{ test_linkage.tested }}/{{ test_linkage.production }}
+- Tested production functions/methods: {{ test_linkage.tested }}/{{ test_linkage.production }}{% if test_linkage.coverage_known != test_linkage.production %} (coverage known for {{ test_linkage.coverage_known }}){% endif %}{{ "\n" }}
 {% if test_linkage.untested %}
 {% for attrs in test_linkage.untested %}
 - Untested/weakly tested: {{ attrs.qualified_name }} ({{ format_percent(attrs.coverage_line) }}, {{ attrs.file_path }}:{{ attrs.line_start }})

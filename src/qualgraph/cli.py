@@ -26,7 +26,7 @@ from qualgraph.annotators.test_linkage import TestLinkageAnnotator
 from qualgraph.annotators.vulture import VultureAnnotator
 from qualgraph.cache.sqlite import Cache
 from qualgraph.graph.builder import build_graph
-from qualgraph.graph.clustering import annotate_clusters
+from qualgraph.graph.clustering import DEFAULT_RESOLUTION, annotate_clusters
 from qualgraph.graph.metrics import annotate_metrics
 from qualgraph.graph.serialize import read_json_graph, write_graphml_graph, write_json_graph
 from qualgraph.llm.analyzer import analyze_top_n
@@ -56,7 +56,7 @@ def build(
     output: Optional[Path] = typer.Option(None, "--output", "-o", help="Annotated JSON graph path."),
     graphml: Optional[Path] = typer.Option(None, "--graphml", help="Optional GraphML export path."),
     exclude: list[str] = typer.Option([], "--exclude", "-x", help="Additional glob to exclude."),
-    resolution: float = typer.Option(1.0, "--resolution", help="Leiden clustering resolution."),
+    resolution: float = typer.Option(DEFAULT_RESOLUTION, "--resolution", help="Leiden clustering resolution."),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Print per-stage timings from the run log."),
 ) -> None:
     """Build a Python code graph and write an annotated graph artifact."""
@@ -90,6 +90,8 @@ def build(
     finally:
         summary = run_logger.finish()
 
+    _attach_run_summary(graph, summary)
+    write_json_graph(graph, output)
     typer.echo(
         f"Wrote {output} "
         f"({graph.number_of_nodes()} nodes, {graph.number_of_edges()} edges, "
@@ -105,7 +107,7 @@ def annotate(
     repo: Path = typer.Argument(..., exists=True, file_okay=False, dir_okay=True, readable=True),
     graph_path: Optional[Path] = typer.Option(None, "--graph", "-g", help="Existing graph JSON path."),
     output: Optional[Path] = typer.Option(None, "--output", "-o", help="Annotated graph JSON path."),
-    annotators: str = typer.Option("radon,ruff,coverage,git", "--annotators", help="Comma-separated annotator names."),
+    annotators: str = typer.Option("radon,ruff,coverage,git,cross_signal", "--annotators", help="Comma-separated annotator names."),
     profile_json: Optional[Path] = typer.Option(None, "--profile-json", help="cProfile JSON artifact for the profiler annotator."),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Print per-stage timings from the run log."),
 ) -> None:
@@ -132,6 +134,8 @@ def annotate(
     finally:
         summary = run_logger.finish()
 
+    _attach_run_summary(graph, summary)
+    write_json_graph(graph, output)
     typer.echo(
         f"Annotated {output} with {len(results)} result(s). "
         f"Run log: {summary.run_id}"
@@ -251,6 +255,10 @@ def llm_analyze(
     finally:
         run_summary = run_logger.finish()
 
+    if not dry_run:
+        _attach_run_summary(code_graph, run_summary, model=provider.model_id)
+        write_json_graph(code_graph, output)
+
     if dry_run:
         typer.echo(
             f"Dry run printed {summary.ranked} LLM prompt(s). "
@@ -331,6 +339,29 @@ def _default_model(provider_name: str, model: str | None) -> str:
         "openai": "gpt-4o-mini",
         "anthropic": "claude-3-5-sonnet-latest",
     }.get(provider_name, provider_name or "dry-run")
+
+
+def _attach_run_summary(graph, summary, model: str | None = None) -> None:
+    graph.graph["run_id"] = summary.run_id
+    graph.graph["duration_ms"] = summary.duration_ms
+    graph.graph["llm"] = {
+        "calls": summary.llm.calls,
+        "input_tokens": summary.llm.input_tokens,
+        "cached_input_tokens": summary.llm.cached_input_tokens,
+        "output_tokens": summary.llm.output_tokens,
+        "total_tokens": summary.llm.total_tokens,
+        "cost_usd": summary.llm.cost_usd,
+        **({"model": model} if model else {}),
+    }
+    graph.graph["annotator_status"] = [
+        {
+            "name": item.get("name"),
+            "status": item.get("status"),
+            "duration_ms": item.get("duration_ms"),
+            "counts": item.get("counts"),
+        }
+        for item in summary.annotators
+    ]
 
 
 def _print_dry_run(tasks: list[dict]) -> None:

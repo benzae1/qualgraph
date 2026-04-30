@@ -20,6 +20,8 @@ def detect_untested_hotspots(
         for node_id, attrs in graph.nodes(data=True)
         if attrs.get("type") in {NodeType.FUNCTION, NodeType.FUNCTION.value, NodeType.METHOD, NodeType.METHOD.value}
         and attrs.get("complexity") is not None
+        and attrs.get("coverage_line") is not None
+        and not _is_test_attrs(attrs)
     ]
     if not funcs:
         return []
@@ -30,10 +32,11 @@ def detect_untested_hotspots(
     for node_id, attrs in funcs:
         complexity = float(attrs["complexity"])
         centrality = float(attrs.get("centrality") or 0.0)
+        coverage = float(attrs["coverage_line"])
         if (
             complexity >= cx_threshold
             and centrality >= cn_threshold
-            and float(attrs.get("coverage_line") or 0.0) == 0.0
+            and coverage == 0.0
         ):
             findings.append(
                 Finding(
@@ -43,7 +46,7 @@ def detect_untested_hotspots(
                     evidence={
                         "complexity": complexity,
                         "centrality": centrality,
-                        "coverage": 0.0,
+                        "coverage": coverage,
                     },
                 )
             )
@@ -57,6 +60,11 @@ def detect_hidden_coupling(graph: nx.DiGraph) -> list[Finding]:
     findings: list[Finding] = []
     for source, target, attrs in graph.edges(data=True):
         if attrs.get("type") != EdgeType.CO_CHANGES_WITH.value:
+            continue
+        left_file, right_file = _edge_file_pair(graph, source, target, attrs)
+        if _is_test_path(str(left_file or "")) or _is_test_path(str(right_file or "")):
+            continue
+        if _is_obvious_test_pair(left_file, right_file):
             continue
         if nx.has_path(dependency_graph, source, target) or nx.has_path(dependency_graph, target, source):
             continue
@@ -156,9 +164,9 @@ def detect_outdated_documentation(graph: nx.DiGraph, churn_pct: float = 0.8) -> 
 
 def detect_god_nodes(
     graph: nx.DiGraph,
-    centrality_pct: float = 0.99,
-    complexity_pct: float = 0.99,
-    degree_pct: float = 0.99,
+    centrality_pct: float = 0.95,
+    complexity_pct: float = 0.95,
+    degree_pct: float = 0.95,
 ) -> list[Finding]:
     """Find nodes that are simultaneously central, complex, and highly connected."""
 
@@ -166,6 +174,7 @@ def detect_god_nodes(
         (node_id, attrs)
         for node_id, attrs in graph.nodes(data=True)
         if attrs.get("type") in {NodeType.FUNCTION, NodeType.FUNCTION.value, NodeType.METHOD, NodeType.METHOD.value}
+        and not _is_test_attrs(attrs)
     ]
     if not candidates:
         return []
@@ -241,6 +250,8 @@ def detect_complex_hotspots(
         if attrs.get("type") in {NodeType.FUNCTION, NodeType.FUNCTION.value, NodeType.METHOD, NodeType.METHOD.value}
         and attrs.get("complexity") is not None
         and attrs.get("cpu_pct") is not None
+        and attrs.get("coverage_line") is not None
+        and not _is_test_attrs(attrs)
     ]
     if not candidates:
         return []
@@ -372,3 +383,33 @@ def _total_degree(graph: nx.DiGraph, node_id: str, attrs: dict[str, Any]) -> int
     in_degree = attrs.get("in_degree") if attrs.get("in_degree") is not None else graph.in_degree(node_id)
     out_degree = attrs.get("out_degree") if attrs.get("out_degree") is not None else graph.out_degree(node_id)
     return int(in_degree) + int(out_degree)
+
+
+def _is_obvious_test_pair(left: Any, right: Any) -> bool:
+    left_path = str(left or "").replace("\\", "/")
+    right_path = str(right or "").replace("\\", "/")
+    if not left_path or not right_path:
+        return False
+    left_is_test = _is_test_path(left_path)
+    right_is_test = _is_test_path(right_path)
+    if left_is_test == right_is_test:
+        return False
+    prod = right_path if left_is_test else left_path
+    test = left_path if left_is_test else right_path
+    prod_stem = prod.rsplit("/", 1)[-1].removesuffix(".py")
+    test_stem = test.rsplit("/", 1)[-1].removesuffix(".py")
+    return test_stem in {f"test_{prod_stem}", f"{prod_stem}_test"} or prod_stem in test_stem
+
+
+def _is_test_path(path: str) -> bool:
+    return path.startswith("tests/") or "/tests/" in path or path.rsplit("/", 1)[-1].startswith("test_")
+
+
+def _is_test_attrs(attrs: dict[str, Any]) -> bool:
+    return attrs.get("type") == NodeType.TEST_FUNCTION.value or _is_test_path(str(attrs.get("file_path") or ""))
+
+
+def _edge_file_pair(graph: nx.DiGraph, source: str, target: str, attrs: dict[str, Any]) -> tuple[Any, Any]:
+    left = attrs.get("source") or (graph.nodes[source].get("file_path") if source in graph.nodes else None)
+    right = attrs.get("target") or (graph.nodes[target].get("file_path") if target in graph.nodes else None)
+    return left, right

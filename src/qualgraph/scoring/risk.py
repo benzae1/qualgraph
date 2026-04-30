@@ -46,7 +46,8 @@ def score(graph: nx.DiGraph, weights: Mapping[str, float] | None = None) -> None
             ),
             default=0.0,
         )
-        coverage_gap = 1.0 - float(attrs.get("coverage_line") or 0.0)
+        coverage = attrs.get("coverage_line")
+        coverage_gap = 0.0 if coverage is None else 1.0 - float(coverage or 0.0)
         components = {
             "centrality": active_weights["w1"] * percentile_ranks["centrality"][index],
             "complexity": active_weights["w2"] * percentile_ranks["complexity"][index],

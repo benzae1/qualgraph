@@ -7,7 +7,10 @@ import leidenalg
 import networkx as nx
 
 
-def cluster_leiden(g: nx.DiGraph, resolution: float = 1.0) -> dict[str, int]:
+DEFAULT_RESOLUTION = 0.35
+
+
+def cluster_leiden(g: nx.DiGraph, resolution: float = DEFAULT_RESOLUTION) -> dict[str, int]:
     """Return ``node_id -> cluster_id`` using Leiden on an undirected graph."""
 
     if g.number_of_nodes() == 0:
@@ -29,7 +32,7 @@ def cluster_leiden(g: nx.DiGraph, resolution: float = 1.0) -> dict[str, int]:
     }
 
 
-def annotate_clusters(g: nx.DiGraph, resolution: float = 1.0) -> dict[str, int]:
+def annotate_clusters(g: nx.DiGraph, resolution: float = DEFAULT_RESOLUTION) -> dict[str, int]:
     clusters = cluster_leiden(g, resolution=resolution)
     for node_id, cluster_id in clusters.items():
         g.nodes[node_id]["cluster_id"] = cluster_id

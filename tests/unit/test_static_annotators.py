@@ -11,6 +11,7 @@ from qualgraph.annotators.locations import find_node_for_location
 from qualgraph.annotators.pip_audit import PipAuditAnnotator
 from qualgraph.annotators.profiler import ProfilerAnnotator
 from qualgraph.annotators.radon import RadonAnnotator
+from qualgraph.annotators.ruff import RuffAnnotator
 from qualgraph.annotators.secrets import SecretsAnnotator
 from qualgraph.annotators.test_linkage import TestLinkageAnnotator
 from qualgraph.findings.cross_signal import (
@@ -151,6 +152,45 @@ def test_findings_helpers_dedupe_and_clear_by_source() -> None:
     assert graph.nodes["node"]["findings"] == [{"source": "bandit", "test_id": "B101"}]
 
 
+def test_ruff_uses_project_config_and_attaches_source_line_evidence(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    (repo / "pyproject.toml").write_text("[tool.ruff]\nline-length = 120\n", encoding="utf-8")
+    (repo / "sample.py").write_text("\n\n\n\ndef work():\n    return 1\n", encoding="utf-8")
+    graph = _sample_graph_with_function()
+    payload = [
+        {
+            "filename": str(repo / "sample.py"),
+            "code": "SIM101",
+            "message": "example",
+            "location": {"row": 6, "column": 5},
+            "end_location": {"row": 6, "column": 13},
+        }
+    ]
+
+    with patch("qualgraph.annotators.ruff.subprocess.run", return_value=_completed(payload)) as run:
+        result = RuffAnnotator().annotate(graph, repo)
+
+    command = run.call_args.args[0]
+    assert "--select=E,F,W,B,C90,S,SIM,RUF" not in command
+    assert result.nodes_annotated == 1
+    finding = graph.nodes["function"]["findings"][0]
+    assert finding["line"] == 6
+    assert finding["evidence"] == "return 1"
+
+
+def test_ruff_defaults_to_curated_rules_without_project_config(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    (repo / "sample.py").write_text("\n\n\n\ndef work():\n    return 1\n", encoding="utf-8")
+    graph = _sample_graph_with_function()
+
+    with patch("qualgraph.annotators.ruff.subprocess.run", return_value=_completed([])) as run:
+        RuffAnnotator().annotate(graph, repo)
+
+    assert "--select=E,F,W,B,C90,S,SIM,RUF" in run.call_args.args[0]
+
+
 def test_detect_untested_hotspots_combines_complexity_centrality_and_coverage() -> None:
     graph = nx.DiGraph()
     graph.add_node(
@@ -203,6 +243,21 @@ def test_detect_hidden_coupling_requires_no_static_dependency_path() -> None:
     assert [finding.node_id for finding in findings] == ["coupled_left"]
     assert findings[0].kind == "hidden_coupling"
     assert findings[0].evidence["target"] == "coupled_right"
+
+
+def test_detect_hidden_coupling_skips_obvious_code_to_test_pairs() -> None:
+    graph = nx.DiGraph()
+    graph.add_node("prod", file_path="starlette/routing.py")
+    graph.add_node("test", file_path="tests/test_routing.py")
+    graph.add_edge(
+        "prod",
+        "test",
+        type="co_changes_with",
+        co_change_count=10,
+        co_change_rate=0.8,
+    )
+
+    assert detect_hidden_coupling(graph) == []
 
 
 def test_detect_vulnerable_usage_requires_vulnerable_import_and_matching_call() -> None:
@@ -489,7 +544,7 @@ def test_report_surfaces_deduped_rules_hotspots_and_readable_centrality() -> Non
 
     report = render_markdown_report(graph)
 
-    assert "- Findings: 1" in report
+    assert "- Findings: 2" in report
     assert "## Executive Summary" in report
     assert "## Per-Cluster Overview" in report
     assert "## Top-N Risk Nodes" in report
@@ -500,6 +555,64 @@ def test_report_surfaces_deduped_rules_hotspots_and_readable_centrality() -> Non
     assert "## Risk Hotspots" in report
     assert "score=" in report
     assert "betweenness=" in report
+
+
+def test_report_backfills_missing_evidence_from_node_source() -> None:
+    graph = nx.DiGraph()
+    graph.add_node(
+        "function",
+        **node_attrs_to_graph(
+            NodeAttrs(
+                id="function",
+                type=NodeType.FUNCTION,
+                name="work",
+                qualified_name="sample.work",
+                file_path="sample.py",
+                line_start=5,
+                line_end=6,
+                source="def work():\n    return risky()\n",
+                complexity=1,
+            )
+        ),
+    )
+    graph.nodes["function"]["findings"] = [
+        {"source": "ruff", "code": "B001", "message": "example", "location": {"row": 6, "column": 5}}
+    ]
+
+    report = render_markdown_report(graph)
+
+    assert "Evidence: return risky()" in report
+
+
+def test_report_derives_cross_signal_findings_when_not_attached() -> None:
+    graph = nx.DiGraph()
+    graph.add_node(
+        "hotspot",
+        type=NodeType.FUNCTION.value,
+        qualified_name="sample.hotspot",
+        file_path="sample.py",
+        line_start=1,
+        line_end=4,
+        complexity=12,
+        centrality=0.9,
+        coverage_line=0.0,
+    )
+    graph.add_node(
+        "other",
+        type=NodeType.FUNCTION.value,
+        qualified_name="sample.other",
+        file_path="sample.py",
+        line_start=6,
+        line_end=7,
+        complexity=1,
+        centrality=0.1,
+        coverage_line=1.0,
+    )
+
+    report = render_markdown_report(graph)
+
+    assert "## Cross-Signal Findings" in report
+    assert "sample.hotspot: untested_hotspot" in report
 
 
 def test_json_export_wraps_node_link_data_with_versioned_metadata() -> None:
