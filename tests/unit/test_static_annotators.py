@@ -584,6 +584,51 @@ def test_report_backfills_missing_evidence_from_node_source() -> None:
     assert "Evidence: return risky()" in report
 
 
+def test_report_does_not_truncate_llm_messages_or_suggested_actions() -> None:
+    graph = nx.DiGraph()
+    graph.add_node(
+        "function",
+        **node_attrs_to_graph(
+            NodeAttrs(
+                id="function",
+                type=NodeType.FUNCTION,
+                name="work",
+                qualified_name="sample.work",
+                file_path="sample.py",
+                line_start=5,
+                line_end=6,
+                source="def work():\n    return risky()\n",
+                complexity=1,
+            )
+        ),
+    )
+    message = (
+        "This LLM finding is deliberately longer than the normal report shortening limit so the "
+        "renderer must keep the final clause that explains the concrete failure mode."
+    )
+    action = (
+        "This suggested action is also longer than the normal evidence limit and should retain the "
+        "specific remediation steps at the end."
+    )
+    graph.nodes["function"]["findings"] = [
+        {
+            "source": "llm",
+            "code": "reliability",
+            "severity": "MEDIUM",
+            "confidence": "INFERRED",
+            "message": message,
+            "evidence": "return risky()",
+            "suggested_action": action,
+        }
+    ]
+
+    report = render_markdown_report(graph)
+
+    assert message in report
+    assert action in report
+    assert "concrete failure mode..." not in report
+
+
 def test_report_derives_cross_signal_findings_when_not_attached() -> None:
     graph = nx.DiGraph()
     graph.add_node(

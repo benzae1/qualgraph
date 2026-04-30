@@ -19,7 +19,7 @@
 Top findings:
 {% if summary.top_findings %}
 {% for record in summary.top_findings %}
-- {{ record.node.qualified_name }}: {{ record.finding.source }} {{ record.code }} {{ severity_text(record.finding) }}- {{ shorten(record.finding.message) }} ({{ record.node.file_path }}:{{ record.line }})
+- {{ record.node.qualified_name }}: {{ record.finding.source }} {{ record.code }} {{ severity_text(record.finding) }}- {{ finding_message(record.finding) }} ({{ record.node.file_path }}:{{ record.line }})
 {% endfor %}
 {% else %}
 - none
@@ -55,10 +55,10 @@ Top findings:
 - Findings:
 {% if item.findings %}
 {% for record in item.findings %}
-  - {{ record.finding.source }} {{ record.code }} {{ severity_text(record.finding) }}- {{ shorten(record.finding.message) }}
+  - {{ record.finding.source }} {{ record.code }} {{ severity_text(record.finding) }}- {{ finding_message(record.finding) }}
     Evidence: {{ shorten(format_evidence(record.finding.evidence), 180) }}
 {% if record.finding.suggested_action %}
-    Suggested action: {{ shorten(record.finding.suggested_action, 180) }}
+    Suggested action: {{ suggested_action(record.finding) }}
 {% endif %}
 {% endfor %}
 {% else %}
@@ -76,7 +76,7 @@ Top findings:
 
 {% if cross_signal_findings %}
 {% for record in cross_signal_findings %}
-- {{ record.node.qualified_name }}: {{ record.code }} {{ severity_text(record.finding) }}- {{ shorten(record.finding.message) }}
+- {{ record.node.qualified_name }}: {{ record.code }} {{ severity_text(record.finding) }}- {{ finding_message(record.finding) }}
   Evidence: {{ shorten(format_evidence(record.finding.evidence), 180) }}
 {% endfor %}
 {% else %}
@@ -134,7 +134,7 @@ _Deduped by node, tool, rule, location, and message._
 
 {% if priority_findings %}
 {% for record in priority_findings %}
-- {{ record.node.qualified_name }}: {{ record.finding.source }} {{ record.code }} {{ severity_text(record.finding) }}- {{ shorten(record.finding.message) }} ({{ record.node.file_path }}:{{ record.line }})
+- {{ record.node.qualified_name }}: {{ record.finding.source }} {{ record.code }} {{ severity_text(record.finding) }}- {{ finding_message(record.finding) }} ({{ record.node.file_path }}:{{ record.line }})
 {% endfor %}
 {% else %}
 - none

@@ -62,6 +62,8 @@ def build_report_context(graph: nx.DiGraph, top_n: int = 10) -> dict[str, Any]:
         "format_small": _format_small,
         "format_percent": _format_percent,
         "shorten": _shorten,
+        "finding_message": _finding_message,
+        "suggested_action": _suggested_action,
         "finding_code": _finding_code,
         "finding_line": _finding_line,
         "severity_text": _severity_text,
@@ -518,6 +520,20 @@ def _shorten(value: Any, limit: int = 110) -> str:
     if len(text) <= limit:
         return text
     return text[: limit - 3].rstrip() + "..."
+
+
+def _finding_message(finding: dict[str, Any], limit: int = 110) -> str:
+    message = str(finding.get("message") or "").replace("\n", " ").strip()
+    if finding.get("source") == "llm":
+        return message
+    return _shorten(message, limit)
+
+
+def _suggested_action(finding: dict[str, Any], limit: int = 180) -> str:
+    action = str(finding.get("suggested_action") or "").replace("\n", " ").strip()
+    if finding.get("source") == "llm":
+        return action
+    return _shorten(action, limit)
 
 
 def _is_obvious_test_pair(left: Any, right: Any) -> bool:
