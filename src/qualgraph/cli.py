@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shlex
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
@@ -44,6 +45,10 @@ app = typer.Typer(help="Graph-aware code quality analysis for Python projects.")
 llm_app = typer.Typer(help="Export and import agent-completed LLM analysis tasks.")
 app.add_typer(llm_app, name="llm")
 
+FAST_ANNOTATORS = "radon,ruff,docstring,cross_signal"
+STANDARD_ANNOTATORS = "radon,ruff,docstring,git,cross_signal"
+FULL_ANNOTATORS = "radon,ruff,vulture,security,docstring,coverage,git,cross_signal"
+
 
 @app.callback()
 def main() -> None:
@@ -57,6 +62,17 @@ def build(
     graphml: Optional[Path] = typer.Option(None, "--graphml", help="Optional GraphML export path."),
     exclude: list[str] = typer.Option([], "--exclude", "-x", help="Additional glob to exclude."),
     resolution: float = typer.Option(DEFAULT_RESOLUTION, "--resolution", help="Leiden clustering resolution."),
+    metric_mode: str = typer.Option(
+        "fast",
+        "--metric-mode",
+        help="Structural metric mode: fast, exact, or off.",
+    ),
+    betweenness_samples: int = typer.Option(
+        128,
+        "--betweenness-samples",
+        min=1,
+        help="Sample count for approximate betweenness in fast metric mode.",
+    ),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Print per-stage timings from the run log."),
 ) -> None:
     """Build a Python code graph and write an annotated graph artifact."""
@@ -74,8 +90,9 @@ def build(
             span["cluster_count"] = len(set(clusters.values()))
 
         with run_logger.span("annotate_metrics") as span:
-            annotate_metrics(graph)
+            _annotate_metrics(graph, metric_mode=metric_mode, betweenness_samples=betweenness_samples)
             span["nodes"] = graph.number_of_nodes()
+            span["mode"] = metric_mode
 
         with run_logger.span("score_risk") as span:
             score_risk(graph)
@@ -107,8 +124,39 @@ def annotate(
     repo: Path = typer.Argument(..., exists=True, file_okay=False, dir_okay=True, readable=True),
     graph_path: Optional[Path] = typer.Option(None, "--graph", "-g", help="Existing graph JSON path."),
     output: Optional[Path] = typer.Option(None, "--output", "-o", help="Annotated graph JSON path."),
-    annotators: str = typer.Option("radon,ruff,coverage,git,cross_signal", "--annotators", help="Comma-separated annotator names."),
+    annotators: str = typer.Option(
+        "fast",
+        "--annotators",
+        help="Comma-separated annotator names, or preset: fast, standard, full.",
+    ),
     profile_json: Optional[Path] = typer.Option(None, "--profile-json", help="cProfile JSON artifact for the profiler annotator."),
+    metric_mode: str = typer.Option(
+        "fast",
+        "--metric-mode",
+        help="Metric mode when building a missing graph: fast, exact, or off.",
+    ),
+    betweenness_samples: int = typer.Option(
+        128,
+        "--betweenness-samples",
+        min=1,
+        help="Sample count for approximate betweenness in fast metric mode.",
+    ),
+    coverage_mode: str = typer.Option(
+        "auto",
+        "--coverage-mode",
+        help="Coverage behavior: auto, reuse, run, or skip.",
+    ),
+    git_max_commits: int = typer.Option(
+        1000,
+        "--git-max-commits",
+        min=0,
+        help="Maximum recent commits for git annotators; 0 scans full history.",
+    ),
+    pytest_args: str = typer.Option(
+        "",
+        "--pytest-args",
+        help="Extra pytest args used only when the coverage annotator runs tests.",
+    ),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Print per-stage timings from the run log."),
 ) -> None:
     """Run annotators over a graph, building the graph first if needed."""
@@ -122,9 +170,15 @@ def annotate(
         else:
             graph = build_graph(repo, [])
             annotate_clusters(graph)
-            annotate_metrics(graph)
+            _annotate_metrics(graph, metric_mode=metric_mode, betweenness_samples=betweenness_samples)
 
-        selected = _resolve_annotators(annotators, profile_json=profile_json)
+        selected = _resolve_annotators(
+            annotators,
+            profile_json=profile_json,
+            coverage_mode=coverage_mode,
+            pytest_args=_split_args(pytest_args),
+            git_max_commits=git_max_commits or None,
+        )
         results = run_pipeline(graph, repo, selected, logger=run_logger, show_progress=True)
         with run_logger.span("score_risk") as span:
             score_risk(graph)
@@ -272,24 +326,47 @@ def llm_analyze(
         )
 
 
-def _resolve_annotators(names: str, profile_json: Path | None = None) -> list:
+def _resolve_annotators(
+    names: str,
+    profile_json: Path | None = None,
+    coverage_mode: str = "auto",
+    pytest_args: list[str] | None = None,
+    git_max_commits: int | None = 1000,
+) -> list:
+    aliases = {
+        "fast": FAST_ANNOTATORS,
+        "static": FAST_ANNOTATORS,
+        "standard": STANDARD_ANNOTATORS,
+        "default": STANDARD_ANNOTATORS,
+        "full": FULL_ANNOTATORS,
+        "all": FULL_ANNOTATORS,
+    }
+    coverage_mode = coverage_mode.strip().lower()
+    if coverage_mode not in {"auto", "reuse", "run", "skip"}:
+        raise typer.BadParameter(f"unknown coverage mode: {coverage_mode}")
     registry = {
         "radon": RadonAnnotator,
         "ruff": RuffAnnotator,
         "vulture": VultureAnnotator,
         "bandit": BanditAnnotator,
         "docstring": DocstringAnnotator,
-        "coverage": (CoverageAnnotator, TestLinkageAnnotator),
-        "coverage_only": CoverageAnnotator,
+        "coverage": (
+            lambda: CoverageAnnotator(mode=coverage_mode, pytest_args=pytest_args),
+            TestLinkageAnnotator,
+        ),
+        "coverage_only": lambda: CoverageAnnotator(mode=coverage_mode, pytest_args=pytest_args),
         "test_linkage": TestLinkageAnnotator,
         "tests": TestLinkageAnnotator,
         "pip_audit": PipAuditAnnotator,
         "pipaudit": PipAuditAnnotator,
         "secrets": SecretsAnnotator,
         "security": (BanditAnnotator, PipAuditAnnotator, SecretsAnnotator),
-        "git": (GitHistoryAnnotator, CoChangeAnnotator),
-        "git_history": GitHistoryAnnotator,
-        "co_change": CoChangeAnnotator,
+        "git": (
+            lambda: GitHistoryAnnotator(max_commits=git_max_commits),
+            lambda: CoChangeAnnotator(max_commits=git_max_commits),
+        ),
+        "git_history": lambda: GitHistoryAnnotator(max_commits=git_max_commits),
+        "co_change": lambda: CoChangeAnnotator(max_commits=git_max_commits),
         "cross_signal": CrossSignalAnnotator,
         "cross-signal": CrossSignalAnnotator,
         "derived": CrossSignalAnnotator,
@@ -297,10 +374,13 @@ def _resolve_annotators(names: str, profile_json: Path | None = None) -> list:
         "profile": lambda: ProfilerAnnotator(profile_json),
     }
     selected = []
+    expanded_names: list[str] = []
     for raw_name in names.split(","):
         name = raw_name.strip()
         if not name:
             continue
+        expanded_names.extend(item.strip() for item in aliases.get(name, name).split(",") if item.strip())
+    for name in expanded_names:
         annotator = registry.get(name)
         if annotator is None:
             raise typer.BadParameter(f"unknown annotator: {name}")
@@ -311,6 +391,31 @@ def _resolve_annotators(names: str, profile_json: Path | None = None) -> list:
         else:
             selected.append(annotator())
     return selected
+
+
+def _annotate_metrics(
+    graph,
+    *,
+    metric_mode: str,
+    betweenness_samples: int,
+) -> None:
+    normalized = metric_mode.strip().lower()
+    if normalized == "off":
+        annotate_metrics(graph, include_betweenness=False)
+        return
+    if normalized == "fast":
+        annotate_metrics(graph, betweenness_samples=betweenness_samples)
+        return
+    if normalized == "exact":
+        annotate_metrics(graph, betweenness_samples=None, exact_betweenness_node_limit=10**9)
+        return
+    raise typer.BadParameter(f"unknown metric mode: {metric_mode}")
+
+
+def _split_args(value: str) -> list[str]:
+    if not value.strip():
+        return []
+    return shlex.split(value)
 
 
 def _default_llm_task_dir() -> Path:

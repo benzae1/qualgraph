@@ -31,13 +31,19 @@ class RuffAnnotator(BaseAnnotator):
         if not _has_ruff_config(repo_path):
             command.extend([f"--select={self.default_select}"])
         command.append(".")
-        completed = subprocess.run(
-            command,
-            cwd=repo_path,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
+        completed = _run_ruff(command, repo_path)
+        if completed.returncode not in (0, 1) and _looks_like_config_error(completed):
+            command = [
+                sys.executable,
+                "-m",
+                "ruff",
+                "check",
+                "--output-format=json",
+                "--isolated",
+                f"--select={self.default_select}",
+                ".",
+            ]
+            completed = _run_ruff(command, repo_path)
         if completed.returncode not in (0, 1):
             raise RuntimeError(completed.stderr.strip() or completed.stdout.strip() or "ruff failed")
 
@@ -93,6 +99,21 @@ def _has_ruff_config(repo_path: Path) -> bool:
     except (OSError, tomllib.TOMLDecodeError):
         return False
     return "ruff" in (data.get("tool") or {})
+
+
+def _run_ruff(command: list[str], repo_path: Path) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        command,
+        cwd=repo_path,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+
+def _looks_like_config_error(completed: subprocess.CompletedProcess[str]) -> bool:
+    output = f"{completed.stderr}\n{completed.stdout}".lower()
+    return "failed to parse" in output or "toml parse error" in output or "unknown rule selector" in output
 
 
 def _skip_low_signal_test_finding(relative_path: str, finding: dict[str, Any]) -> bool:

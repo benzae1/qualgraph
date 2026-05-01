@@ -8,7 +8,17 @@ from statistics import median
 import networkx as nx
 
 
-def annotate_metrics(g: nx.DiGraph) -> None:
+EXACT_BETWEENNESS_NODE_LIMIT = 500
+DEFAULT_BETWEENNESS_SAMPLES = 128
+
+
+def annotate_metrics(
+    g: nx.DiGraph,
+    *,
+    betweenness_samples: int | None = DEFAULT_BETWEENNESS_SAMPLES,
+    exact_betweenness_node_limit: int = EXACT_BETWEENNESS_NODE_LIMIT,
+    include_betweenness: bool = True,
+) -> None:
     """Write structural metrics back onto graph nodes.
 
     Betweenness is useful for bridge-finding, but it is often exactly zero in
@@ -19,14 +29,18 @@ def annotate_metrics(g: nx.DiGraph) -> None:
     if g.number_of_nodes() == 0:
         return
 
-    if g.number_of_nodes() > 5000:
-        bw = nx.betweenness_centrality(g, k=500, seed=42)
-    else:
-        bw = nx.betweenness_centrality(g)
+    bw = _betweenness(
+        g,
+        samples=betweenness_samples,
+        exact_node_limit=exact_betweenness_node_limit,
+        enabled=include_betweenness,
+    )
 
     degree = _degree_centrality(g)
     pagerank = _pagerank(g)
     structural_scores = _structural_scores(bw, degree, pagerank)
+    in_degrees = dict(g.in_degree())
+    out_degrees = dict(g.out_degree())
 
     for node_id in g.nodes:
         g.nodes[node_id]["betweenness_centrality"] = float(bw.get(node_id, 0.0))
@@ -34,10 +48,21 @@ def annotate_metrics(g: nx.DiGraph) -> None:
         g.nodes[node_id]["pagerank"] = float(pagerank.get(node_id, 0.0))
         g.nodes[node_id]["structural_score"] = float(structural_scores.get(node_id, 0.0))
         g.nodes[node_id]["centrality"] = float(structural_scores.get(node_id, 0.0))
-        g.nodes[node_id]["in_degree"] = int(g.in_degree(node_id))
-        g.nodes[node_id]["out_degree"] = int(g.out_degree(node_id))
+        g.nodes[node_id]["in_degree"] = int(in_degrees.get(node_id, 0))
+        g.nodes[node_id]["out_degree"] = int(out_degrees.get(node_id, 0))
 
     annotate_cluster_roles(g)
+    betweenness_mode = (
+        "disabled"
+        if not include_betweenness
+        else "exact"
+        if g.number_of_nodes() <= exact_betweenness_node_limit
+        else "sampled"
+    )
+    g.graph["metrics"] = {
+        "betweenness": betweenness_mode,
+        "betweenness_samples": _betweenness_samples_used(g, betweenness_mode, betweenness_samples),
+    }
 
 
 def annotate_cluster_roles(g: nx.DiGraph) -> None:
@@ -47,6 +72,7 @@ def annotate_cluster_roles(g: nx.DiGraph) -> None:
         return
 
     clusters: dict[int | str, list[str]] = defaultdict(list)
+    pipeline_nodes = _pipeline_nodes(g)
     for node_id, data in g.nodes(data=True):
         clusters[data.get("cluster_id", "unclustered")].append(node_id)
 
@@ -63,46 +89,47 @@ def annotate_cluster_roles(g: nx.DiGraph) -> None:
             out_degree = int(g.nodes[node_id].get("out_degree") or 0)
             centrality = float(g.nodes[node_id].get("centrality") or 0.0)
             g.nodes[node_id]["cluster_role"] = _cluster_role(
-                g,
-                node_id,
                 in_degree=in_degree,
                 out_degree=out_degree,
                 centrality=centrality,
                 high_in=high_in,
                 high_out=high_out,
                 centrality_floor=centrality_floor,
+                is_pipeline_node=node_id in pipeline_nodes,
             )
 
 
 def _cluster_role(
-    g: nx.DiGraph,
-    node_id: str,
     in_degree: int,
     out_degree: int,
     centrality: float,
     high_in: int,
     high_out: int,
     centrality_floor: float,
+    is_pipeline_node: bool,
 ) -> str:
     if out_degree >= high_out and centrality >= centrality_floor:
         return "hub"
     if in_degree >= high_in and out_degree <= 1:
         return "utility"
-    if _is_pipeline_node(g, node_id, in_degree, out_degree):
+    if is_pipeline_node:
         return "pipeline"
     if in_degree == 0 and out_degree == 0:
         return "isolated"
     return "member"
 
 
-def _is_pipeline_node(g: nx.DiGraph, node_id: str, in_degree: int, out_degree: int) -> bool:
-    if in_degree > 1 or out_degree > 1:
-        return False
-    weak_component = nx.node_connected_component(g.to_undirected(), node_id)
-    if len(weak_component) < 3:
-        return False
-    subgraph = g.subgraph(weak_component)
-    return all(subgraph.in_degree(node) <= 1 and subgraph.out_degree(node) <= 1 for node in subgraph.nodes)
+def _pipeline_nodes(g: nx.DiGraph) -> set[str]:
+    undirected = g.to_undirected(as_view=True)
+    in_degrees = dict(g.in_degree())
+    out_degrees = dict(g.out_degree())
+    pipeline_nodes: set[str] = set()
+    for component in nx.connected_components(undirected):
+        if len(component) < 3:
+            continue
+        if all(in_degrees.get(node, 0) <= 1 and out_degrees.get(node, 0) <= 1 for node in component):
+            pipeline_nodes.update(component)
+    return pipeline_nodes
 
 
 def _percentile(values: list[int], percentile: float) -> int:
@@ -120,9 +147,32 @@ def _degree_centrality(g: nx.DiGraph) -> dict[str, float]:
     return {node_id: float(g.degree(node_id)) / denominator for node_id in g.nodes}
 
 
+def _betweenness(
+    g: nx.DiGraph,
+    *,
+    samples: int | None,
+    exact_node_limit: int,
+    enabled: bool,
+) -> dict[str, float]:
+    if not enabled:
+        return {node_id: 0.0 for node_id in g.nodes}
+    if g.number_of_nodes() <= exact_node_limit:
+        return nx.betweenness_centrality(g)
+    k = min(g.number_of_nodes(), max(1, samples or DEFAULT_BETWEENNESS_SAMPLES))
+    return nx.betweenness_centrality(g, k=k, seed=42)
+
+
+def _betweenness_samples_used(g: nx.DiGraph, mode: str, samples: int | None) -> int:
+    if mode == "disabled":
+        return 0
+    if mode == "exact":
+        return g.number_of_nodes()
+    return min(g.number_of_nodes(), max(1, samples or DEFAULT_BETWEENNESS_SAMPLES))
+
+
 def _pagerank(g: nx.DiGraph) -> dict[str, float]:
     try:
-        return nx.pagerank(g)
+        return nx.pagerank(g, max_iter=100, tol=1.0e-6)
     except (ImportError, nx.PowerIterationFailedConvergence):
         return {node_id: 0.0 for node_id in g.nodes}
 

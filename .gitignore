@@ -1,6 +1,7 @@
 benchmarks/repos/*
 .venv/
 .qualgraph/
+graphify-out/cache/*.json
 .pytest_cache/
 .ruff_cache/
 __pycache__/

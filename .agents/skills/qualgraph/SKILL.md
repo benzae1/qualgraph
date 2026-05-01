@@ -20,11 +20,16 @@ Use the requested path, or `.` if no path was provided.
    ```powershell
    .venv\Scripts\qualgraph build INPUT_PATH --output .qualgraph\graph.json
    ```
+   - Large repositories use fast sampled structural metrics by default. Use `--metric-mode exact` only for small repos or when exact betweenness is required.
 
 3. Annotate the graph:
    ```powershell
-   .venv\Scripts\qualgraph annotate INPUT_PATH --graph .qualgraph\graph.json --output .qualgraph\annotated.graph.json --annotators radon,ruff,coverage,git,security
+   .venv\Scripts\qualgraph annotate INPUT_PATH --graph .qualgraph\graph.json --output .qualgraph\annotated.graph.json --annotators fast
    ```
+   - `fast` is the default and runs static signals only: radon, ruff, docstring, cross-signal.
+   - Use `--annotators standard` to include bounded git history.
+   - Use `--annotators full --coverage-mode reuse` when an existing `.coverage` file is available.
+   - Use `--annotators full --coverage-mode run --pytest-args "..."` only when the user explicitly wants tests/coverage generated during the Qualgraph run.
 
 4. Export LLM tasks:
    ```powershell

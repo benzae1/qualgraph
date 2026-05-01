@@ -191,6 +191,23 @@ def test_ruff_defaults_to_curated_rules_without_project_config(tmp_path: Path) -
     assert "--select=E,F,W,B,C90,S,SIM,RUF" in run.call_args.args[0]
 
 
+def test_ruff_retries_with_isolated_defaults_when_project_config_is_incompatible(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    (repo / "pyproject.toml").write_text("[tool.ruff.lint]\nselect = ['TC']\n", encoding="utf-8")
+    (repo / "sample.py").write_text("\n\n\n\ndef work():\n    return 1\n", encoding="utf-8")
+    graph = _sample_graph_with_function()
+
+    failed = _completed([], returncode=2, stderr="Failed to parse pyproject.toml\nUnknown rule selector: `TC`")
+    with patch("qualgraph.annotators.ruff.subprocess.run", side_effect=[failed, _completed([])]) as run:
+        result = RuffAnnotator().annotate(graph, repo)
+
+    assert result.nodes_annotated == 0
+    assert run.call_count == 2
+    assert "--isolated" in run.call_args.args[0]
+    assert "--select=E,F,W,B,C90,S,SIM,RUF" in run.call_args.args[0]
+
+
 def test_detect_untested_hotspots_combines_complexity_centrality_and_coverage() -> None:
     graph = nx.DiGraph()
     graph.add_node(
@@ -473,7 +490,7 @@ def test_detect_secrets_attaches_conservative_low_severity_findings() -> None:
         }
     }
 
-    with patch("qualgraph.annotators.secrets.subprocess.run", return_value=_completed(payload)):
+    with patch("qualgraph.annotators.secrets._scan_secrets", return_value=payload):
         result = SecretsAnnotator().annotate(graph, Path("."))
 
     assert result.nodes_annotated == 1
@@ -797,9 +814,9 @@ def _json(payload: dict) -> str:
 
 
 class _completed:
-    def __init__(self, payload: dict) -> None:
+    def __init__(self, payload: dict, returncode: int = 0, stderr: str = "") -> None:
         import json
 
-        self.returncode = 0
+        self.returncode = returncode
         self.stdout = json.dumps(payload)
-        self.stderr = ""
+        self.stderr = stderr

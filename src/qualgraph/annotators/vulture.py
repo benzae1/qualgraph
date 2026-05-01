@@ -16,6 +16,7 @@ from qualgraph.annotators.locations import find_node_for_location
 
 
 WHITELIST_LOCATION_RE = re.compile(r"\((?P<path>.+?):(?P<line>\d+)\)")
+SCAN_EXCLUDES = ".git,.hg,.mypy_cache,.pytest_cache,.qualgraph,.ruff_cache,.tox,.venv,__pycache__,build,dist,htmlcov,venv"
 
 
 class VultureAnnotator(BaseAnnotator):
@@ -31,7 +32,7 @@ class VultureAnnotator(BaseAnnotator):
             attrs.pop("dead_code", None)
 
         completed = subprocess.run(
-            [sys.executable, "-m", "vulture", ".", "--make-whitelist"],
+            [sys.executable, "-m", "vulture", ".", "--make-whitelist", "--exclude", SCAN_EXCLUDES],
             cwd=repo_path,
             capture_output=True,
             text=True,

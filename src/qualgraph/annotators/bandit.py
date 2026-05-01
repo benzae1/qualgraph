@@ -16,6 +16,9 @@ from qualgraph.annotators.findings import add_finding, clear_findings_by_source
 from qualgraph.annotators.locations import find_node_for_location
 
 
+SCAN_EXCLUDES = ".git,.hg,.mypy_cache,.pytest_cache,.qualgraph,.ruff_cache,.tox,.venv,__pycache__,build,dist,htmlcov,venv"
+
+
 class BanditAnnotator(BaseAnnotator):
     name = "bandit"
     version = "1.0"
@@ -26,7 +29,7 @@ class BanditAnnotator(BaseAnnotator):
     def annotate(self, graph: nx.DiGraph, repo_path: Path) -> AnnotatorResult:
         clear_findings_by_source(graph, self.name)
         completed = subprocess.run(
-            [sys.executable, "-m", "bandit", "-r", ".", "-f", "json"],
+            [sys.executable, "-m", "bandit", "-r", ".", "-f", "json", "-x", SCAN_EXCLUDES],
             cwd=repo_path,
             capture_output=True,
             text=True,
@@ -35,7 +38,19 @@ class BanditAnnotator(BaseAnnotator):
         if completed.returncode not in (0, 1):
             raise RuntimeError(completed.stderr.strip() or completed.stdout.strip() or "bandit failed")
 
-        payload = json.loads(completed.stdout or "{}")
+        raw_output = completed.stdout.strip()
+        if not raw_output:
+            return AnnotatorResult(name=self.name)
+        json_start = raw_output.find("{")
+        if json_start < 0:
+            message = completed.stderr.strip() or raw_output
+            return AnnotatorResult(name=self.name, errors=[f"bandit did not emit JSON: {message}"])
+
+        try:
+            payload = json.loads(raw_output[json_start:] or "{}")
+        except json.JSONDecodeError as exc:
+            message = completed.stderr.strip() or completed.stdout.strip() or str(exc)
+            return AnnotatorResult(name=self.name, errors=[f"bandit did not emit JSON: {message}"])
         nodes_touched: set[str] = set()
         for finding in payload.get("results", []):
             filename = finding.get("filename")

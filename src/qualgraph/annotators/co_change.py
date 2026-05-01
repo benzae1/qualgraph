@@ -10,7 +10,7 @@ import networkx as nx
 from git import InvalidGitRepositoryError, Repo
 
 from qualgraph.annotators.base import AnnotatorResult, BaseAnnotator
-from qualgraph.annotators.git_history import _relative_to_target, _target_prefix
+from qualgraph.annotators.git_history import _commit_records
 from qualgraph.annotators.locations import nodes_for_file
 from qualgraph.graph.schema import EdgeAttrs, EdgeType, NodeType, edge_attrs_to_graph
 
@@ -19,9 +19,10 @@ class CoChangeAnnotator(BaseAnnotator):
     name = "co_change"
     version = "1.0"
 
-    def __init__(self, min_count: int = 5, min_rate: float = 0.5) -> None:
+    def __init__(self, min_count: int = 5, min_rate: float = 0.5, max_commits: int | None = 1000) -> None:
         self.min_count = min_count
         self.min_rate = min_rate
+        self.max_commits = max_commits
 
     def annotate(self, graph: nx.DiGraph, repo_path: Path) -> AnnotatorResult:
         try:
@@ -29,18 +30,11 @@ class CoChangeAnnotator(BaseAnnotator):
         except InvalidGitRepositoryError:
             return AnnotatorResult(name=self.name, errors=["not a git repository"])
 
-        target_prefix = _target_prefix(repo, repo_path)
         file_churn: collections.Counter[str] = collections.Counter()
         pair_counts: collections.Counter[tuple[str, str]] = collections.Counter()
 
-        for commit in repo.iter_commits():
-            touched = sorted(
-                {
-                    relative
-                    for file_path in commit.stats.files
-                    if (relative := _relative_to_target(file_path, target_prefix)) is not None
-                }
-            )
+        for commit in _commit_records(repo, repo_path, self.max_commits):
+            touched = sorted(set(commit.files))
             for file_path in touched:
                 file_churn[file_path] += 1
             for left, right in itertools.combinations(touched, 2):

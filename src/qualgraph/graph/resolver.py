@@ -8,6 +8,7 @@ runtime, decorators that replace functions, and type-driven method targets.
 
 from __future__ import annotations
 
+from collections import defaultdict
 from typing import Any, Mapping
 
 import networkx as nx
@@ -20,9 +21,10 @@ def resolve_calls(g: nx.DiGraph, symbol_table: Mapping[str, str]) -> None:
     pending_inherits = list(g.graph.get("pending_inherits", []))
     pending_imports = list(g.graph.get("pending_imports", []))
     import_maps = g.graph.get("import_maps", {})
+    suffix_index = _suffix_index(symbol_table)
 
     for imported in pending_imports:
-        target_id = _resolve_name(imported["name"], imported["file_path"], symbol_table, import_maps)
+        target_id = _resolve_name(imported["name"], imported["file_path"], symbol_table, import_maps, suffix_index)
         if target_id and target_id != imported["source"]:
             _add_edge(
                 g,
@@ -35,7 +37,7 @@ def resolve_calls(g: nx.DiGraph, symbol_table: Mapping[str, str]) -> None:
 
     unresolved_calls = []
     for call in pending_calls:
-        target_id = _resolve_name(call["name"], call["file_path"], symbol_table, import_maps)
+        target_id = _resolve_name(call["name"], call["file_path"], symbol_table, import_maps, suffix_index)
         if target_id and target_id != call["source"]:
             _add_edge(g, call["source"], target_id, EdgeType.CALLS, source=call["name"])
         else:
@@ -43,7 +45,7 @@ def resolve_calls(g: nx.DiGraph, symbol_table: Mapping[str, str]) -> None:
 
     unresolved_inherits = []
     for inherit in pending_inherits:
-        target_id = _resolve_name(inherit["name"], inherit["file_path"], symbol_table, import_maps)
+        target_id = _resolve_name(inherit["name"], inherit["file_path"], symbol_table, import_maps, suffix_index)
         if target_id and target_id != inherit["source"]:
             _add_edge(g, inherit["source"], target_id, EdgeType.INHERITS, source=inherit["name"])
         else:
@@ -58,21 +60,29 @@ def _resolve_name(
     file_path: str,
     symbol_table: Mapping[str, str],
     import_maps: Mapping[str, Mapping[str, str]],
+    suffix_index: Mapping[str, set[str]],
 ) -> str | None:
     candidates = _candidate_names(name, file_path, import_maps)
     for candidate in candidates:
         if candidate in symbol_table:
             return symbol_table[candidate]
 
-    suffix_matches = [
-        node_id
-        for qualified_name, node_id in symbol_table.items()
-        if any(_matches_suffix(qualified_name, candidate) for candidate in candidates)
-    ]
-    unique_matches = sorted(set(suffix_matches))
+    suffix_matches: set[str] = set()
+    for candidate in candidates:
+        suffix_matches.update(suffix_index.get(candidate, set()))
+    unique_matches = sorted(suffix_matches)
     if len(unique_matches) == 1:
         return unique_matches[0]
     return None
+
+
+def _suffix_index(symbol_table: Mapping[str, str]) -> dict[str, set[str]]:
+    index: dict[str, set[str]] = defaultdict(set)
+    for qualified_name, node_id in symbol_table.items():
+        parts = qualified_name.split(".")
+        for offset in range(len(parts)):
+            index[".".join(parts[offset:])].add(node_id)
+    return dict(index)
 
 
 def _candidate_names(
@@ -93,10 +103,6 @@ def _candidate_names(
         candidates.insert(0, import_map[name])
 
     return _dedupe(candidates)
-
-
-def _matches_suffix(qualified_name: str, candidate: str) -> bool:
-    return qualified_name == candidate or qualified_name.endswith(f".{candidate}")
 
 
 def _dedupe(values: list[str]) -> list[str]:

@@ -3,17 +3,33 @@
 from __future__ import annotations
 
 import importlib.util
-import json
-import subprocess
-import sys
 from pathlib import Path
 from typing import Any
 
 import networkx as nx
+from detect_secrets import SecretsCollection
+from detect_secrets.settings import default_settings
 
 from qualgraph.annotators.base import AnnotatorResult, BaseAnnotator
 from qualgraph.annotators.findings import add_finding, clear_findings_by_source
 from qualgraph.annotators.locations import find_node_for_location
+
+
+EXCLUDED_PARTS = {
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".qualgraph",
+    ".ruff_cache",
+    ".tox",
+    ".venv",
+    "__pycache__",
+    "build",
+    "dist",
+    "htmlcov",
+    "venv",
+}
 
 
 class SecretsAnnotator(BaseAnnotator):
@@ -25,17 +41,7 @@ class SecretsAnnotator(BaseAnnotator):
 
     def annotate(self, graph: nx.DiGraph, repo_path: Path) -> AnnotatorResult:
         clear_findings_by_source(graph, self.name)
-        completed = subprocess.run(
-            [sys.executable, "-m", "detect_secrets", "scan", "--all-files"],
-            cwd=repo_path,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        if completed.returncode != 0:
-            raise RuntimeError(completed.stderr.strip() or completed.stdout.strip() or "detect-secrets failed")
-
-        payload = json.loads(completed.stdout or "{}")
+        payload = _scan_secrets(repo_path, _python_files_from_graph(graph))
         nodes_touched: set[str] = set()
         for filename, findings in (payload.get("results") or {}).items():
             for finding in findings or []:
@@ -49,6 +55,28 @@ class SecretsAnnotator(BaseAnnotator):
                     nodes_touched.add(node_id)
 
         return AnnotatorResult(name=self.name, nodes_annotated=len(nodes_touched))
+
+
+def _scan_secrets(repo_path: Path, filenames: list[str]) -> dict[str, Any]:
+    collection = SecretsCollection(root=str(repo_path))
+    with default_settings():
+        for filename in filenames:
+            collection.scan_file(filename)
+    return {"results": collection.json()}
+
+
+def _python_files_from_graph(graph: nx.DiGraph) -> list[str]:
+    files = {
+        str(attrs.get("file_path"))
+        for _node_id, attrs in graph.nodes(data=True)
+        if attrs.get("file_path") and not _excluded(str(attrs.get("file_path")))
+    }
+    return sorted(files)
+
+
+def _excluded(filename: str) -> bool:
+    normalized = Path(filename).as_posix()
+    return any(part in EXCLUDED_PARTS for part in normalized.split("/"))
 
 
 def _finding_payload(filename: str, finding: dict[str, Any]) -> dict[str, Any]:

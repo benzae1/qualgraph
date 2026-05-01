@@ -38,7 +38,17 @@ from qualgraph.graph.schema import (
 
 DEFAULT_EXCLUDE_GLOBS = [
     ".git/**",
+    ".hg/**",
+    ".mypy_cache/**",
+    ".pytest_cache/**",
+    ".qualgraph/**",
+    ".ruff_cache/**",
+    ".tox/**",
     ".venv/**",
+    "build/**",
+    "dist/**",
+    "htmlcov/**",
+    "node_modules/**",
     "venv/**",
     "__pycache__/**",
     "graphify-out/**",
