@@ -64,7 +64,7 @@ def build_report_context(graph: nx.DiGraph, top_n: int = 10) -> dict[str, Any]:
         "co_changes": _co_changes(graph),
         "clusters": clusters,
         "cross_signal_findings": _cross_signal_findings(finding_records),
-        "dimension_scorecards": _dimension_scorecards(finding_records, risk_nodes),
+        "dimension_scorecards": _dimension_scorecards(actionable_records, risk_nodes),
         "annotator_status": _annotator_status(graph, run_summary),
         "format_score": _format_score,
         "format_small": _format_small,
@@ -98,6 +98,7 @@ def _template_env() -> Environment:
 def _finding_records(graph: nx.DiGraph, nodes: list[tuple[str, dict]]) -> list[dict[str, Any]]:
     records: list[dict[str, Any]] = []
     seen: set[tuple[Any, ...]] = set()
+    seen_cross_tool: set[tuple[Any, ...]] = set()
     for node_id, attrs in nodes:
         for finding in attrs.get("findings", []) or []:
             if not isinstance(finding, dict):
@@ -105,7 +106,11 @@ def _finding_records(graph: nx.DiGraph, nodes: list[tuple[str, dict]]) -> list[d
             key = (node_id, *finding_key(finding))
             if key in seen:
                 continue
+            cross_tool_key = _cross_tool_finding_key(node_id, attrs, finding)
+            if cross_tool_key in seen_cross_tool:
+                continue
             seen.add(key)
+            seen_cross_tool.add(cross_tool_key)
             records.append(_record(node_id, attrs, finding, graph))
     for finding in detect_cross_signal_findings(graph):
         if finding.node_id not in graph.nodes:
@@ -222,7 +227,7 @@ def _is_low_signal_finding(record: dict[str, Any]) -> bool:
     code = _finding_code(finding)
     if code.startswith("D"):
         return True
-    if _is_test_node(record["node"]) and code in {"S101", "B101"}:
+    if code in {"S101", "B101"}:
         return True
     return False
 
@@ -563,6 +568,25 @@ def _finding_line(finding: dict[str, Any], attrs: dict[str, Any]) -> Any:
     if isinstance(location, dict) and location.get("row") is not None:
         return location["row"]
     return finding.get("line") or attrs.get("line_start")
+
+
+def _cross_tool_finding_key(node_id: str, attrs: dict[str, Any], finding: dict[str, Any]) -> tuple[Any, ...]:
+    code = _finding_code(finding)
+    canonical_code = {"B101": "assert-used", "S101": "assert-used"}.get(code, code)
+    return (
+        node_id,
+        attrs.get("file_path"),
+        _finding_line(finding, attrs),
+        canonical_code,
+        _canonical_message(finding),
+    )
+
+
+def _canonical_message(finding: dict[str, Any]) -> str:
+    message = str(finding.get("message") or "").lower()
+    if "assert" in message:
+        return "assert-used"
+    return re.sub(r"\s+", " ", message).strip()
 
 
 def _severity_text(finding: dict[str, Any]) -> str:

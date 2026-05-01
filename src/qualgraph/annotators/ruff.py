@@ -20,7 +20,7 @@ from qualgraph.annotators.locations import find_node_for_location
 class RuffAnnotator(BaseAnnotator):
     name = "ruff"
     version = "1.0"
-    default_select = "E,F,W,B,C90,S,SIM,RUF"
+    default_select = "E,F,W,B,C90,SIM,RUF"
 
     def is_available(self) -> bool:
         return importlib.util.find_spec("ruff") is not None
@@ -55,7 +55,7 @@ class RuffAnnotator(BaseAnnotator):
             if not filename or row is None:
                 continue
             relative = _relative_to_repo(repo_path, filename)
-            if _skip_low_signal_test_finding(relative, finding):
+            if _skip_low_signal_finding(relative, finding):
                 continue
             node_id = find_node_for_location(graph, relative, int(row))
             if node_id is None:
@@ -68,9 +68,12 @@ class RuffAnnotator(BaseAnnotator):
 
 def _finding_payload(finding: dict[str, Any], repo_path: Path, relative_path: str) -> dict[str, Any]:
     row = (finding.get("location") or {}).get("row")
+    severity = _severity_for_rule(str(finding.get("code") or ""))
     return {
         "source": "ruff",
         "code": finding.get("code"),
+        "severity": severity,
+        "severity_num": _severity_num(severity),
         "message": finding.get("message"),
         "location": finding.get("location"),
         "end_location": finding.get("end_location"),
@@ -116,10 +119,12 @@ def _looks_like_config_error(completed: subprocess.CompletedProcess[str]) -> boo
     return "failed to parse" in output or "toml parse error" in output or "unknown rule selector" in output
 
 
-def _skip_low_signal_test_finding(relative_path: str, finding: dict[str, Any]) -> bool:
+def _skip_low_signal_finding(relative_path: str, finding: dict[str, Any]) -> bool:
+    code = str(finding.get("code") or "")
+    if code == "S101":
+        return True
     if not _is_test_path(relative_path):
         return False
-    code = str(finding.get("code") or "")
     return code == "S101" or code.startswith("D")
 
 
@@ -142,3 +147,25 @@ def _source_line(repo_path: Path, relative_path: str, row: Any) -> str:
     if 1 <= line_number <= len(lines):
         return lines[line_number - 1].strip()
     return ""
+
+
+def _severity_for_rule(code: str) -> str:
+    if code.startswith("F"):
+        return "MEDIUM"
+    if code.startswith("B"):
+        return "MEDIUM"
+    if code.startswith("S"):
+        return "MEDIUM"
+    if code.startswith("C90"):
+        return "MEDIUM"
+    if code in {"RUF006", "RUF015", "RUF018", "RUF100"}:
+        return "MEDIUM"
+    return "LOW"
+
+
+def _severity_num(severity: str) -> float:
+    return {
+        "HIGH": 1.0,
+        "MEDIUM": 0.66,
+        "LOW": 0.33,
+    }.get(severity.upper(), 0.0)

@@ -188,7 +188,7 @@ def test_ruff_defaults_to_curated_rules_without_project_config(tmp_path: Path) -
     with patch("qualgraph.annotators.ruff.subprocess.run", return_value=_completed([])) as run:
         RuffAnnotator().annotate(graph, repo)
 
-    assert "--select=E,F,W,B,C90,S,SIM,RUF" in run.call_args.args[0]
+    assert "--select=E,F,W,B,C90,SIM,RUF" in run.call_args.args[0]
 
 
 def test_ruff_retries_with_isolated_defaults_when_project_config_is_incompatible(tmp_path: Path) -> None:
@@ -205,7 +205,37 @@ def test_ruff_retries_with_isolated_defaults_when_project_config_is_incompatible
     assert result.nodes_annotated == 0
     assert run.call_count == 2
     assert "--isolated" in run.call_args.args[0]
-    assert "--select=E,F,W,B,C90,S,SIM,RUF" in run.call_args.args[0]
+    assert "--select=E,F,W,B,C90,SIM,RUF" in run.call_args.args[0]
+
+
+def test_ruff_drops_assert_rule_and_maps_severity(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    (repo / "sample.py").write_text("\n\n\n\ndef work():\n    return missing_name\n", encoding="utf-8")
+    graph = _sample_graph_with_function()
+    payload = [
+        {
+            "filename": str(repo / "sample.py"),
+            "code": "S101",
+            "message": "Use of assert detected",
+            "location": {"row": 6, "column": 5},
+        },
+        {
+            "filename": str(repo / "sample.py"),
+            "code": "F821",
+            "message": "Undefined name `missing_name`",
+            "location": {"row": 6, "column": 12},
+        },
+    ]
+
+    with patch("qualgraph.annotators.ruff.subprocess.run", return_value=_completed(payload)):
+        result = RuffAnnotator().annotate(graph, repo)
+
+    assert result.nodes_annotated == 1
+    finding = graph.nodes["function"]["findings"][0]
+    assert finding["code"] == "F821"
+    assert finding["severity"] == "MEDIUM"
+    assert finding["severity_num"] == 0.66
 
 
 def test_detect_untested_hotspots_combines_complexity_centrality_and_coverage() -> None:

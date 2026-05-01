@@ -29,7 +29,7 @@ class BanditAnnotator(BaseAnnotator):
     def annotate(self, graph: nx.DiGraph, repo_path: Path) -> AnnotatorResult:
         clear_findings_by_source(graph, self.name)
         completed = subprocess.run(
-            [sys.executable, "-m", "bandit", "-r", ".", "-f", "json", "-x", SCAN_EXCLUDES],
+            [sys.executable, "-m", "bandit", "-r", ".", "-f", "json", "-x", SCAN_EXCLUDES, "-s", "B101"],
             cwd=repo_path,
             capture_output=True,
             text=True,
@@ -53,6 +53,8 @@ class BanditAnnotator(BaseAnnotator):
             return AnnotatorResult(name=self.name, errors=[f"bandit did not emit JSON: {message}"])
         nodes_touched: set[str] = set()
         for finding in payload.get("results", []):
+            if _is_low_signal_finding(finding):
+                continue
             filename = finding.get("filename")
             line_number = finding.get("line_number")
             if not filename or line_number is None:
@@ -78,6 +80,10 @@ def _finding_payload(finding: dict[str, Any]) -> dict[str, Any]:
         "test_id": finding.get("test_id"),
         "line": finding.get("line_number"),
     }
+
+
+def _is_low_signal_finding(finding: dict[str, Any]) -> bool:
+    return str(finding.get("test_id") or "").upper() == "B101"
 
 
 def _relative_to_repo(repo_path: Path, filename: str) -> str:
