@@ -58,9 +58,11 @@ def _to_igraph(g: nx.DiGraph) -> ig.Graph:
 
 def _coarsen_clusters(g: nx.DiGraph, clusters: dict[str, int]) -> dict[str, int]:
     target = _target_cluster_count(len(clusters))
+    max_size = _max_cluster_size(len(clusters), target)
+    clusters = _split_oversized_clusters(g, clusters, max_size)
     current_count = len(set(clusters.values()))
     if current_count <= target:
-        return clusters
+        return _compact_cluster_ids(clusters)
 
     sizes = Counter(clusters.values())
     kept = {cluster_id for cluster_id, _size in sizes.most_common(target)}
@@ -73,14 +75,13 @@ def _coarsen_clusters(g: nx.DiGraph, clusters: dict[str, int]) -> dict[str, int]
         if cluster_id in kept:
             reassigned[node_id] = cluster_id
             continue
-        neighbor_cluster = _nearest_kept_cluster(node_id, clusters, kept, undirected)
-        segment_cluster = _segment_cluster(g.nodes[node_id], kept_by_segment)
+        neighbor_cluster = _nearest_kept_cluster(node_id, clusters, kept, undirected, mutable_sizes, max_size)
+        segment_cluster = _segment_cluster(g.nodes[node_id], kept_by_segment, mutable_sizes, max_size)
         target_cluster = neighbor_cluster or segment_cluster or min(mutable_sizes, key=lambda item: (mutable_sizes[item], item))
         reassigned[node_id] = target_cluster
         mutable_sizes[target_cluster] += 1
 
-    id_map = {cluster_id: index for index, cluster_id in enumerate(sorted(set(reassigned.values())))}
-    return {node_id: id_map[cluster_id] for node_id, cluster_id in reassigned.items()}
+    return _compact_cluster_ids(reassigned)
 
 
 def _target_cluster_count(node_count: int) -> int:
@@ -89,16 +90,49 @@ def _target_cluster_count(node_count: int) -> int:
     return max(25, min(140, int(max(math.sqrt(node_count), node_count / 50))))
 
 
+def _max_cluster_size(node_count: int, target: int) -> int:
+    return max(75, math.ceil(node_count / max(target, 1) * 3))
+
+
+def _split_oversized_clusters(g: nx.DiGraph, clusters: dict[str, int], max_size: int) -> dict[str, int]:
+    by_cluster: dict[int, list[str]] = defaultdict(list)
+    for node_id, cluster_id in clusters.items():
+        by_cluster[cluster_id].append(node_id)
+
+    next_cluster_id = max(by_cluster, default=-1) + 1
+    split: dict[str, int] = {}
+    for cluster_id, node_ids in sorted(by_cluster.items()):
+        if len(node_ids) <= max_size:
+            for node_id in node_ids:
+                split[node_id] = cluster_id
+            continue
+        by_segment: dict[str, list[str]] = defaultdict(list)
+        for node_id in node_ids:
+            by_segment[_path_segment(g.nodes[node_id]) or "misc"].append(node_id)
+        for segment, segment_nodes in sorted(by_segment.items()):
+            ordered = sorted(segment_nodes)
+            for offset in range(0, len(ordered), max_size):
+                chunk = ordered[offset : offset + max_size]
+                target_cluster = cluster_id if segment == "misc" and offset == 0 else next_cluster_id
+                if target_cluster == next_cluster_id:
+                    next_cluster_id += 1
+                for node_id in chunk:
+                    split[node_id] = target_cluster
+    return split
+
+
 def _nearest_kept_cluster(
     node_id: str,
     clusters: dict[str, int],
     kept: set[int],
     undirected: nx.Graph,
+    sizes: Counter[int],
+    max_size: int,
 ) -> int | None:
     counts: Counter[int] = Counter()
     for neighbor in undirected.neighbors(node_id):
         cluster_id = clusters.get(neighbor)
-        if cluster_id in kept:
+        if cluster_id in kept and sizes[cluster_id] < max_size:
             counts[cluster_id] += 1
     if not counts:
         return None
@@ -119,12 +153,25 @@ def _kept_clusters_by_segment(g: nx.DiGraph, clusters: dict[str, int], kept: set
     }
 
 
-def _segment_cluster(attrs: dict, kept_by_segment: dict[str, list[int]]) -> int | None:
+def _segment_cluster(
+    attrs: dict,
+    kept_by_segment: dict[str, list[int]],
+    sizes: Counter[int],
+    max_size: int,
+) -> int | None:
     segment = _path_segment(attrs)
     if not segment:
         return None
     clusters = kept_by_segment.get(segment) or []
-    return clusters[0] if clusters else None
+    for cluster_id in clusters:
+        if sizes[cluster_id] < max_size:
+            return cluster_id
+    return None
+
+
+def _compact_cluster_ids(clusters: dict[str, int]) -> dict[str, int]:
+    id_map = {cluster_id: index for index, cluster_id in enumerate(sorted(set(clusters.values())))}
+    return {node_id: id_map[cluster_id] for node_id, cluster_id in clusters.items()}
 
 
 def _path_segment(attrs: dict) -> str | None:
