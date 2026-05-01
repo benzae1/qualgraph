@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections import Counter, defaultdict
 from typing import Any
 
 import networkx as nx
@@ -57,7 +58,7 @@ def detect_hidden_coupling(graph: nx.DiGraph) -> list[Finding]:
     """Find co-change edges that lack a static calls/imports path in either direction."""
 
     dependency_graph = _edge_type_subgraph(graph, {EdgeType.CALLS.value, EdgeType.IMPORTS.value})
-    findings: list[Finding] = []
+    hidden_pairs: list[dict[str, Any]] = []
     for source, target, attrs in graph.edges(data=True):
         if attrs.get("type") != EdgeType.CO_CHANGES_WITH.value:
             continue
@@ -70,18 +71,63 @@ def detect_hidden_coupling(graph: nx.DiGraph) -> list[Finding]:
             continue
         if nx.has_path(dependency_graph, source, target) or nx.has_path(dependency_graph, target, source):
             continue
+        hidden_pairs.append(
+            {
+                "source": source,
+                "target": target,
+                "co_change_count": attrs.get("co_change_count") or attrs.get("weight"),
+                "co_change_rate": attrs.get("co_change_rate"),
+                "edge_type": attrs.get("type"),
+            }
+        )
+
+    if not hidden_pairs:
+        return []
+
+    node_counts = Counter(
+        node_id
+        for pair in hidden_pairs
+        for node_id in (str(pair["source"]), str(pair["target"]))
+    )
+    hubs = {node_id for node_id, count in node_counts.items() if count >= 3}
+    hub_pairs: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    findings: list[Finding] = []
+    for pair in hidden_pairs:
+        pair_hubs = [node_id for node_id in (str(pair["source"]), str(pair["target"])) if node_id in hubs]
+        if pair_hubs:
+            hub = sorted(pair_hubs, key=lambda node_id: (-node_counts[node_id], node_id))[0]
+            partner = pair["target"] if hub == pair["source"] else pair["source"]
+            hub_pairs[hub].append({**pair, "partner": partner})
+            continue
         findings.append(
             Finding(
-                node_id=source,
+                node_id=str(pair["source"]),
                 kind="hidden_coupling",
                 severity="medium",
                 confidence="INFERRED",
                 message="Files or modules change together without an observed static calls/imports path.",
                 evidence={
-                    "target": target,
-                    "co_change_count": attrs.get("co_change_count") or attrs.get("weight"),
-                    "co_change_rate": attrs.get("co_change_rate"),
-                    "edge_type": attrs.get("type"),
+                    "target": pair["target"],
+                    "co_change_count": pair["co_change_count"],
+                    "co_change_rate": pair["co_change_rate"],
+                    "edge_type": pair["edge_type"],
+                },
+            )
+        )
+    for hub, pairs in sorted(hub_pairs.items()):
+        findings.append(
+            Finding(
+                node_id=hub,
+                kind="hidden_coupling_hub",
+                severity="medium",
+                confidence="INFERRED",
+                message="Module is a co-change hub for multiple partners without observed static calls/imports paths.",
+                evidence={
+                    "partners": [pair["partner"] for pair in sorted(pairs, key=lambda item: str(item["partner"]))],
+                    "partner_count": len(pairs),
+                    "co_change_count": sum(int(pair.get("co_change_count") or 0) for pair in pairs),
+                    "max_co_change_rate": max((float(pair.get("co_change_rate") or 0.0) for pair in pairs), default=0.0),
+                    "edge_type": EdgeType.CO_CHANGES_WITH.value,
                 },
             )
         )
@@ -218,21 +264,26 @@ def detect_cyclic_dependencies(graph: nx.DiGraph, max_cycles: int = 50) -> list[
 
     calls_graph = _edge_type_subgraph(graph, {EdgeType.CALLS.value})
     findings: list[Finding] = []
+    seen_cycles: set[frozenset[str]] = set()
     for cycle in nx.simple_cycles(calls_graph):
-        if len(cycle) < 2:
+        if len(cycle) < 3:
             continue
-        for node_id in cycle:
-            findings.append(
-                Finding(
-                    node_id=node_id,
-                    kind="cyclic_dependency",
-                    severity="medium",
-                    confidence="EXTRACTED",
-                    message="Node participates in a cycle in the calls graph.",
-                    evidence={"cycle": cycle, "cycle_size": len(cycle)},
-                )
+        cycle_key = frozenset(str(node_id) for node_id in cycle)
+        if cycle_key in seen_cycles:
+            continue
+        seen_cycles.add(cycle_key)
+        representative = _cycle_representative(calls_graph, [str(node_id) for node_id in cycle])
+        findings.append(
+            Finding(
+                node_id=representative,
+                kind="cyclic_dependency",
+                severity="medium",
+                confidence="EXTRACTED",
+                message="A multi-node cycle exists in the calls graph.",
+                evidence={"cycle": cycle, "cycle_size": len(cycle), "members": sorted(cycle_key)},
             )
-        if len({tuple(finding.evidence["cycle"]) for finding in findings if finding.kind == "cyclic_dependency"}) >= max_cycles:
+        )
+        if len(findings) >= max_cycles:
             break
     return findings
 
@@ -385,6 +436,10 @@ def _total_degree(graph: nx.DiGraph, node_id: str, attrs: dict[str, Any]) -> int
     in_degree = attrs.get("in_degree") if attrs.get("in_degree") is not None else graph.in_degree(node_id)
     out_degree = attrs.get("out_degree") if attrs.get("out_degree") is not None else graph.out_degree(node_id)
     return int(in_degree) + int(out_degree)
+
+
+def _cycle_representative(graph: nx.DiGraph, cycle: list[str]) -> str:
+    return sorted(cycle, key=lambda node_id: (-(graph.in_degree(node_id) + graph.out_degree(node_id)), node_id))[0]
 
 
 def _is_obvious_test_pair(left: Any, right: Any) -> bool:

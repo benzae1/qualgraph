@@ -322,6 +322,21 @@ def test_detect_hidden_coupling_skips_type_only_modules() -> None:
     assert detect_hidden_coupling(graph) == []
 
 
+def test_detect_hidden_coupling_aggregates_repeated_hubs() -> None:
+    graph = nx.DiGraph()
+    graph.add_nodes_from(["hub", "a", "b", "c"])
+    graph.add_edge("hub", "a", type="co_changes_with", co_change_count=2, co_change_rate=0.4)
+    graph.add_edge("hub", "b", type="co_changes_with", co_change_count=3, co_change_rate=0.6)
+    graph.add_edge("c", "hub", type="co_changes_with", co_change_count=4, co_change_rate=0.8)
+
+    findings = detect_hidden_coupling(graph)
+
+    assert [finding.kind for finding in findings] == ["hidden_coupling_hub"]
+    assert findings[0].node_id == "hub"
+    assert findings[0].evidence["partner_count"] == 3
+    assert findings[0].evidence["co_change_count"] == 9
+
+
 def test_detect_vulnerable_usage_requires_vulnerable_import_and_matching_call() -> None:
     graph = nx.DiGraph()
     graph.add_node("uses_vuln", type=NodeType.FUNCTION.value)
@@ -421,14 +436,18 @@ def test_detect_cyclic_dependencies_uses_calls_subgraph_only() -> None:
     graph = nx.DiGraph()
     graph.add_edge("a", "b", type="calls")
     graph.add_edge("b", "a", type="calls")
+    graph.add_edge("x", "y", type="calls")
+    graph.add_edge("y", "z", type="calls")
+    graph.add_edge("z", "x", type="calls")
     graph.add_edge("c", "d", type="imports")
     graph.add_edge("d", "c", type="imports")
 
     findings = detect_cyclic_dependencies(graph)
 
-    assert sorted(finding.node_id for finding in findings) == ["a", "b"]
-    assert {finding.kind for finding in findings} == {"cyclic_dependency"}
-    assert all(finding.evidence["cycle_size"] == 2 for finding in findings)
+    assert len(findings) == 1
+    assert findings[0].kind == "cyclic_dependency"
+    assert findings[0].evidence["cycle_size"] == 3
+    assert findings[0].evidence["members"] == ["x", "y", "z"]
 
 
 def test_detect_complex_hotspots_combines_cpu_complexity_and_coverage() -> None:

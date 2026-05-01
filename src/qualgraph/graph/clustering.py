@@ -7,7 +7,7 @@ import leidenalg
 import networkx as nx
 
 
-DEFAULT_RESOLUTION = 0.35
+DEFAULT_RESOLUTION = 0.05
 
 
 def cluster_leiden(g: nx.DiGraph, resolution: float = DEFAULT_RESOLUTION) -> dict[str, int]:

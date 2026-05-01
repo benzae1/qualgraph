@@ -386,6 +386,7 @@ def _clusters(
                 "top_risk": risk_by_cluster.get(cluster_id, [])[:3],
             }
         )
+    clusters = sorted(clusters, key=lambda item: (item["size"], len(item["top_risk"]), len(item["issues"])), reverse=True)
     return _dedupe_cluster_names(clusters)[:20]
 
 
@@ -625,8 +626,11 @@ def _format_evidence(value: Any) -> str:
     if isinstance(value, dict):
         preferred = [
             "target",
+            "partners",
+            "partner_count",
             "co_change_count",
             "co_change_rate",
+            "max_co_change_rate",
             "centrality",
             "complexity",
             "coverage",
@@ -778,6 +782,12 @@ def _humanize_symbol(value: str) -> str:
 
 
 def _dominant_label(names: list[str], paths: list[str]) -> str:
+    test_label = _test_infrastructure_label(names, paths)
+    if test_label:
+        return test_label
+    path_label = _path_segment_label(paths)
+    if path_label:
+        return path_label
     scores: Counter[str] = Counter()
     for token, label in _domain_labels().items():
         scores[label] = sum(1 for item in [*names, *paths] if token in item.lower())
@@ -794,6 +804,52 @@ def _dominant_label(names: list[str], paths: list[str]) -> str:
     if candidates:
         return candidates.most_common(1)[0][0]
     return "Cluster"
+
+
+def _test_infrastructure_label(names: list[str], paths: list[str]) -> str | None:
+    items = [*names, *paths]
+    if not items:
+        return None
+    testish = sum(
+        1
+        for item in items
+        if "conftest" in item.lower()
+        or "mockserver" in item.lower()
+        or "/tests/" in item.replace("\\", "/").lower()
+        or item.replace("\\", "/").lower().startswith("tests/")
+    )
+    return "Test Infrastructure" if testish / len(items) >= 0.35 else None
+
+
+def _path_segment_label(paths: list[str]) -> str | None:
+    ignored = {
+        "",
+        ".",
+        "src",
+        "tests",
+        "test",
+        "benchmarks",
+        "repos",
+        "scrapy",
+        "starlette",
+        "qualgraph",
+        "__pycache__",
+    }
+    candidates: Counter[str] = Counter()
+    for path in paths:
+        normalized = Path(path).with_suffix("").parts
+        for part in reversed(normalized[:-1]):
+            lowered = part.lower()
+            if lowered in ignored or lowered.startswith("test_") or lowered.startswith("."):
+                continue
+            candidates[part] += 1
+            break
+    if not candidates:
+        return None
+    label, count = candidates.most_common(1)[0]
+    if count < max(2, len(paths) * 0.2):
+        return None
+    return label
 
 
 def _domain_labels() -> dict[str, str]:
