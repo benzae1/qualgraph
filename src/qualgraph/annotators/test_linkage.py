@@ -55,11 +55,16 @@ def _add_dynamic_context_edges(graph: nx.DiGraph, repo_path: Path) -> int:
     if not hasattr(data, "contexts_by_lineno"):
         return 0
 
-    test_nodes = {
-        attrs.get("name"): node_id
+    test_nodes = [
+        {
+            "node_id": node_id,
+            "name": attrs.get("name"),
+            "qualified_name": attrs.get("qualified_name"),
+            "file_path": attrs.get("file_path"),
+        }
         for node_id, attrs in graph.nodes(data=True)
         if attrs.get("type") == NodeType.TEST_FUNCTION.value
-    }
+    ]
     edges_added = 0
     for measured_file in data.measured_files():
         try:
@@ -83,10 +88,18 @@ def _add_dynamic_context_edges(graph: nx.DiGraph, repo_path: Path) -> int:
     return edges_added
 
 
-def _match_test_context(context: str, test_nodes: dict[str | None, str]) -> str | None:
-    for test_name, node_id in test_nodes.items():
-        if test_name and test_name in context:
-            return node_id
+def _match_test_context(context: str, test_nodes: list[dict[str, str | None]]) -> str | None:
+    normalized_context = context.replace("\\", "/")
+    for test_node in test_nodes:
+        test_name = test_node.get("name")
+        qualified_name = str(test_node.get("qualified_name") or "").replace(".", "::")
+        file_path = str(test_node.get("file_path") or "").replace("\\", "/")
+        if qualified_name and qualified_name in normalized_context:
+            return test_node["node_id"]
+        if file_path and file_path in normalized_context and test_name and str(test_name) in normalized_context:
+            return test_node["node_id"]
+        if test_name and str(test_name) in normalized_context:
+            return test_node["node_id"]
     return None
 
 

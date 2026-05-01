@@ -4,6 +4,7 @@ from unittest.mock import patch
 import networkx as nx
 
 from qualgraph.annotators.cross_signal import CrossSignalAnnotator
+from qualgraph.annotators.coverage import _write_context_rcfile
 from qualgraph.annotators.docstring import DocstringAnnotator
 from qualgraph.annotators.findings import add_finding, clear_findings_by_source
 from qualgraph.annotators.git_history import _relative_to_target
@@ -89,6 +90,15 @@ def test_test_linkage_adds_static_tested_by_edges() -> None:
 
     assert result.edges_added > 0
     assert any(attrs.get("type") == "tested_by" for _source, _target, attrs in graph.edges(data=True))
+
+
+def test_coverage_context_rcfile_enables_test_function_contexts(tmp_path: Path) -> None:
+    rcfile = _write_context_rcfile(tmp_path)
+
+    text = rcfile.read_text(encoding="utf-8")
+    assert "branch = True" in text
+    assert "dynamic_context = test_function" in text
+    assert rcfile.parent.name == ".qualgraph"
 
 
 def test_profiler_annotator_attributes_cprofile_json_by_file_and_line(tmp_path: Path) -> None:
@@ -815,12 +825,22 @@ def test_report_status_and_linkage_distinguish_static_edges_from_coverage() -> N
         line_end=4,
         coverage_line=0.75,
     )
+    graph.add_node(
+        "test",
+        type=NodeType.TEST_FUNCTION.value,
+        qualified_name="tests.test_sample.test_prod",
+        file_path="tests/test_sample.py",
+        line_start=1,
+        line_end=4,
+    )
+    graph.add_edge("prod", "test", type="tested_by", source="coverage_context")
 
     report = render_markdown_report(graph)
 
     assert "coverage: ok (12.5 ms); nodes_annotated=1" in report
     assert "bandit: failed (1.0 ms)" in report
     assert "Statically linked production functions/methods: 0/1" in report
+    assert "Coverage-context linked production functions/methods: 1/1" in report
     assert "Covered production functions/methods: 1/1" in report
 
 

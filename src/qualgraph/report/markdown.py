@@ -298,7 +298,13 @@ def _test_linkage(nodes: list[tuple[str, dict]], edges: list[tuple[str, str, dic
         for node_id, attrs in nodes
         if attrs.get("type") in {"Function", "Method"} and not _is_test_node(attrs)
     }
-    tested_nodes = {source for source, _target, attrs in edges if attrs.get("type") == "tested_by"}
+    static_nodes = {source for source, _target, attrs in edges if attrs.get("type") == "tested_by" and attrs.get("source") == "static"}
+    dynamic_nodes = {
+        source
+        for source, _target, attrs in edges
+        if attrs.get("type") == "tested_by" and attrs.get("source") == "coverage_context"
+    }
+    tested_nodes = static_nodes | dynamic_nodes
     covered_nodes = {
         node_id
         for node_id, attrs in production.items()
@@ -311,6 +317,8 @@ def _test_linkage(nodes: list[tuple[str, dict]], edges: list[tuple[str, str, dic
     ]
     return {
         "tested": len(set(production) & tested_nodes),
+        "static_tested": len(set(production) & static_nodes),
+        "context_tested": len(set(production) & dynamic_nodes),
         "covered": len(covered_nodes),
         "production": len(production),
         "coverage_known": sum(1 for attrs in production.values() if attrs.get("coverage_line") is not None),

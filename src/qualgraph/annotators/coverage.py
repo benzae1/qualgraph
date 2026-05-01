@@ -41,13 +41,15 @@ class CoverageAnnotator(BaseAnnotator):
         if self.mode == "reuse" and not coverage_file.exists():
             return AnnotatorResult(name=self.name, errors=[f"coverage data not found: {coverage_file}"])
         if self.mode == "run" or (self.mode == "auto" and not coverage_file.exists()):
+            rcfile = _write_context_rcfile(repo_path)
             completed = subprocess.run(
                 [
                     sys.executable,
                     "-m",
                     "coverage",
                     "run",
-                    "--branch",
+                    "--rcfile",
+                    str(rcfile),
                     "-m",
                     "pytest",
                     "--continue-on-collection-errors",
@@ -103,6 +105,20 @@ def _relative_to_repo(repo_path: Path, filename: str) -> str:
         return path.resolve().relative_to(repo_path.resolve()).as_posix()
     except ValueError:
         return path.as_posix()
+
+
+def _write_context_rcfile(repo_path: Path) -> Path:
+    qualgraph_dir = repo_path / ".qualgraph"
+    qualgraph_dir.mkdir(parents=True, exist_ok=True)
+    rcfile = qualgraph_dir / "coverage-context.ini"
+    rcfile.write_text(
+        "[run]\n"
+        "branch = True\n"
+        "relative_files = True\n"
+        "dynamic_context = test_function\n",
+        encoding="utf-8",
+    )
+    return rcfile
 
 
 def _nodes_by_file(graph: nx.DiGraph) -> dict[str, list[tuple[dict, int, int]]]:
