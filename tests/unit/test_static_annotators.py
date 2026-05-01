@@ -26,6 +26,7 @@ from qualgraph.findings.cross_signal import (
     detect_vulnerable_usage,
 )
 from qualgraph.graph.builder import build_graph
+from qualgraph.graph.clustering import cluster_leiden
 from qualgraph.graph.metrics import annotate_metrics
 from qualgraph.graph.schema import NodeAttrs, NodeType, node_attrs_to_graph
 from qualgraph.report.json_export import EXPORT_SCHEMA_VERSION, export_json_data
@@ -67,6 +68,16 @@ def test_find_node_for_location_prefers_smallest_containing_node() -> None:
     assert find_node_for_location(graph, "sample.py", 6) == "function"
     assert find_node_for_location(graph, "sample.py", 2) == "module"
     assert find_node_for_location(graph, "missing.py", 6) is None
+
+
+def test_cluster_leiden_coarsens_large_tiny_cluster_sets() -> None:
+    graph = nx.DiGraph()
+    for index in range(250):
+        graph.add_node(f"node-{index}", type=NodeType.FUNCTION.value, file_path=f"pkg/mod_{index}.py")
+
+    clusters = cluster_leiden(graph)
+
+    assert len(set(clusters.values())) <= 25
 
 
 def test_radon_and_docstring_annotate_tiny_repo_nodes() -> None:
