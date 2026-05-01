@@ -117,6 +117,7 @@ def test_test_linkage_adds_static_tested_by_edges() -> None:
 
     assert result.edges_added > 0
     assert any(attrs.get("type") == "tested_by" for _source, _target, attrs in graph.edges(data=True))
+    assert any(attrs.get("linkage_source") == "static" for _source, _target, attrs in graph.edges(data=True))
 
 
 def test_coverage_context_rcfile_enables_test_function_contexts(tmp_path: Path) -> None:

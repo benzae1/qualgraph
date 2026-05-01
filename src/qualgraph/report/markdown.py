@@ -298,11 +298,15 @@ def _test_linkage(nodes: list[tuple[str, dict]], edges: list[tuple[str, str, dic
         for node_id, attrs in nodes
         if attrs.get("type") in {"Function", "Method"} and not _is_test_node(attrs)
     }
-    static_nodes = {source for source, _target, attrs in edges if attrs.get("type") == "tested_by" and attrs.get("source") == "static"}
+    static_nodes = {
+        source
+        for source, _target, attrs in edges
+        if attrs.get("type") == "tested_by" and _linkage_source(attrs) == "static"
+    }
     dynamic_nodes = {
         source
         for source, _target, attrs in edges
-        if attrs.get("type") == "tested_by" and attrs.get("source") == "coverage_context"
+        if attrs.get("type") == "tested_by" and _linkage_source(attrs) == "coverage_context"
     }
     tested_nodes = static_nodes | dynamic_nodes
     covered_nodes = {
@@ -362,6 +366,10 @@ def _co_changes(graph: nx.DiGraph) -> list[dict[str, Any]]:
             continue
         co_changes.append({"source": source, "target": target, **attrs})
     return sorted(co_changes, key=lambda item: item.get("co_change_count") or 0, reverse=True)[:10]
+
+
+def _linkage_source(attrs: dict[str, Any]) -> str | None:
+    return attrs.get("linkage_source") or attrs.get("source")
 
 
 def _clusters(

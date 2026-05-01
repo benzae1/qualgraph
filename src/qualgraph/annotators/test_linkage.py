@@ -35,7 +35,10 @@ def _add_static_test_edges(graph: nx.DiGraph) -> int:
             graph.add_edge(
                 target,
                 source,
-                **edge_attrs_to_graph(EdgeAttrs(type=EdgeType.TESTED_BY, source="static")),
+                **{
+                    **edge_attrs_to_graph(EdgeAttrs(type=EdgeType.TESTED_BY)),
+                    "linkage_source": "static",
+                },
             )
             edges_added += 1
     return edges_added
@@ -82,7 +85,10 @@ def _add_dynamic_context_edges(graph: nx.DiGraph, repo_path: Path) -> int:
                     graph.add_edge(
                         code_node,
                         test_node,
-                        **edge_attrs_to_graph(EdgeAttrs(type=EdgeType.TESTED_BY, source="coverage_context")),
+                        **{
+                            **edge_attrs_to_graph(EdgeAttrs(type=EdgeType.TESTED_BY)),
+                            "linkage_source": "coverage_context",
+                        },
                     )
                     edges_added += 1
     return edges_added
