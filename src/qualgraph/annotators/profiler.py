@@ -46,6 +46,8 @@ class ProfilerAnnotator(BaseAnnotator):
         total = _total_time(payload, records)
         index = _node_location_index(graph, repo_path)
         nodes_touched: set[str] = set()
+        hottest_node: str | None = None
+        max_cpu_pct = 0.0
 
         for record in records:
             node_id = index.get((_normalize_path(record.file_path), record.line))
@@ -56,11 +58,22 @@ class ProfilerAnnotator(BaseAnnotator):
             attrs["profile_call_count"] = record.call_count
             attrs["cpu_pct"] = record.cum_time / total if total > 0 else 0.0
             attrs["hotpath_weight"] = attrs["cpu_pct"]
+            if attrs["cpu_pct"] > max_cpu_pct:
+                max_cpu_pct = float(attrs["cpu_pct"])
+                hottest_node = str(attrs.get("qualified_name") or attrs.get("name") or node_id)
             nodes_touched.add(node_id)
 
         graph.graph["profile_total_time"] = total
         graph.graph["profile_records"] = len(records)
-        return AnnotatorResult(name=self.name, nodes_annotated=len(nodes_touched))
+        return AnnotatorResult(
+            name=self.name,
+            nodes_annotated=len(nodes_touched),
+            extra_counts={
+                "profile_records": len(records),
+                "max_cpu_pct": round(max_cpu_pct, 6),
+                "top_hotpath": hottest_node,
+            },
+        )
 
 
 def _profile_records(payload: dict[str, Any]) -> list[ProfileRecord]:

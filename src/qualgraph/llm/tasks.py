@@ -69,6 +69,8 @@ def import_results(graph: nx.DiGraph, run_dir: str | Path, strict: bool = False)
     missing = 0
     findings_added = 0
     touched_nodes: set[str] = set()
+    proposed_count = 0
+    rejected_count = 0
 
     for task in manifest.get("tasks", []):
         output_path = Path(task["output_path"])
@@ -83,6 +85,8 @@ def import_results(graph: nx.DiGraph, run_dir: str | Path, strict: bool = False)
         node_id = task["node_id"]
         context = build_context(graph, node_id)
         parsed = parse_analysis_response(json.dumps(payload), evidence_corpus(context))
+        proposed_count += int(parsed.get("proposed_count") or 0)
+        rejected_count += int(parsed.get("rejected_count") or 0)
         imported += 1
         for finding in parsed.get("findings", []) or []:
             normalized = _normalize_finding(finding)
@@ -100,12 +104,22 @@ def import_results(graph: nx.DiGraph, run_dir: str | Path, strict: bool = False)
             default=0.0,
         )
     score_risk(graph)
+    graph.graph["llm_validation"] = {
+        "tasks": len(manifest.get("tasks", []) or []),
+        "imported": imported,
+        "proposed": proposed_count,
+        "accepted": proposed_count - rejected_count,
+        "rejected": rejected_count,
+    }
     return {
         "tasks": len(manifest.get("tasks", []) or []),
         "imported": imported,
         "missing": missing,
         "findings_added": findings_added,
         "nodes_touched": len(touched_nodes),
+        "proposed": proposed_count,
+        "accepted": proposed_count - rejected_count,
+        "rejected": rejected_count,
     }
 
 

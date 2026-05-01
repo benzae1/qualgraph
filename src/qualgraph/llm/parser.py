@@ -11,18 +11,22 @@ VALID_SEVERITIES = {"low", "medium", "high", "critical"}
 VALID_CONFIDENCE = {"EXTRACTED", "INFERRED", "AMBIGUOUS"}
 
 
-def parse_analysis_response(response_text: str, evidence_corpus: str) -> dict[str, list[dict[str, Any]]]:
+def parse_analysis_response(response_text: str, evidence_corpus: str) -> dict[str, Any]:
     payload = json.loads(response_text)
     findings = []
+    proposed = 0
+    rejected = 0
     for finding in payload.get("findings", []) or []:
         if not isinstance(finding, dict):
             continue
+        proposed += 1
         normalized = _normalize_finding(finding)
         evidence = normalized.get("evidence") or ""
         if not evidence or evidence not in evidence_corpus:
+            rejected += 1
             continue
         findings.append(normalized)
-    return {"findings": findings}
+    return {"findings": findings, "proposed_count": proposed, "rejected_count": rejected}
 
 
 def _normalize_finding(finding: dict[str, Any]) -> dict[str, Any]:

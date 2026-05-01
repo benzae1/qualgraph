@@ -17,12 +17,14 @@ class AnnotatorResult:
     edges_added: int = 0
     duration_seconds: float = 0.0
     errors: list[str] = field(default_factory=list)
+    extra_counts: dict[str, Any] = field(default_factory=dict)
 
     def counts(self) -> dict[str, Any]:
         return {
             "nodes_annotated": self.nodes_annotated,
             "edges_added": self.edges_added,
             "error_count": len(self.errors or []),
+            **self.extra_counts,
         }
 
 

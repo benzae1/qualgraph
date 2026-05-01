@@ -33,8 +33,10 @@ def score(graph: nx.DiGraph, weights: Mapping[str, float] | None = None) -> None
         return
 
     percentile_ranks: dict[str, list[float]] = {}
-    for component in ("centrality", "complexity", "churn"):
+    for component in ("centrality", "complexity", "churn", "hotpath"):
         values = [float(attrs.get(component) or 0.0) for _node_id, attrs in funcs]
+        if component == "hotpath":
+            values = [float(attrs.get("cpu_pct") or attrs.get("hotpath_weight") or 0.0) for _node_id, attrs in funcs]
         percentile_ranks[component] = _rankdata(values)
 
     for index, (_node_id, attrs) in enumerate(funcs):
@@ -48,6 +50,7 @@ def score(graph: nx.DiGraph, weights: Mapping[str, float] | None = None) -> None
         )
         coverage = attrs.get("coverage_line")
         coverage_gap = 0.0 if coverage is None else 1.0 - float(coverage or 0.0)
+        hotpath_raw = float(attrs.get("cpu_pct") or attrs.get("hotpath_weight") or 0.0)
         components = {
             "centrality": active_weights["w1"] * percentile_ranks["centrality"][index],
             "complexity": active_weights["w2"] * percentile_ranks["complexity"][index],
@@ -55,7 +58,7 @@ def score(graph: nx.DiGraph, weights: Mapping[str, float] | None = None) -> None
             "coverage_gap": active_weights["w4"] * coverage_gap,
             "security": active_weights["w5"] * security_max,
             "llm": active_weights["w6"] * float(attrs.get("llm_severity_max") or 0.0),
-            "hotpath": active_weights["w7"] * float(attrs.get("hotpath_weight") or 0.0),
+            "hotpath": active_weights["w7"] * (percentile_ranks["hotpath"][index] if hotpath_raw > 0 else 0.0),
         }
         attrs["risk_score"] = float(sum(components.values()))
         attrs["risk_components"] = components

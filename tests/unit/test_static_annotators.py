@@ -128,6 +128,9 @@ def test_profiler_annotator_attributes_cprofile_json_by_file_and_line(tmp_path: 
     assert attrs["cpu_pct"] == 0.25
     assert attrs["hotpath_weight"] == 0.25
     assert graph.graph["profile_total_time"] == 2.0
+    assert result.counts()["profile_records"] == 2
+    assert result.counts()["max_cpu_pct"] == 0.25
+    assert result.counts()["top_hotpath"] == "sample.work"
 
 
 def test_git_history_path_mapping_for_nested_repo_targets() -> None:
@@ -583,6 +586,19 @@ def test_risk_score_writes_weighted_components_for_llm_selection() -> None:
     }
     assert graph.nodes["high"]["risk_score"] == 14.0
     assert [node_id for node_id, _attrs in top_risk_nodes(graph, limit=1)] == ["high"]
+
+
+def test_risk_score_uses_percentile_hotpath_weight() -> None:
+    graph = nx.DiGraph()
+    graph.add_node("cold", type=NodeType.FUNCTION.value, cpu_pct=0.0)
+    graph.add_node("warm", type=NodeType.FUNCTION.value, cpu_pct=0.1)
+    graph.add_node("hot", type=NodeType.FUNCTION.value, cpu_pct=0.5)
+
+    score(graph, {"w1": 0, "w2": 0, "w3": 0, "w4": 0, "w5": 0, "w6": 0, "w7": 1})
+
+    assert graph.nodes["cold"]["risk_components"]["hotpath"] == 0.0
+    assert graph.nodes["warm"]["risk_components"]["hotpath"] > 0.0
+    assert graph.nodes["hot"]["risk_components"]["hotpath"] == 1.0
 
 
 def test_top_risk_nodes_excludes_test_files_by_default() -> None:

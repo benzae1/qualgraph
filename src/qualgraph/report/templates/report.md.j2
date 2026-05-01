@@ -10,6 +10,9 @@
 - LLM model: {{ summary.llm_model }}
 {% endif %}
 - LLM cost: {{ summary.llm_cost_label }}
+{% if summary.llm_validation %}
+- LLM findings proposed/accepted/rejected: {{ summary.llm_validation.proposed }}/{{ summary.llm_validation.accepted }}/{{ summary.llm_validation.rejected }}
+{% endif %}
 {% if summary.duration_ms is not none %}
 - Runtime: {{ "%.1f"|format(summary.duration_ms) }} ms
 {% else %}

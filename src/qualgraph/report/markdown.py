@@ -50,6 +50,7 @@ def build_report_context(graph: nx.DiGraph, top_n: int = 10) -> dict[str, Any]:
             "llm_model": _llm_model(graph, run_summary),
             "duration_ms": _duration_ms(graph, run_summary),
             "top_findings": top_findings,
+            "llm_validation": _llm_validation(graph),
         },
         "node_types": sorted(Counter(attrs.get("type", "unknown") for _node_id, attrs in nodes).items()),
         "edge_types": sorted(Counter(attrs.get("type", "unknown") for _source, _target, attrs in edges).items()),
@@ -483,6 +484,18 @@ def _llm_model(graph: nx.DiGraph, run_summary: dict[str, Any] | None = None) -> 
                 if record.get("model"):
                     return str(record["model"])
     return None
+
+
+def _llm_validation(graph: nx.DiGraph) -> dict[str, int] | None:
+    raw = graph.graph.get("llm_validation")
+    if not isinstance(raw, dict):
+        return None
+    proposed = int(raw.get("proposed") or 0)
+    accepted = int(raw.get("accepted") or 0)
+    rejected = int(raw.get("rejected") or 0)
+    if proposed == 0 and accepted == 0 and rejected == 0:
+        return None
+    return {"proposed": proposed, "accepted": accepted, "rejected": rejected}
 
 
 def _llm_calls(graph: nx.DiGraph, run_summary: dict[str, Any] | None = None) -> int:

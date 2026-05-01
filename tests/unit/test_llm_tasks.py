@@ -57,6 +57,8 @@ def test_parse_analysis_response_discards_findings_without_source_evidence() -> 
 
     assert len(parsed["findings"]) == 1
     assert parsed["findings"][0]["title"] == "Unhandled risky call"
+    assert parsed["proposed_count"] == 2
+    assert parsed["rejected_count"] == 1
 
 
 def test_export_and_import_agent_llm_tasks(tmp_path) -> None:
@@ -111,9 +113,20 @@ def test_export_and_import_agent_llm_tasks(tmp_path) -> None:
     summary = import_results(graph, tmp_path / "run-1")
 
     assert summary["findings_added"] == 1
+    assert summary["proposed"] == 1
+    assert summary["accepted"] == 1
+    assert summary["rejected"] == 0
+    assert graph.graph["llm_validation"] == {
+        "tasks": 1,
+        "imported": 1,
+        "proposed": 1,
+        "accepted": 1,
+        "rejected": 0,
+    }
     assert graph.nodes["function"]["llm_severity_max"] == 0.85
     assert graph.nodes["function"]["risk_components"]["llm"] == 0.85
     report = render_markdown_report(graph)
+    assert "LLM findings proposed/accepted/rejected: 1/1/0" in report
     assert "llm reliability" in report
     assert "The risky call has no visible error handling." in report
 
