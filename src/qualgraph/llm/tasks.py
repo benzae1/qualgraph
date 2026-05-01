@@ -81,7 +81,7 @@ def import_results(graph: nx.DiGraph, run_dir: str | Path, strict: bool = False)
             if strict:
                 raise FileNotFoundError(output_path)
             continue
-        payload = json.loads(output_path.read_text(encoding="utf-8"))
+        payload = json.loads(output_path.read_text(encoding="utf-8-sig"))
         node_id = task["node_id"]
         context = build_context(graph, node_id)
         parsed = parse_analysis_response(json.dumps(payload), evidence_corpus(context))

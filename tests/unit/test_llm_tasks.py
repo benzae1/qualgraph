@@ -107,7 +107,7 @@ def test_export_and_import_agent_llm_tasks(tmp_path) -> None:
                 ]
             }
         ),
-        encoding="utf-8",
+        encoding="utf-8-sig",
     )
 
     summary = import_results(graph, tmp_path / "run-1")
