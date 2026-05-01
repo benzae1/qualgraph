@@ -58,6 +58,9 @@ class VultureAnnotator(BaseAnnotator):
                 attrs,
                 {
                     "source": "vulture",
+                    "code": _vulture_code(line),
+                    "severity": _vulture_severity(line),
+                    "confidence": "EXTRACTED",
                     "message": line.strip(),
                     "line": int(match.group("line")),
                 },
@@ -73,3 +76,27 @@ def _relative_to_repo(repo_path: Path, filename: str) -> str:
         return path.resolve().relative_to(repo_path.resolve()).as_posix()
     except ValueError:
         return path.as_posix()
+
+
+def _vulture_code(line: str) -> str:
+    text = line.lower()
+    if "unused variable" in text:
+        return "unused_variable"
+    if "unused import" in text:
+        return "unused_import"
+    if "unused function" in text:
+        return "unused_function"
+    if "unused method" in text:
+        return "unused_method"
+    if "unused class" in text:
+        return "unused_class"
+    if "unused attribute" in text:
+        return "unused_attribute"
+    return "dead_code"
+
+
+def _vulture_severity(line: str) -> str:
+    code = _vulture_code(line)
+    if code in {"unused_function", "unused_method", "unused_class"}:
+        return "MEDIUM"
+    return "LOW"

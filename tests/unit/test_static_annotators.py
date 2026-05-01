@@ -260,6 +260,21 @@ def test_detect_hidden_coupling_skips_obvious_code_to_test_pairs() -> None:
     assert detect_hidden_coupling(graph) == []
 
 
+def test_detect_hidden_coupling_skips_type_only_modules() -> None:
+    graph = nx.DiGraph()
+    graph.add_node("runtime", file_path="starlette/routing.py")
+    graph.add_node("types", file_path="starlette/types.py")
+    graph.add_edge(
+        "runtime",
+        "types",
+        type="co_changes_with",
+        co_change_count=10,
+        co_change_rate=0.8,
+    )
+
+    assert detect_hidden_coupling(graph) == []
+
+
 def test_detect_vulnerable_usage_requires_vulnerable_import_and_matching_call() -> None:
     graph = nx.DiGraph()
     graph.add_node("uses_vuln", type=NodeType.FUNCTION.value)
@@ -504,6 +519,14 @@ def test_risk_score_writes_weighted_components_for_llm_selection() -> None:
     assert [node_id for node_id, _attrs in top_risk_nodes(graph, limit=1)] == ["high"]
 
 
+def test_top_risk_nodes_excludes_test_files_by_default() -> None:
+    graph = nx.DiGraph()
+    graph.add_node("prod", type=NodeType.FUNCTION.value, file_path="pkg/runtime.py", risk_score=1.0)
+    graph.add_node("test", type=NodeType.FUNCTION.value, file_path="tests/test_runtime.py", risk_score=99.0)
+
+    assert [node_id for node_id, _attrs in top_risk_nodes(graph, limit=10)] == ["prod"]
+
+
 def test_report_surfaces_deduped_rules_hotspots_and_readable_centrality() -> None:
     graph = nx.DiGraph()
     graph.add_node(
@@ -544,12 +567,13 @@ def test_report_surfaces_deduped_rules_hotspots_and_readable_centrality() -> Non
 
     report = render_markdown_report(graph)
 
-    assert "- Findings: 2" in report
+    assert "- Findings: 2 actionable production (2 total" in report
     assert "## Executive Summary" in report
     assert "## Per-Cluster Overview" in report
     assert "## Top-N Risk Nodes" in report
     assert "## Cross-Signal Findings" in report
     assert "## Per-Dimension Scorecards" in report
+    assert "## Annotator Status" in report
     assert "## Top Finding Rules" in report
     assert "ruff E501: 1" in report
     assert "## Risk Hotspots" in report
@@ -658,6 +682,64 @@ def test_report_derives_cross_signal_findings_when_not_attached() -> None:
 
     assert "## Cross-Signal Findings" in report
     assert "sample.hotspot: untested_hotspot" in report
+
+
+def test_report_dedupes_cluster_names_and_excludes_tests_from_risk_nodes() -> None:
+    graph = nx.DiGraph()
+    graph.graph["cluster_count"] = 2
+    graph.add_node(
+        "prod",
+        type=NodeType.FUNCTION.value,
+        qualified_name="sample.prod",
+        file_path="sample.py",
+        line_start=1,
+        line_end=4,
+        risk_score=1.0,
+        cluster_id=1,
+        cluster_name="Middleware",
+    )
+    graph.add_node(
+        "test",
+        type=NodeType.FUNCTION.value,
+        qualified_name="tests.test_sample.helper",
+        file_path="tests/test_sample.py",
+        line_start=1,
+        line_end=4,
+        risk_score=99.0,
+        cluster_id=2,
+        cluster_name="Middleware",
+    )
+
+    report = render_markdown_report(graph, top_n=10)
+
+    assert "Middleware (Prod)" in report
+    assert "Middleware (Helper)" in report
+    assert "### 1. sample.prod" in report
+    assert "### 1. tests.test_sample.helper" not in report
+
+
+def test_report_status_and_linkage_distinguish_static_edges_from_coverage() -> None:
+    graph = nx.DiGraph()
+    graph.graph["annotator_status"] = [
+        {"name": "coverage", "status": "ok", "duration_ms": 12.5, "counts": {"nodes_annotated": 1}},
+        {"name": "bandit", "status": "failed", "duration_ms": 1.0, "counts": {}},
+    ]
+    graph.add_node(
+        "prod",
+        type=NodeType.FUNCTION.value,
+        qualified_name="sample.prod",
+        file_path="sample.py",
+        line_start=1,
+        line_end=4,
+        coverage_line=0.75,
+    )
+
+    report = render_markdown_report(graph)
+
+    assert "coverage: ok (12.5 ms); nodes_annotated=1" in report
+    assert "bandit: failed (1.0 ms)" in report
+    assert "Statically linked production functions/methods: 0/1" in report
+    assert "Covered production functions/methods: 1/1" in report
 
 
 def test_json_export_wraps_node_link_data_with_versioned_metadata() -> None:

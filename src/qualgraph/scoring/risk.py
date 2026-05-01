@@ -68,8 +68,19 @@ def top_risk_nodes(graph: nx.DiGraph, limit: int = 50) -> list[tuple[str, dict[s
         (node_id, attrs)
         for node_id, attrs in graph.nodes(data=True)
         if attrs.get("type") in {NodeType.FUNCTION, NodeType.FUNCTION.value, NodeType.METHOD, NodeType.METHOD.value}
+        and not _is_test_attrs(attrs)
     ]
     return sorted(funcs, key=lambda item: float(item[1].get("risk_score") or 0.0), reverse=True)[:limit]
+
+
+def _is_test_attrs(attrs: dict[str, Any]) -> bool:
+    file_path = str(attrs.get("file_path") or "").replace("\\", "/")
+    return (
+        attrs.get("type") == NodeType.TEST_FUNCTION.value
+        or file_path.startswith("tests/")
+        or "/tests/" in file_path
+        or file_path.rsplit("/", 1)[-1].startswith("test_")
+    )
 
 
 def _rankdata(values: list[float]) -> list[float]:

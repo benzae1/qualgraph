@@ -5,8 +5,11 @@
 - Nodes: {{ summary.nodes }}
 - Edges: {{ summary.edges }}
 - Clusters: {{ summary.clusters }}
-- Findings: {{ summary.findings }} actionable production ({{ summary.total_findings }} total)
-- Total LLM cost: ${{ "%.4f"|format(summary.llm_cost_usd) }}
+- Findings: {{ summary.findings }} actionable production ({{ summary.total_findings }} total{% if summary.non_actionable_findings %}; {{ summary.non_actionable_findings }} non-production/low-signal excluded{% endif %})
+{% if summary.llm_model %}
+- LLM model: {{ summary.llm_model }}
+{% endif %}
+- LLM cost: {{ summary.llm_cost_label }}
 {% if summary.duration_ms is not none %}
 - Runtime: {{ "%.1f"|format(summary.duration_ms) }} ms
 {% else %}
@@ -96,6 +99,16 @@ Top findings:
 - {{ node_type }}: {{ count }}
 {% endfor %}
 
+## Annotator Status
+
+{% if annotator_status %}
+{% for item in annotator_status %}
+- {{ item.name }}: {{ item.status }}{% if item.duration_ms is not none %} ({{ "%.1f"|format(item.duration_ms) }} ms){% endif %}{% if item.counts %}; {{ item.counts }}{% endif %}{{ "\n" }}
+{% endfor %}
+{% else %}
+- No annotator status metadata available.
+{% endif %}
+
 ## Edge Types
 
 {% for edge_type, count in edge_types %}
@@ -162,7 +175,8 @@ _Deduped by node, tool, rule, location, and message._
 
 ## Test Linkage
 
-- Tested production functions/methods: {{ test_linkage.tested }}/{{ test_linkage.production }}{% if test_linkage.coverage_known != test_linkage.production %} (coverage known for {{ test_linkage.coverage_known }}){% endif %}{{ "\n" }}
+- Statically linked production functions/methods: {{ test_linkage.tested }}/{{ test_linkage.production }}
+- Covered production functions/methods: {{ test_linkage.covered }}/{{ test_linkage.production }}{% if test_linkage.coverage_known != test_linkage.production %} (coverage known for {{ test_linkage.coverage_known }}){% endif %}{{ "\n" }}
 {% if test_linkage.untested %}
 {% for attrs in test_linkage.untested %}
 - Untested/weakly tested: {{ attrs.qualified_name }} ({{ format_percent(attrs.coverage_line) }}, {{ attrs.file_path }}:{{ attrs.line_start }})

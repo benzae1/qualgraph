@@ -64,6 +64,8 @@ def detect_hidden_coupling(graph: nx.DiGraph) -> list[Finding]:
         left_file, right_file = _edge_file_pair(graph, source, target, attrs)
         if _is_test_path(str(left_file or "")) or _is_test_path(str(right_file or "")):
             continue
+        if _is_type_only_path(left_file) or _is_type_only_path(right_file):
+            continue
         if _is_obvious_test_pair(left_file, right_file):
             continue
         if nx.has_path(dependency_graph, source, target) or nx.has_path(dependency_graph, target, source):
@@ -403,6 +405,12 @@ def _is_obvious_test_pair(left: Any, right: Any) -> bool:
 
 def _is_test_path(path: str) -> bool:
     return path.startswith("tests/") or "/tests/" in path or path.rsplit("/", 1)[-1].startswith("test_")
+
+
+def _is_type_only_path(path: Any) -> bool:
+    normalized = str(path or "").replace("\\", "/").lower()
+    filename = normalized.rsplit("/", 1)[-1]
+    return filename in {"types.py", "_types.py", "typing.py"} or normalized.endswith("/types/__init__.py")
 
 
 def _is_test_attrs(attrs: dict[str, Any]) -> bool:

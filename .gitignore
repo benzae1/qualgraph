@@ -1,4 +1,4 @@
-/repos/
+benchmarks/repos/*
 .venv/
 .qualgraph/
 .pytest_cache/

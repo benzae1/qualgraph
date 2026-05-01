@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
@@ -32,15 +33,21 @@ def build_report_context(graph: nx.DiGraph, top_n: int = 10) -> dict[str, Any]:
     avg_coverage = sum(covered) / len(covered) if covered else None
     top_findings = _priority_findings(actionable_records, limit=3)
     risk_nodes = _risk_nodes(nodes, finding_records, limit=top_n)
+    clusters = _clusters(nodes, finding_records, risk_nodes)
+    cluster_stats = _cluster_stats(nodes, clusters)
+    non_actionable = max(0, len(finding_records) - len(actionable_records))
     return {
         "summary": {
             "nodes": graph.number_of_nodes(),
             "edges": graph.number_of_edges(),
-            "clusters": graph.graph.get("cluster_count", _cluster_count(nodes)),
+            "clusters": cluster_stats["label"],
             "findings": len(actionable_records),
             "total_findings": len(finding_records),
+            "non_actionable_findings": non_actionable,
             "avg_coverage": avg_coverage,
             "llm_cost_usd": _llm_cost(graph, run_summary),
+            "llm_cost_label": _llm_cost_label(graph, run_summary),
+            "llm_model": _llm_model(graph, run_summary),
             "duration_ms": _duration_ms(graph, run_summary),
             "top_findings": top_findings,
         },
@@ -55,9 +62,10 @@ def build_report_context(graph: nx.DiGraph, top_n: int = 10) -> dict[str, Any]:
         "test_linkage": _test_linkage(nodes, edges),
         "git_history": _git_history(nodes),
         "co_changes": _co_changes(graph),
-        "clusters": _clusters(nodes, finding_records, risk_nodes),
+        "clusters": clusters,
         "cross_signal_findings": _cross_signal_findings(finding_records),
         "dimension_scorecards": _dimension_scorecards(finding_records, risk_nodes),
+        "annotator_status": _annotator_status(graph, run_summary),
         "format_score": _format_score,
         "format_small": _format_small,
         "format_percent": _format_percent,
@@ -193,18 +201,20 @@ def _priority_findings(records: list[dict[str, Any]], limit: int) -> list[dict[s
     return sorted(records, key=_priority_key)[:limit]
 
 
-def _priority_key(record: dict[str, Any]) -> tuple[int, int, int, str]:
+def _priority_key(record: dict[str, Any]) -> tuple[int, float, str]:
     finding = record["finding"]
     test_rank = 1 if _is_test_node(record["node"]) else 0
-    source_rank = {"llm": 0, "cross-signal": 1, "bandit": 2, "pip-audit": 3, "vulture": 4, "ruff": 5}.get(
+    source_bonus = {"llm": 0.25, "cross-signal": 0.15, "bandit": 0.2, "pip-audit": 0.2, "vulture": 0.0, "ruff": 0.0}.get(
         finding.get("source"),
-        6,
+        0.0,
     )
-    severity_rank = {"CRITICAL": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3}.get(
+    severity = {"CRITICAL": 1.0, "HIGH": 0.85, "MEDIUM": 0.66, "LOW": 0.33}.get(
         str(finding.get("severity") or "").upper(),
-        4,
+        0.0,
     )
-    return (test_rank, source_rank, severity_rank, str(record["node"].get("qualified_name") or ""))
+    risk = min(float(record["node"].get("risk_score") or 0.0) / 5.0, 1.0)
+    impact = severity + risk + source_bonus
+    return (test_rank, -impact, str(record["node"].get("qualified_name") or ""))
 
 
 def _is_low_signal_finding(record: dict[str, Any]) -> bool:
@@ -236,6 +246,8 @@ def _risk_nodes(
     risk_nodes = []
     for node_id, attrs in nodes:
         if attrs.get("type") not in {"Function", "Method"}:
+            continue
+        if _is_test_node(attrs):
             continue
         score = _risk_score(node_id, attrs, visible_findings_by_node[node_id])
         if score <= 0:
@@ -281,6 +293,11 @@ def _test_linkage(nodes: list[tuple[str, dict]], edges: list[tuple[str, str, dic
         if attrs.get("type") in {"Function", "Method"} and not _is_test_node(attrs)
     }
     tested_nodes = {source for source, _target, attrs in edges if attrs.get("type") == "tested_by"}
+    covered_nodes = {
+        node_id
+        for node_id, attrs in production.items()
+        if attrs.get("coverage_line") is not None and float(attrs.get("coverage_line") or 0.0) > 0.0
+    }
     untested = [
         attrs
         for node_id, attrs in production.items()
@@ -288,6 +305,7 @@ def _test_linkage(nodes: list[tuple[str, dict]], edges: list[tuple[str, str, dic
     ]
     return {
         "tested": len(set(production) & tested_nodes),
+        "covered": len(covered_nodes),
         "production": len(production),
         "coverage_known": sum(1 for attrs in production.values() if attrs.get("coverage_line") is not None),
         "untested": sorted(untested, key=lambda item: float(item.get("coverage_line") or 0))[:10],
@@ -315,15 +333,20 @@ def _co_changes(graph: nx.DiGraph) -> list[dict[str, Any]]:
         for source, target, attrs in graph.edges(data=True)
         if attrs.get("type") in {"calls", "imports"}
     )
-    co_changes = [
-        {"source": source, "target": target, **attrs}
-        for source, target, attrs in graph.edges(data=True)
-        if attrs.get("type") == "co_changes_with"
-        and _is_production_pair(*_edge_file_pair(graph, source, target, attrs))
-        and not _is_obvious_test_pair(*_edge_file_pair(graph, source, target, attrs))
-        and not nx.has_path(dependency_graph, source, target)
-        and not nx.has_path(dependency_graph, target, source)
-    ]
+    co_changes = []
+    for source, target, attrs in graph.edges(data=True):
+        if attrs.get("type") != "co_changes_with":
+            continue
+        left_file, right_file = _edge_file_pair(graph, source, target, attrs)
+        if not _is_production_pair(left_file, right_file):
+            continue
+        if _is_type_only_path(left_file) or _is_type_only_path(right_file):
+            continue
+        if _is_obvious_test_pair(left_file, right_file):
+            continue
+        if nx.has_path(dependency_graph, source, target) or nx.has_path(dependency_graph, target, source):
+            continue
+        co_changes.append({"source": source, "target": target, **attrs})
     return sorted(co_changes, key=lambda item: item.get("co_change_count") or 0, reverse=True)[:10]
 
 
@@ -358,7 +381,7 @@ def _clusters(
                 "top_risk": risk_by_cluster.get(cluster_id, [])[:3],
             }
         )
-    return clusters[:20]
+    return _dedupe_cluster_names(clusters)[:20]
 
 
 def _cluster_names(nodes: list[tuple[str, dict]]) -> dict[Any, str]:
@@ -407,6 +430,16 @@ def _cluster_count(nodes: list[tuple[str, dict]]) -> int:
     return len({attrs.get("cluster_id") for _node_id, attrs in nodes if attrs.get("cluster_id") is not None})
 
 
+def _cluster_stats(nodes: list[tuple[str, dict]], displayed: list[dict[str, Any]]) -> dict[str, Any]:
+    sizes = Counter(attrs.get("cluster_id") for _node_id, attrs in nodes if attrs.get("cluster_id") is not None)
+    total = len(sizes)
+    trivial = sum(1 for size in sizes.values() if size <= 1)
+    label = f"{total} total, {len(displayed)} shown"
+    if trivial:
+        label += f", {trivial} trivial"
+    return {"total": total, "shown": len(displayed), "trivial": trivial, "label": label}
+
+
 def _llm_cost(graph: nx.DiGraph, run_summary: dict[str, Any] | None = None) -> float:
     llm = graph.graph.get("llm") or {}
     if isinstance(llm, dict) and llm:
@@ -416,6 +449,53 @@ def _llm_cost(graph: nx.DiGraph, run_summary: dict[str, Any] | None = None) -> f
         if isinstance(summary_llm, dict):
             return float(summary_llm.get("cost_usd") or 0.0)
     return float(graph.graph.get("llm_cost_usd") or 0.0)
+
+
+def _llm_cost_label(graph: nx.DiGraph, run_summary: dict[str, Any] | None = None) -> str:
+    model = _llm_model(graph, run_summary)
+    calls = _llm_calls(graph, run_summary)
+    cost = _llm_cost(graph, run_summary)
+    if calls == 0 and not model:
+        return "N/A (agent-completed local task files)"
+    if model and (model.startswith("ollama/") or model.startswith("ollama:") or model == "ollama"):
+        return "N/A (local Ollama)"
+    return f"${cost:.4f}"
+
+
+def _llm_model(graph: nx.DiGraph, run_summary: dict[str, Any] | None = None) -> str | None:
+    llm = graph.graph.get("llm") or {}
+    if isinstance(llm, dict) and llm.get("model"):
+        return str(llm["model"])
+    if run_summary:
+        calls_path = _llm_calls_path(run_summary)
+        if calls_path and calls_path.exists():
+            for line in calls_path.read_text(encoding="utf-8").splitlines():
+                try:
+                    record = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if record.get("model"):
+                    return str(record["model"])
+    return None
+
+
+def _llm_calls(graph: nx.DiGraph, run_summary: dict[str, Any] | None = None) -> int:
+    llm = graph.graph.get("llm") or {}
+    if isinstance(llm, dict) and llm.get("calls") is not None:
+        return int(llm.get("calls") or 0)
+    if run_summary:
+        summary_llm = run_summary.get("llm") or {}
+        if isinstance(summary_llm, dict):
+            return int(summary_llm.get("calls") or 0)
+    return 0
+
+
+def _llm_calls_path(run_summary: dict[str, Any]) -> Path | None:
+    repo_path = run_summary.get("repo_path")
+    run_id = run_summary.get("run_id")
+    if not repo_path or not run_id:
+        return None
+    return Path(repo_path) / ".qualgraph" / "runs" / str(run_id) / "llm_calls.jsonl"
 
 
 def _duration_ms(graph: nx.DiGraph, run_summary: dict[str, Any] | None = None) -> float | None:
@@ -442,6 +522,31 @@ def _dimension(finding: dict[str, Any]) -> str:
     if "docstring" in code or "documentation" in code:
         return "documentation"
     return "maintainability"
+
+
+def _annotator_status(graph: nx.DiGraph, run_summary: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+    raw_statuses = graph.graph.get("annotator_status")
+    if not raw_statuses and run_summary:
+        raw_statuses = run_summary.get("annotators")
+    statuses = []
+    for item in raw_statuses or []:
+        if not isinstance(item, dict):
+            continue
+        statuses.append(
+            {
+                "name": item.get("name") or "unknown",
+                "status": item.get("status") or "unknown",
+                "duration_ms": item.get("duration_ms"),
+                "counts": _format_counts(item.get("counts")),
+            }
+        )
+    return statuses
+
+
+def _format_counts(counts: Any) -> str:
+    if not isinstance(counts, dict) or not counts:
+        return ""
+    return ", ".join(f"{key}={value}" for key, value in counts.items() if value not in (None, 0, 0.0))
 
 
 def _is_test_node(attrs: dict[str, Any]) -> bool:
@@ -486,7 +591,10 @@ def _format_small(value: Any) -> str:
 def _format_percent(value: Any) -> str:
     if value is None:
         return "unknown"
-    return f"{float(value):.1%}"
+    try:
+        return f"{float(value):.1%}"
+    except Exception:
+        return "unknown"
 
 
 def _format_evidence(value: Any) -> str:
@@ -560,6 +668,12 @@ def _is_production_pair(left: Any, right: Any) -> bool:
     return bool(left and right and not _is_test_path(str(left)) and not _is_test_path(str(right)))
 
 
+def _is_type_only_path(path: Any) -> bool:
+    normalized = str(path or "").replace("\\", "/").lower()
+    filename = normalized.rsplit("/", 1)[-1]
+    return filename in {"types.py", "_types.py", "typing.py"} or normalized.endswith("/types/__init__.py")
+
+
 def _edge_file_pair(graph: nx.DiGraph, source: str, target: str, attrs: dict[str, Any]) -> tuple[Any, Any]:
     left = attrs.get("source") or (graph.nodes[source].get("file_path") if source in graph.nodes else None)
     right = attrs.get("target") or (graph.nodes[target].get("file_path") if target in graph.nodes else None)
@@ -600,9 +714,43 @@ def _infer_cluster_summary(cluster_nodes: list[dict[str, Any]]) -> dict[str, str
         for name in names
         if name and not name.startswith("test_")
     ][:3]
-    readable = label if label in _domain_labels().values() else label.replace("_", " ").replace("-", " ").title()
+    readable = label if label in _domain_labels().values() else label.replace("_", " ").replace("-", " ").title().strip()
     description = "Includes " + ", ".join(top_symbols) if top_symbols else "No dominant production symbols."
     return {"name": readable, "description": description}
+
+
+def _dedupe_cluster_names(clusters: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    name_counts = Counter(str(cluster["name"]) for cluster in clusters)
+    used: set[str] = set()
+    for cluster in clusters:
+        base_name = str(cluster["name"])
+        if name_counts[base_name] <= 1:
+            used.add(base_name)
+            continue
+        discriminator = _cluster_discriminator(cluster)
+        candidate = f"{base_name} ({discriminator})" if discriminator else base_name
+        if candidate in used:
+            candidate = f"{candidate} #{cluster['id']}"
+        cluster["name"] = candidate
+        used.add(candidate)
+    return clusters
+
+
+def _cluster_discriminator(cluster: dict[str, Any]) -> str:
+    description = str(cluster.get("description") or "")
+    if description.startswith("Includes "):
+        first = description.removeprefix("Includes ").split(",", 1)[0].strip()
+        if first:
+            return _humanize_symbol(first)
+    return f"Cluster {cluster.get('id')}"
+
+
+def _humanize_symbol(value: str) -> str:
+    text = value.strip("_").replace("_", " ").strip()
+    if not text:
+        return "Cluster"
+    text = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", text)
+    return " ".join(part.capitalize() for part in text.split())
 
 
 def _dominant_label(names: list[str], paths: list[str]) -> str:
