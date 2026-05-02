@@ -91,7 +91,8 @@ def _target_cluster_count(node_count: int) -> int:
 
 
 def _max_cluster_size(node_count: int, target: int) -> int:
-    return max(75, math.ceil(node_count / max(target, 1) * 3))
+    average_size = node_count / max(target, 1)
+    return max(500, math.ceil(average_size * 8))
 
 
 def _split_oversized_clusters(g: nx.DiGraph, clusters: dict[str, int], max_size: int) -> dict[str, int]:

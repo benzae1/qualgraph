@@ -82,7 +82,7 @@ def test_cluster_leiden_coarsens_large_tiny_cluster_sets() -> None:
 
 def test_cluster_leiden_splits_oversized_clusters() -> None:
     graph = nx.DiGraph()
-    for index in range(250):
+    for index in range(1000):
         graph.add_node(f"node-{index}", type=NodeType.FUNCTION.value, file_path=f"pkg/area/mod_{index}.py")
         if index:
             graph.add_edge(f"node-{index - 1}", f"node-{index}", type="calls")
@@ -93,7 +93,7 @@ def test_cluster_leiden_splits_oversized_clusters() -> None:
     for cluster_id in clusters.values():
         sizes[cluster_id] = sizes.get(cluster_id, 0) + 1
 
-    assert max(sizes.values()) <= 75
+    assert max(sizes.values()) <= 500
 
 
 def test_radon_and_docstring_annotate_tiny_repo_nodes() -> None:
