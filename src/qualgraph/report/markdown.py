@@ -581,7 +581,14 @@ def _annotator_status(graph: nx.DiGraph, run_summary: dict[str, Any] | None = No
 def _format_counts(counts: Any) -> str:
     if not isinstance(counts, dict) or not counts:
         return ""
-    return ", ".join(f"{key}={value}" for key, value in counts.items() if value not in (None, 0, 0.0))
+    parts = []
+    for key, value in counts.items():
+        if value is None:
+            continue
+        if value in (0, 0.0) and key != "error_count":
+            continue
+        parts.append(f"{key}={value}")
+    return ", ".join(parts)
 
 
 def _is_test_node(attrs: dict[str, Any]) -> bool:

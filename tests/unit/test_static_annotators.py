@@ -4,6 +4,7 @@ from unittest.mock import patch
 import networkx as nx
 
 from qualgraph.annotators.cross_signal import CrossSignalAnnotator
+from qualgraph.annotators.bandit import BanditAnnotator
 from qualgraph.annotators.coverage import _write_context_rcfile
 from qualgraph.annotators.docstring import DocstringAnnotator
 from qualgraph.annotators.findings import add_finding, clear_findings_by_source
@@ -277,6 +278,40 @@ def test_ruff_drops_assert_rule_and_maps_severity(tmp_path: Path) -> None:
     assert finding["code"] == "F821"
     assert finding["severity"] == "MEDIUM"
     assert finding["severity_num"] == 0.66
+
+
+def test_bandit_reports_suppressed_low_signal_findings(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    (repo / "sample.py").write_text("\n\n\n\ndef work():\n    subprocess.Popen(cmd, shell=True)\n", encoding="utf-8")
+    graph = _sample_graph_with_function()
+    payload = {
+        "results": [
+            {
+                "filename": str(repo / "sample.py"),
+                "line_number": 6,
+                "test_id": "B101",
+                "issue_text": "Use of assert detected",
+            },
+            {
+                "filename": str(repo / "sample.py"),
+                "line_number": 6,
+                "test_id": "B602",
+                "issue_text": "subprocess call with shell=True identified",
+                "issue_severity": "HIGH",
+                "issue_confidence": "HIGH",
+            },
+        ]
+    }
+
+    with patch("qualgraph.annotators.bandit.subprocess.run", return_value=_completed(payload)):
+        result = BanditAnnotator().annotate(graph, repo)
+
+    assert result.nodes_annotated == 1
+    assert result.counts()["results_scanned"] == 2
+    assert result.counts()["nodes_matched"] == 1
+    assert result.counts()["suppressed_low_signal"] == 1
+    assert graph.nodes["function"]["findings"][0]["test_id"] == "B602"
 
 
 def test_detect_untested_hotspots_combines_complexity_centrality_and_coverage() -> None:
@@ -841,7 +876,7 @@ def test_report_dedupes_cluster_names_and_excludes_tests_from_risk_nodes() -> No
 def test_report_status_and_linkage_distinguish_static_edges_from_coverage() -> None:
     graph = nx.DiGraph()
     graph.graph["annotator_status"] = [
-        {"name": "coverage", "status": "ok", "duration_ms": 12.5, "counts": {"nodes_annotated": 1}},
+        {"name": "coverage", "status": "ok", "duration_ms": 12.5, "counts": {"nodes_annotated": 1, "error_count": 0}},
         {"name": "bandit", "status": "failed", "duration_ms": 1.0, "counts": {}},
     ]
     graph.add_node(
@@ -865,7 +900,7 @@ def test_report_status_and_linkage_distinguish_static_edges_from_coverage() -> N
 
     report = render_markdown_report(graph)
 
-    assert "coverage: ok (12.5 ms); nodes_annotated=1" in report
+    assert "coverage: ok (12.5 ms); nodes_annotated=1, error_count=0" in report
     assert "bandit: failed (1.0 ms)" in report
     assert "Statically linked production functions/methods: 0/1" in report
     assert "Coverage-context linked production functions/methods: 1/1" in report

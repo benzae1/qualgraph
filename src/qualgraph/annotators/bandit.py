@@ -52,9 +52,9 @@ class BanditAnnotator(BaseAnnotator):
             message = completed.stderr.strip() or completed.stdout.strip() or str(exc)
             return AnnotatorResult(name=self.name, errors=[f"bandit did not emit JSON: {message}"])
         nodes_touched: set[str] = set()
+        located_nodes: set[str] = set()
+        suppressed_low_signal = 0
         for finding in payload.get("results", []):
-            if _is_low_signal_finding(finding):
-                continue
             filename = finding.get("filename")
             line_number = finding.get("line_number")
             if not filename or line_number is None:
@@ -62,10 +62,22 @@ class BanditAnnotator(BaseAnnotator):
             node_id = find_node_for_location(graph, _relative_to_repo(repo_path, filename), int(line_number))
             if node_id is None:
                 continue
+            located_nodes.add(node_id)
+            if _is_low_signal_finding(finding):
+                suppressed_low_signal += 1
+                continue
             if add_finding(graph.nodes[node_id], _finding_payload(finding)):
                 nodes_touched.add(node_id)
 
-        return AnnotatorResult(name=self.name, nodes_annotated=len(nodes_touched))
+        return AnnotatorResult(
+            name=self.name,
+            nodes_annotated=len(nodes_touched),
+            extra_counts={
+                "results_scanned": len(payload.get("results", []) or []),
+                "nodes_matched": len(located_nodes),
+                "suppressed_low_signal": suppressed_low_signal,
+            },
+        )
 
 
 def _finding_payload(finding: dict[str, Any]) -> dict[str, Any]:
