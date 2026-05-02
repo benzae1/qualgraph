@@ -160,7 +160,7 @@ _Deduped by node, tool, rule, location, and message._
 
 {% if risk_nodes %}
 {% for item in risk_nodes %}
-- {{ item.node.qualified_name }}: score={{ "%.1f"|format(item.score) }}, findings={{ item.finding_count }}, coverage={{ format_percent(item.node.coverage_line) }}, complexity={{ item.node.complexity or "n/a" }}, churn={{ item.node.churn or 0 }} ({{ item.node.file_path }}:{{ item.node.line_start }})
+- {{ item.node.qualified_name }}: score={{ "%.1f"|format(item.score) }}, findings={{ item.finding_count }}, why={{ item.why }}, coverage={{ format_percent(item.node.coverage_line) }}, complexity={{ item.node.complexity or "n/a" }}, churn={{ item.node.churn or 0 }} ({{ item.node.file_path }}:{{ item.node.line_start }})
 {% endfor %}
 {% else %}
 - none

@@ -270,6 +270,7 @@ def _risk_nodes(
                 "findings": [record for record in findings_by_node.get(node_id, []) if _is_actionable_record(record)],
                 "finding_count": visible_findings_by_node[node_id],
                 "risk_components": attrs.get("risk_components") or {},
+                "why": _risk_reason(attrs.get("risk_components") or {}, visible_findings_by_node[node_id]),
             }
         )
     return sorted(risk_nodes, key=lambda item: item["score"], reverse=True)[:limit]
@@ -285,6 +286,31 @@ def _risk_score(node_id: str, attrs: dict[str, Any], finding_count: int) -> floa
     structural = float(attrs.get("structural_score", attrs.get("centrality")) or 0.0)
     hotpath = float(attrs.get("hotpath_weight") or 0.0)
     return finding_count + coverage_penalty + min(complexity / 5, 3.0) + min(churn / 10, 3.0) + structural + hotpath
+
+
+def _risk_reason(components: dict[str, Any], finding_count: int) -> str:
+    labels = {
+        "centrality": "high centrality",
+        "complexity": "high complexity",
+        "churn": "high churn",
+        "coverage_gap": "coverage gap",
+        "security": "security finding",
+        "llm": "LLM finding",
+        "hotpath": "profile hot path",
+    }
+    ranked = sorted(
+        (
+            (key, float(value or 0.0))
+            for key, value in components.items()
+            if key in labels and float(value or 0.0) > 0
+        ),
+        key=lambda item: item[1],
+        reverse=True,
+    )
+    reasons = [labels[key] for key, _value in ranked[:3]]
+    if finding_count and "finding-backed score" not in reasons:
+        reasons.insert(0, "finding-backed score")
+    return " + ".join(reasons) if reasons else "composite risk score"
 
 
 def _coverage_gaps(nodes: list[tuple[str, dict]], limit: int) -> list[dict[str, Any]]:
