@@ -1,12 +1,12 @@
-# Graph Report - analytify  (2026-05-01)
+# Graph Report - analytify  (2026-05-02)
 
 ## Corpus Check
-- 575 files · ~553,982 words
+- 575 files · ~555,067 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 9380 nodes · 32798 edges · 57 communities detected
-- Extraction: 38% EXTRACTED · 62% INFERRED · 0% AMBIGUOUS · INFERRED: 20275 edges (avg confidence: 0.65)
+- 9398 nodes · 32869 edges · 57 communities detected
+- Extraction: 38% EXTRACTED · 62% INFERRED · 0% AMBIGUOUS · INFERRED: 20313 edges (avg confidence: 0.65)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -47,15 +47,15 @@
 - [[_COMMUNITY_Community 35|Community 35]]
 - [[_COMMUNITY_Community 36|Community 36]]
 - [[_COMMUNITY_Community 37|Community 37]]
-- [[_COMMUNITY_Community 38|Community 38]]
-- [[_COMMUNITY_Community 40|Community 40]]
+- [[_COMMUNITY_Community 39|Community 39]]
+- [[_COMMUNITY_Community 50|Community 50]]
 - [[_COMMUNITY_Community 51|Community 51]]
-- [[_COMMUNITY_Community 52|Community 52]]
+- [[_COMMUNITY_Community 54|Community 54]]
 - [[_COMMUNITY_Community 55|Community 55]]
 - [[_COMMUNITY_Community 56|Community 56]]
 - [[_COMMUNITY_Community 57|Community 57]]
-- [[_COMMUNITY_Community 58|Community 58]]
-- [[_COMMUNITY_Community 82|Community 82]]
+- [[_COMMUNITY_Community 81|Community 81]]
+- [[_COMMUNITY_Community 91|Community 91]]
 - [[_COMMUNITY_Community 92|Community 92]]
 - [[_COMMUNITY_Community 93|Community 93]]
 - [[_COMMUNITY_Community 94|Community 94]]
@@ -83,13 +83,13 @@
 ## Surprising Connections (you probably didn't know these)
 - `Update early settings that do not require a crawler instance, such as SPIDER_MOD` --uses--> `Crawler`  [INFERRED]
   benchmarks\repos\scrapy\scrapy\addons.py → benchmarks\repos\scrapy\scrapy\crawler.py
+- `Crawler` --uses--> `Logs an error message from a spider.`  [INFERRED]
+  benchmarks\repos\scrapy\scrapy\crawler.py → benchmarks\repos\scrapy\scrapy\logformatter.py
 - `Crawler` --uses--> `Logs a download error message from a spider (typically coming from         the`  [INFERRED]
   benchmarks\repos\scrapy\scrapy\crawler.py → benchmarks\repos\scrapy\scrapy\logformatter.py
 - `Crawler` --uses--> `Return a filesystem-safe version of a string ``text``      >>> _path_safe('sim`  [INFERRED]
   benchmarks\repos\scrapy\scrapy\crawler.py → benchmarks\repos\scrapy\scrapy\pqueues.py
 - `Crawler` --uses--> `Protocol for downstream queues of ``ScrapyPriorityQueue``.`  [INFERRED]
-  benchmarks\repos\scrapy\scrapy\crawler.py → benchmarks\repos\scrapy\scrapy\pqueues.py
-- `Crawler` --uses--> `Return a number of requests in a Downloader for a given slot`  [INFERRED]
   benchmarks\repos\scrapy\scrapy\crawler.py → benchmarks\repos\scrapy\scrapy\pqueues.py
 
 ## Hyperedges (group relationships)
@@ -104,187 +104,187 @@
 
 ### Community 0 - "Community 0"
 Cohesion: 0.0
-Nodes (803): AddonManager, This class facilitates loading and storing :ref:`topics-addons`., Load add-ons and configurations from a settings object and apply them., AjaxCrawlMiddleware, _has_ajaxcrawlable_meta(), Handle 'AJAX crawlable' pages marked as crawlable via meta tag., Return True if a page without hash fragment could be "AJAX crawlable"., >>> _has_ajaxcrawlable_meta('<html><head><meta name="fragment"  content="!"/></h (+795 more)
+Nodes (764): AddonManager, This class facilitates loading and storing :ref:`topics-addons`., Load add-ons and configurations from a settings object and apply them., AjaxCrawlMiddleware, _has_ajaxcrawlable_meta(), Handle 'AJAX crawlable' pages marked as crawlable via meta tag., Return True if a page without hash fragment could be "AJAX crawlable"., >>> _has_ajaxcrawlable_meta('<html><head><meta name="fragment"  content="!"/></h (+756 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.01
-Nodes (745): Creates an Starlette application., Initializes the application.          Parameters:             debug: Boolean, Starlette, AuthCredentials, AuthenticationBackend, AuthenticationError, AuthenticationMiddleware, BaseUser (+737 more)
+Nodes (786): Creates an Starlette application., Initializes the application.          Parameters:             debug: Boolean, Starlette, AuthCredentials, AuthenticationBackend, AuthenticationError, AuthenticationMiddleware, BaseUser (+778 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.01
-Nodes (432): BaseRunSpiderCommand, call(), proc(), closest_scrapy_cfg(), get_config(), get_sources(), init_env(), Get Scrapy config file as a ConfigParser (+424 more)
+Nodes (327): CachingHostnameResolverSpider, type(), port(), _lookup_exception_handler(), wrap_app_handling_exceptions(), from_crawler(), HttpAuthMiddleware, Set Basic HTTP Authorization header     (http_user and http_pass spider class a (+319 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.01
-Nodes (490): AnalysisSummary, analyze_top_n(), _attach_findings(), build_request(), _cache_key(), _finding_payload(), _grammar_version(), LLMAnalyzer (+482 more)
+Nodes (391): from_crawler(), NoRequestsSpider, BaseRunSpiderCommand, call(), proc(), FloatConvertor, IntegerConvertor, PathConvertor (+383 more)
 
 ### Community 4 - "Community 4"
 Cohesion: 0.01
-Nodes (232): BaseDownloadHandler, CachingHostnameResolverSpider, type(), port(), DataURIDownloadHandler, _lookup_exception_handler(), wrap_app_handling_exceptions(), from_crawler() (+224 more)
+Nodes (385): Update early settings that do not require a crawler instance, such as SPIDER_MOD, Agent, H2Agent, H2ConnectionPool, Close all the HTTP/2 connections and remove them from pool          Returns:, Arguments:             uri - URI obtained directly from request URL, We use the proxy uri instead of uri obtained from request url, ScrapyProxyH2Agent (+377 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.01
-Nodes (223): load_response(), CrawlSpider, CommaSeparatedStrings, iter_errback(), Wrap an iterable calling an errback if an error is caught while     iterating i, NotSupported, Indicates a feature or method is not supported, CSVFeedSpider (+215 more)
+Nodes (296): ABC, ABCMeta, AssertionError, identity(), BlockingFeedStorage, Contract, CsvItemExporter, CallbackKeywordArgumentsContract (+288 more)
 
 ### Community 6 - "Community 6"
-Cohesion: 0.02
-Nodes (267): Agent, BaseDownloadHandler, Optional base class for download handlers., BaseHttpDownloadHandler, BaseMockServer, ClientTLSOptions, CookieJar, CrawlSpider (+259 more)
+Cohesion: 0.01
+Nodes (309): as_async_generator(), collect_asyncgen(), Wraps an iterable (sync or async) into an async generator., requires(), CrawlSpider, aiter_errback(), _AsyncCooperatorAdapter, iter_errback() (+301 more)
 
 ### Community 7 - "Community 7"
 Cohesion: 0.01
-Nodes (192): load_pre_crawler_settings(), from_crawler(), NoRequestsSpider, build_component_list(), feed_complete_default_values_from_settings(), feed_process_params_from_cli(), Receives feed export params (from the 'crawl' or 'runspider' commands),     che, Compose a component list from a :ref:`component priority dictionary     <compon (+184 more)
+Nodes (428): AnalysisSummary, analyze_top_n(), _attach_findings(), build_request(), _cache_key(), _finding_payload(), _grammar_version(), LLMAnalyzer (+420 more)
 
 ### Community 8 - "Community 8"
-Cohesion: 0.02
-Nodes (184): ABC, BlockingFeedStorage, CsvItemExporter, from_crawler(), process_request(), DefaultHeaders downloader middleware  See documentation in docs/topics/downloa, BaseItemExporter, CsvItemExporter (+176 more)
+Cohesion: 0.01
+Nodes (240): load_pre_crawler_settings(), is_botocore_available(), Boto/botocore helpers, cluster_leiden(), _coarsen_clusters(), _compact_cluster_ids(), _kept_clusters_by_segment(), _max_cluster_size() (+232 more)
 
 ### Community 9 - "Community 9"
 Cohesion: 0.01
-Nodes (210): H2Agent, H2ConnectionPool, Close all the HTTP/2 connections and remove them from pool          Returns:, Arguments:             uri - URI obtained directly from request URL, We use the proxy uri instead of uri obtained from request url, ScrapyProxyH2Agent, ClientFactory, iterate_in_threadpool() (+202 more)
+Nodes (79): _BenchServer, _BenchSpider, Command, A spider that follows all links, Command, TextTestResult, _get_commands_dict(), _get_commands_from_entry_points() (+71 more)
 
 ### Community 10 - "Community 10"
-Cohesion: 0.01
-Nodes (139): CaselessDict, ImmutableMultiDict, MultiDict, CaselessDict, fromkeys(), LocalCache, This module contains data types used by Scrapy which are not included in the Py, Dictionary with a finite number of keys.      Older items expires first. (+131 more)
+Cohesion: 0.02
+Nodes (142): _add_edge(), _aliased_import_parts(), build_graph(), _call_name(), _class_base_names(), _class_definition_nodes(), _collect_python_files(), _docstring() (+134 more)
 
 ### Community 11 - "Community 11"
 Cohesion: 0.02
-Nodes (135): Update early settings that do not require a crawler instance, such as SPIDER_MOD, Call a function in a thread and return its result as a coroutine.      This us, run_in_thread(), is_botocore_available(), Boto/botocore helpers, CaseInsensitiveDict, A dict-like structure that accepts strings or bytes     as keys and allows case, NotConfigured (+127 more)
+Nodes (69): NoRequestsSpider, main(), NoRequestsSpider, DownloadHandlerProtocol, DownloadHandlers, configure_logging(), _get_handler(), install_scrapy_root_handler() (+61 more)
 
 ### Community 12 - "Community 12"
-Cohesion: 0.01
-Nodes (100): BaseScheduler, _pop_command_name(), CookieJar, _DummyLock, from_crawler(), full_url(), host(), _is_public_domain() (+92 more)
+Cohesion: 0.03
+Nodes (59): ftp_makedirs_cwd(), ftp_store_file(), Opens a FTP connection with passed credentials,sets current directory     to th, Set the current directory of the FTP connection given in the ``ftp``     argume, DownloaderAwarePriorityQueue, DownloaderInterface, _path_safe(), QueueProtocol (+51 more)
 
 ### Community 13 - "Community 13"
 Cohesion: 0.03
-Nodes (106): ABCMeta, AssertionError, identity(), Contract, CallbackKeywordArgumentsContract, MetadataContract, Contract to check presence of fields in scraped items     @scrapes page_name pa, Contract to set the url of the request (mandatory)     @url http://scrapy.org (+98 more)
+Nodes (69): ClientFactory, _load_context_factory_from_settings(), make_response(), ForeverTakingResource, HostHeaderResource, PayloadResource, L{ForeverTakingResource} is a resource which never finishes responding     to r, A testing resource which renders itself as the value of the host header     fro (+61 more)
 
 ### Community 14 - "Community 14"
-Cohesion: 0.02
-Nodes (74): NoRequestsSpider, coroutine_test(), inline_callbacks_test(), Mark a test function written in a :func:`twisted.internet.defer.inlineCallbacks`, Mark a test function that returns a coroutine.      * with ``pytest-twisted``, NoRequestsSpider, NoRequestsSpider, PeriodicLog (+66 more)
-
-### Community 15 - "Community 15"
-Cohesion: 0.02
-Nodes (106): as_async_generator(), collect_asyncgen(), Wraps an iterable (sync or async) into an async generator., _embed_bpython_shell(), _embed_ipython_shell(), _embed_ptpython_shell(), _embed_standard_shell(), get_shell_embed_func() (+98 more)
-
-### Community 16 - "Community 16"
 Cohesion: 0.08
 Nodes (84): BaseSpiderMiddleware, from_crawler(), process_spider_output(), process_spider_output_async(), Return a processed item from the spider output.          This method is called, Optional base class for spider middlewares.      .. versionadded:: 2.13, Return a processed request from the spider output.          This method is cal, BaseSpiderMiddleware (+76 more)
 
-### Community 17 - "Community 17"
+### Community 15 - "Community 15"
+Cohesion: 0.04
+Nodes (21): from_response(), from_curl(), _buildresponse(), _qs(), Test that _get_from raised a ValueError when an XPath selects an element, Test that a ValueError is raised for non-iterable and non-dict formdata input, Test that a ValueError is raised for fault-inducing iterable formdata input, TestFormRequest (+13 more)
+
+### Community 16 - "Community 16"
 Cohesion: 0.03
-Nodes (61): _check_max_size(), _DecompressionMaxSizeExceeded, _inflate(), _unbrotli(), _unzstd(), make_response(), gunzip(), gzip_magic_number() (+53 more)
+Nodes (38): CaselessDict, CaseInsensitiveDict, CaselessDict, fromkeys(), LocalCache, This module contains data types used by Scrapy which are not included in the Py, A dict-like structure that accepts strings or bytes     as keys and allows case, Dictionary with a finite number of keys.      Older items expires first. (+30 more)
+
+### Community 17 - "Community 17"
+Cohesion: 0.05
+Nodes (59): Call a function in a thread and return its result as a coroutine.      This us, run_in_thread(), FilesPipeline, from_crawler(), FSFilesStore, FTPFilesStore, GCSFilesStore, _md5sum() (+51 more)
 
 ### Community 18 - "Community 18"
-Cohesion: 0.03
-Nodes (42): _BenchServer, _BenchSpider, Command, A spider that follows all links, Command, TextTestResult, Command, Command (+34 more)
+Cohesion: 0.04
+Nodes (45): ItemLoader, Tiny order-processing package used as a qualgraph benchmark fixture., A user-friendly abstraction to populate an :ref:`item <topics-items>` with data, Inventory, Inventory storage and reservation logic., StockItem, from_crawler(), MailSender (+37 more)
 
 ### Community 19 - "Community 19"
+Cohesion: 0.03
+Nodes (32): CookieJar, _DummyLock, from_crawler(), full_url(), host(), _is_public_domain(), origin_req_host(), potential_domain_matches() (+24 more)
+
+### Community 20 - "Community 20"
 Cohesion: 0.04
 Nodes (33): main(), MockDNSResolver, MockDNSServer, Implements twisted.internet.interfaces.IResolver partially, async_sleep(), get_script_run_env(), Return a OS environment dict suitable to run scripts shipped with tests., twisted_sleep() (+25 more)
 
-### Community 20 - "Community 20"
-Cohesion: 0.07
-Nodes (17): from_response(), _get_clickable(), _get_form(), _get_form_url(), _get_inputs(), This module implements the FormRequest class which is a more convenient class (, Find the wanted form element within the given response., Return a list of key-value pairs for the inputs found in the given form. (+9 more)
-
 ### Community 21 - "Community 21"
-Cohesion: 0.07
-Nodes (30): Inventory, Inventory storage and reservation logic., StockItem, Customer, CustomerTier, LineItem, Order, OrderStatus (+22 more)
+Cohesion: 0.05
+Nodes (40): coroutine_test(), inline_callbacks_test(), Mark a test function written in a :func:`twisted.internet.defer.inlineCallbacks`, Mark a test function that returns a coroutine.      * with ``pytest-twisted``, PeriodicLog, CustomPeriodicLog, extension(), TestPeriodicLog (+32 more)
 
 ### Community 22 - "Community 22"
 Cohesion: 0.06
 Nodes (33): Debugger, Extensions for debugging Scrapy  See documentation in docs/topics/extensions.r, StackTraceDump, format_engine_status(), get_engine_status(), print_engine_status(), Return a report of the current engine status, listen_tcp() (+25 more)
 
 ### Community 23 - "Community 23"
-Cohesion: 0.08
-Nodes (33): test_add_http_if_no_scheme(), test_credentials(), test_default_ports(), test_default_ports_creds_off(), test_default_ports_keep(), test_guess_scheme(), test__is_filesystem_path(), test_noop() (+25 more)
+Cohesion: 0.07
+Nodes (30): _check_max_size(), _DecompressionMaxSizeExceeded, _inflate(), _unbrotli(), _unzstd(), gunzip(), gzip_magic_number(), Gunzip the given data and return as much data as possible.      This is resili (+22 more)
 
 ### Community 24 - "Community 24"
-Cohesion: 0.11
-Nodes (13): decode_robotstxt(), ProtegoRobotParser, PythonRobotParser, RerpRobotParser, RobotParser, BaseRobotParserTest, empty response should equal 'allow all, garbage response should be discarded, equal 'allow all (+5 more)
+Cohesion: 0.07
+Nodes (36): from_crawler(), process_request(), HTTP basic auth downloader middleware  See documentation in docs/topics/downlo, test_add_http_if_no_scheme(), test_credentials(), test_default_ports(), test_default_ports_creds_off(), test_default_ports_keep() (+28 more)
 
 ### Community 25 - "Community 25"
-Cohesion: 0.11
-Nodes (8): _AsyncBackend, _is_asgi3(), Provide an ASGI3 interface onto an ASGI2 app., _TestClientTransport, _Upgrade, WebSocketTestSession, _WrapASGI2, WebSocketDisconnect
+Cohesion: 0.1
+Nodes (12): decode_robotstxt(), ProtegoRobotParser, PythonRobotParser, RerpRobotParser, RobotParser, BaseRobotParserTest, empty response should equal 'allow all, garbage response should be discarded, equal 'allow all (+4 more)
 
 ### Community 26 - "Community 26"
-Cohesion: 0.12
-Nodes (5): test_absolute_path(), test_custom_asyncio_loop_enabled_true(), test_runspider_log_short_names(), TestRunSpiderCommand, TestWindowsRunSpiderCommand
+Cohesion: 0.11
+Nodes (16): Directive, Element, General, text(), collect_scrapy_settings_refs(), get_setting_name_and_refid(), _iter_sorted_settings(), make_setting_element() (+8 more)
 
 ### Community 27 - "Community 27"
-Cohesion: 0.09
-Nodes (12): Config, Environ, EnvironError, undefined, Holds a string value that should not be revealed in tracebacks etc.     You sho, Secret, We use `assert_type` to test the types returned by Config via mypy., test_config_types() (+4 more)
+Cohesion: 0.13
+Nodes (10): Config, Environ, EnvironError, undefined, We use `assert_type` to test the types returned by Config via mypy., test_config_types(), test_config_with_encoding(), test_config_with_env_prefix() (+2 more)
 
 ### Community 28 - "Community 28"
-Cohesion: 0.14
-Nodes (7): curl_to_request_kwargs(), CurlParser, DataAction, _parse_headers_and_cookies(), Convert a cURL command syntax to Request kwargs.      :param str curl_command:, _test_command(), TestCurlToRequestKwargs
-
-### Community 29 - "Community 29"
 Cohesion: 0.11
 Nodes (9): Bz2Plugin, GzipPlugin, LZMAPlugin, Extension for processing data before they are exported to feeds., Uses all the declared plugins to process data first, then writes         the pr, Compresses received data using `gzip <https://en.wikipedia.org/wiki/Gzip>`_., Close the target file along with all the plugins., Compresses received data using `bz2 <https://en.wikipedia.org/wiki/Bzip2>`_. (+1 more)
 
-### Community 30 - "Community 30"
+### Community 29 - "Community 29"
 Cohesion: 0.18
 Nodes (4): _getarg(), Root, Root, Resource
 
-### Community 31 - "Community 31"
+### Community 30 - "Community 30"
 Cohesion: 0.23
 Nodes (7): Update a deprecated path from an object with its new location, update_classpath(), MyWarning, NewName, SomeBaseClass, TestUpdateClassPath, UserWarning
+
+### Community 31 - "Community 31"
+Cohesion: 0.25
+Nodes (5): from_crawler(), process_request(), Set User-Agent header per spider or use a default value from settings, This middleware allows spiders to override the user_agent, UserAgentMiddleware
 
 ### Community 32 - "Community 32"
 Cohesion: 0.29
 Nodes (3): ProcessWithZeroDivisionErrorPipeline, Some pipelines used for testing, ZeroDivisionErrorPipeline
 
 ### Community 34 - "Community 34"
-Cohesion: 0.4
-Nodes (5): MetaPathFinder, install_reactor_import_hook(), Hook that prevents importing :mod:`twisted.internet.reactor`., Prevent importing :mod:`twisted.internet.reactor`., ReactorImportHook
-
-### Community 35 - "Community 35"
 Cohesion: 0.5
 Nodes (3): Tests that make sure parts needed for the scrapy-poet stack work., Making sure annotations on all non-abstract callbacks can be resolved., test_callbacks()
 
-### Community 36 - "Community 36"
+### Community 35 - "Community 35"
 Cohesion: 0.67
 Nodes (1): ExceptionSpider
 
-### Community 37 - "Community 37"
+### Community 36 - "Community 36"
 Cohesion: 0.67
 Nodes (1): NormalSpider
 
-### Community 38 - "Community 38"
+### Community 37 - "Community 37"
 Cohesion: 1.0
 Nodes (1): Scrapy signals  These signals are documented in docs/topics/signals.rst. Pleas
 
-### Community 40 - "Community 40"
+### Community 39 - "Community 39"
 Cohesion: 1.0
 Nodes (2): CHANGELOG, README
 
-### Community 51 - "Community 51"
+### Community 50 - "Community 50"
 Cohesion: 1.0
 Nodes (1): Create a CallLaterResult from an asyncio TimerHandle.
 
-### Community 52 - "Community 52"
+### Community 51 - "Community 51"
 Cohesion: 1.0
 Nodes (1): Create a CallLaterResult from a Twisted DelayedCall.
 
-### Community 55 - "Community 55"
+### Community 54 - "Community 54"
 Cohesion: 1.0
 Nodes (1): Create a Scrapy project in a temporary directory and return its path.
 
-### Community 56 - "Community 56"
+### Community 55 - "Community 55"
 Cohesion: 1.0
 Nodes (1): Copy a pre-generated Scrapy project into a temporary directory and return its pa
 
-### Community 57 - "Community 57"
+### Community 56 - "Community 56"
 Cohesion: 1.0
 Nodes (1): Add text to the end of the project settings.py.
 
-### Community 58 - "Community 58"
+### Community 57 - "Community 57"
 Cohesion: 1.0
 Nodes (1): Replace custom_settings in the given spider file with the given text.
 
-### Community 82 - "Community 82"
+### Community 81 - "Community 81"
 Cohesion: 1.0
 Nodes (1): Mutate ``graph`` with this annotator's signal.
+
+### Community 91 - "Community 91"
+Cohesion: 1.0
+Nodes (1): Return ``node_id -> cluster_id`` using Leiden on an undirected graph.
 
 ### Community 92 - "Community 92"
 Cohesion: 1.0
@@ -331,29 +331,31 @@ Cohesion: 1.0
 Nodes (1): Return the stable node id used by graph building and caching.      Convention: `
 
 ## Knowledge Gaps
-- **263 isolated node(s):** `Extract setting name from directive index node`, `Must be included after 'sphinx.ext.autodoc'. Fixes unwanted 'alias of' behavior.`, `A spider that generate light requests to measure QPS throughput  usage:`, `Scrapy core exceptions  These exceptions are documented in docs/topics/excepti`, `Indicates a missing configuration situation` (+258 more)
+- **264 isolated node(s):** `Extract setting name from directive index node`, `Must be included after 'sphinx.ext.autodoc'. Fixes unwanted 'alias of' behavior.`, `A spider that generate light requests to measure QPS throughput  usage:`, `Scrapy core exceptions  These exceptions are documented in docs/topics/excepti`, `Indicates a missing configuration situation` (+259 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 36`** (3 nodes): `exception.py`, `ExceptionSpider`, `.parse()`
+- **Thin community `Community 35`** (3 nodes): `exception.py`, `ExceptionSpider`, `.parse()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 37`** (3 nodes): `normal.py`, `NormalSpider`, `.parse()`
+- **Thin community `Community 36`** (3 nodes): `normal.py`, `NormalSpider`, `.parse()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 38`** (2 nodes): `signals.py`, `Scrapy signals  These signals are documented in docs/topics/signals.rst. Pleas`
+- **Thin community `Community 37`** (2 nodes): `signals.py`, `Scrapy signals  These signals are documented in docs/topics/signals.rst. Pleas`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 40`** (2 nodes): `CHANGELOG`, `README`
+- **Thin community `Community 39`** (2 nodes): `CHANGELOG`, `README`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 51`** (1 nodes): `Create a CallLaterResult from an asyncio TimerHandle.`
+- **Thin community `Community 50`** (1 nodes): `Create a CallLaterResult from an asyncio TimerHandle.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 52`** (1 nodes): `Create a CallLaterResult from a Twisted DelayedCall.`
+- **Thin community `Community 51`** (1 nodes): `Create a CallLaterResult from a Twisted DelayedCall.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 55`** (1 nodes): `Create a Scrapy project in a temporary directory and return its path.`
+- **Thin community `Community 54`** (1 nodes): `Create a Scrapy project in a temporary directory and return its path.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 56`** (1 nodes): `Copy a pre-generated Scrapy project into a temporary directory and return its pa`
+- **Thin community `Community 55`** (1 nodes): `Copy a pre-generated Scrapy project into a temporary directory and return its pa`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 57`** (1 nodes): `Add text to the end of the project settings.py.`
+- **Thin community `Community 56`** (1 nodes): `Add text to the end of the project settings.py.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 58`** (1 nodes): `Replace custom_settings in the given spider file with the given text.`
+- **Thin community `Community 57`** (1 nodes): `Replace custom_settings in the given spider file with the given text.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 82`** (1 nodes): `Mutate ``graph`` with this annotator's signal.`
+- **Thin community `Community 81`** (1 nodes): `Mutate ``graph`` with this annotator's signal.`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 91`** (1 nodes): `Return ``node_id -> cluster_id`` using Leiden on an undirected graph.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 92`** (1 nodes): `Mutate ``graph`` with this annotator's signal.`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -381,12 +383,12 @@ Nodes (1): Return the stable node id used by graph building and caching.      Co
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Crawler` connect `Community 0` to `Community 1`, `Community 2`, `Community 3`, `Community 4`, `Community 5`, `Community 6`, `Community 7`, `Community 8`, `Community 10`, `Community 11`, `Community 12`, `Community 13`, `Community 15`, `Community 16`, `Community 17`, `Community 22`, `Community 24`?**
+- **Why does `Crawler` connect `Community 0` to `Community 1`, `Community 2`, `Community 3`, `Community 4`, `Community 5`, `Community 6`, `Community 8`, `Community 11`, `Community 12`, `Community 14`, `Community 16`, `Community 17`, `Community 18`, `Community 19`, `Community 22`, `Community 23`, `Community 24`, `Community 25`, `Community 31`?**
   _High betweenness centrality (0.137) - this node is a cross-community bridge._
-- **Why does `ScrapyDeprecationWarning` connect `Community 0` to `Community 1`, `Community 2`, `Community 3`, `Community 4`, `Community 5`, `Community 6`, `Community 7`, `Community 8`, `Community 9`, `Community 10`, `Community 11`, `Community 12`, `Community 14`, `Community 15`, `Community 23`, `Community 31`?**
-  _High betweenness centrality (0.094) - this node is a cross-community bridge._
-- **Why does `MockServer` connect `Community 6` to `Community 0`, `Community 2`, `Community 3`, `Community 4`, `Community 5`, `Community 8`, `Community 9`, `Community 12`, `Community 13`, `Community 14`, `Community 19`?**
-  _High betweenness centrality (0.074) - this node is a cross-community bridge._
+- **Why does `ScrapyDeprecationWarning` connect `Community 0` to `Community 2`, `Community 3`, `Community 4`, `Community 5`, `Community 6`, `Community 7`, `Community 8`, `Community 10`, `Community 11`, `Community 12`, `Community 13`, `Community 16`, `Community 17`, `Community 18`, `Community 21`, `Community 23`, `Community 24`, `Community 30`?**
+  _High betweenness centrality (0.095) - this node is a cross-community bridge._
+- **Why does `MockServer` connect `Community 4` to `Community 0`, `Community 1`, `Community 2`, `Community 3`, `Community 5`, `Community 6`, `Community 7`, `Community 8`, `Community 10`, `Community 11`, `Community 13`, `Community 20`?**
+  _High betweenness centrality (0.073) - this node is a cross-community bridge._
 - **Are the 593 inferred relationships involving `Crawler` (e.g. with `AddonManager` and `This class facilitates loading and storing :ref:`topics-addons`.`) actually correct?**
   _`Crawler` has 593 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 535 inferred relationships involving `ScrapyDeprecationWarning` (e.g. with `Crawler` and `CrawlerRunnerBase`) actually correct?**
