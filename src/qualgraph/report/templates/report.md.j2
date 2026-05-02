@@ -181,6 +181,9 @@ _Deduped by node, tool, rule, location, and message._
 - Statically linked production functions/methods: {{ test_linkage.static_tested }}/{{ test_linkage.production }}
 - Coverage-context linked production functions/methods: {{ test_linkage.context_tested }}/{{ test_linkage.production }}
 - Covered production functions/methods: {{ test_linkage.covered }}/{{ test_linkage.production }}{% if test_linkage.coverage_known != test_linkage.production %} (coverage known for {{ test_linkage.coverage_known }}){% endif %}{{ "\n" }}
+{% if test_linkage.context_note %}
+- {{ test_linkage.context_note }}
+{% endif %}
 {% if test_linkage.untested %}
 {% for attrs in test_linkage.untested %}
 - Untested/weakly tested: {{ attrs.qualified_name }} ({{ format_percent(attrs.coverage_line) }}, {{ attrs.file_path }}:{{ attrs.line_start }})

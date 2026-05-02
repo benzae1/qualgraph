@@ -949,6 +949,24 @@ def test_report_status_and_linkage_distinguish_static_edges_from_coverage() -> N
     assert "Covered production functions/methods: 1/1" in report
 
 
+def test_report_explains_missing_coverage_contexts() -> None:
+    graph = nx.DiGraph()
+    graph.add_node(
+        "prod",
+        type=NodeType.FUNCTION.value,
+        qualified_name="sample.prod",
+        file_path="sample.py",
+        line_start=1,
+        line_end=4,
+        coverage_line=0.75,
+    )
+
+    report = render_markdown_report(graph)
+
+    assert "Coverage-context linked production functions/methods: 0/1" in report
+    assert "No coverage contexts found; run coverage with dynamic_context=test_function" in report
+
+
 def test_json_export_wraps_node_link_data_with_versioned_metadata() -> None:
     graph = nx.DiGraph()
     graph.graph["config"] = {"annotators": ["radon"]}

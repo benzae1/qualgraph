@@ -186,6 +186,11 @@ Grouped annotator aliases:
 - `cross_signal` or `derived` runs cross-signal derived findings
 - `profiler` ingests `--profile-json <path>`
 
+Coverage-context test linkage requires coverage data recorded with
+`dynamic_context = test_function`. Use `--coverage-mode run` to let Qualgraph
+write `.qualgraph/coverage-context.ini` and run pytest with context recording,
+or use an equivalent coverage.py rcfile before `--coverage-mode reuse`.
+
 ## Cross-Signal Findings
 
 Cross-signal findings exist because all inputs share graph nodes and edges.

@@ -29,6 +29,7 @@ Use the requested path, or `.` if no path was provided.
    - `fast` is the default and runs static signals only: radon, ruff, docstring, cross-signal.
    - Use `--annotators standard` to include bounded git history.
    - Use `--annotators full --coverage-mode reuse` when an existing `.coverage` file is available.
+   - Coverage-context test linkage only appears when the reused `.coverage` was recorded with `dynamic_context = test_function`.
    - Use `--annotators full --coverage-mode run --pytest-args "..."` only when the user explicitly wants tests/coverage generated during the Qualgraph run.
 
 4. Export LLM tasks:
