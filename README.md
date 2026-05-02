@@ -140,7 +140,7 @@ qualgraph export-json .qualgraph/annotated.graph.json --output .qualgraph/export
 LLM agent-file workflow:
 
 ```powershell
-qualgraph llm export-tasks .qualgraph/annotated.graph.json --limit 20
+qualgraph llm export-tasks .qualgraph/annotated.graph.json --limit 50
 qualgraph llm import-results .qualgraph/runs/<run_id> --graph .qualgraph/annotated.graph.json --output .qualgraph/final.graph.json
 qualgraph report .qualgraph/final.graph.json --output .qualgraph/report.md
 ```
@@ -148,8 +148,8 @@ qualgraph report .qualgraph/final.graph.json --output .qualgraph/report.md
 API-backed LLM workflow:
 
 ```powershell
-qualgraph llm analyze .qualgraph/annotated.graph.json --max-llm-calls 20 --provider ollama --dry-run
-qualgraph llm analyze .qualgraph/annotated.graph.json --max-llm-calls 20 --provider openai --model gpt-4o-mini --output .qualgraph/final.graph.json
+qualgraph llm analyze .qualgraph/annotated.graph.json --max-llm-calls 50 --provider ollama --dry-run
+qualgraph llm analyze .qualgraph/annotated.graph.json --max-llm-calls 50 --provider openai --model gpt-4o-mini --output .qualgraph/final.graph.json
 ```
 
 The intended future command is:
@@ -393,7 +393,7 @@ For full local analysis:
 ```powershell
 .venv\Scripts\qualgraph build benchmarks\repos\tiny_repo --output .qualgraph\graph.json
 .venv\Scripts\qualgraph annotate benchmarks\repos\tiny_repo --graph .qualgraph\graph.json --output .qualgraph\annotated.graph.json --annotators radon,ruff,coverage,git,security
-.venv\Scripts\qualgraph llm export-tasks .qualgraph\annotated.graph.json --limit 20
+.venv\Scripts\qualgraph llm export-tasks .qualgraph\annotated.graph.json --limit 50
 ```
 
 Then complete task JSON files, import results, and render:

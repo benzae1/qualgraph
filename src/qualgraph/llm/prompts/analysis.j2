@@ -39,3 +39,7 @@ Return ONLY a JSON object of this exact shape:
 }
 Do not include findings you cannot back with a citation in the source.
 The confidence field and the evidence requirement are your anti-hallucination machinery.
+Check each dimension before returning: maintainability, reliability, security, and performance.
+Prefer one or two high-confidence findings over broad speculation, but do not skip real
+reliability issues such as assert-as-validation, unchecked bounds, resource leaks, or
+error-handling paths merely because a security issue is also present.

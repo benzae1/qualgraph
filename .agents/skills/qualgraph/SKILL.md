@@ -33,7 +33,7 @@ Use the requested path, or `.` if no path was provided.
 
 4. Export LLM tasks:
    ```powershell
-   .venv\Scripts\qualgraph llm export-tasks .qualgraph\annotated.graph.json --limit 20
+   .venv\Scripts\qualgraph llm export-tasks .qualgraph\annotated.graph.json --limit 50
    ```
 
 5. Complete the task files yourself.

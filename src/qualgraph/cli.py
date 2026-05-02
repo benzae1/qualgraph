@@ -236,7 +236,7 @@ def export_json(
 def llm_export_tasks(
     graph: Path = typer.Argument(..., exists=True, file_okay=True, dir_okay=False, readable=True),
     output_dir: Optional[Path] = typer.Option(None, "--output-dir", "-o", help="Directory for LLM task files."),
-    limit: int = typer.Option(20, "--limit", "-n", min=1, help="Number of top-risk nodes to export."),
+    limit: int = typer.Option(50, "--limit", "-n", min=1, help="Number of top-risk nodes to export."),
 ) -> None:
     """Export top-risk node prompts for an agent to complete from files."""
 
@@ -273,7 +273,7 @@ def llm_import_results(
 def llm_analyze(
     graph: Path = typer.Argument(..., exists=True, file_okay=True, dir_okay=False, readable=True),
     output: Optional[Path] = typer.Option(None, "--output", "-o", help="Graph path to write after analysis."),
-    max_llm_calls: int = typer.Option(20, "--max-llm-calls", min=0, help="Maximum top-risk nodes to analyze."),
+    max_llm_calls: int = typer.Option(50, "--max-llm-calls", min=0, help="Maximum top-risk nodes to analyze."),
     dry_run: bool = typer.Option(False, "--dry-run", help="Print prompts without calling an LLM or writing output."),
     provider_name: str = typer.Option("ollama", "--provider", help="Provider: ollama, openai, or anthropic."),
     model: Optional[str] = typer.Option(None, "--model", help="Provider model id override."),
