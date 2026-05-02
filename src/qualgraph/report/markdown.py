@@ -262,6 +262,7 @@ def _risk_nodes(
         score = _risk_score(node_id, attrs, visible_findings_by_node[node_id])
         if score <= 0:
             continue
+        components = attrs.get("risk_components") or {}
         risk_nodes.append(
             {
                 "node_id": node_id,
@@ -269,8 +270,8 @@ def _risk_nodes(
                 "score": score,
                 "findings": [record for record in findings_by_node.get(node_id, []) if _is_actionable_record(record)],
                 "finding_count": visible_findings_by_node[node_id],
-                "risk_components": attrs.get("risk_components") or {},
-                "why": _risk_reason(attrs.get("risk_components") or {}, visible_findings_by_node[node_id]),
+                "risk_components": _report_risk_components(components),
+                "why": _risk_reason(components, visible_findings_by_node[node_id]),
             }
         )
     return sorted(risk_nodes, key=lambda item: item["score"], reverse=True)[:limit]
@@ -311,6 +312,14 @@ def _risk_reason(components: dict[str, Any], finding_count: int) -> str:
     if finding_count and "finding-backed score" not in reasons:
         reasons.insert(0, "finding-backed score")
     return " + ".join(reasons) if reasons else "composite risk score"
+
+
+def _report_risk_components(components: dict[str, Any]) -> dict[str, Any]:
+    return {
+        key: value
+        for key, value in components.items()
+        if not (key == "hotpath" and float(value or 0.0) == 0.0)
+    }
 
 
 def _coverage_gaps(nodes: list[tuple[str, dict]], limit: int) -> list[dict[str, Any]]:

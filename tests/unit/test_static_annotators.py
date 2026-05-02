@@ -713,7 +713,7 @@ def test_report_surfaces_deduped_rules_hotspots_and_readable_centrality() -> Non
                 complexity=6,
                 churn=4,
                 risk_score=2.0,
-                risk_components={"coverage_gap": 0.75, "complexity": 0.5},
+                risk_components={"coverage_gap": 0.75, "complexity": 0.5, "hotpath": 0.0},
             )
         ),
     )
@@ -736,6 +736,7 @@ def test_report_surfaces_deduped_rules_hotspots_and_readable_centrality() -> Non
     assert "## Risk Hotspots" in report
     assert "score=" in report
     assert "why=finding-backed score + coverage gap + high complexity" in report
+    assert "hotpath=0.00" not in report
     assert "betweenness=" in report
 
 
