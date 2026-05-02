@@ -808,6 +808,44 @@ def test_report_does_not_truncate_llm_messages_or_suggested_actions() -> None:
     assert "concrete failure mode..." not in report
 
 
+def test_report_top_rules_always_surfaces_llm_rules() -> None:
+    graph = nx.DiGraph()
+    graph.add_node(
+        "function",
+        **node_attrs_to_graph(
+            NodeAttrs(
+                id="function",
+                type=NodeType.FUNCTION,
+                name="work",
+                qualified_name="sample.work",
+                file_path="sample.py",
+                line_start=5,
+                line_end=6,
+                source="def work():\n    return risky()\n",
+                complexity=1,
+            )
+        ),
+    )
+    graph.nodes["function"]["findings"] = [
+        {"source": "ruff", "code": f"RUF{index:03d}", "message": f"ruff issue {index}", "line": 6}
+        for index in range(12)
+    ]
+    graph.nodes["function"]["findings"].append(
+        {
+            "source": "llm",
+            "code": "security",
+            "severity": "HIGH",
+            "confidence": "INFERRED",
+            "message": "The risky call can execute untrusted input.",
+            "evidence": "return risky()",
+        }
+    )
+
+    report = render_markdown_report(graph)
+
+    assert "llm security: 1" in report
+
+
 def test_report_derives_cross_signal_findings_when_not_attached() -> None:
     graph = nx.DiGraph()
     graph.add_node(

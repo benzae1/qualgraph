@@ -190,9 +190,13 @@ def _top_rules(records: list[dict[str, Any]], limit: int) -> list[dict[str, Any]
         code = _finding_code(finding)
         counts[(source, code)] += 1
         messages.setdefault((source, code), finding.get("message") or "")
+    selected = [key for key, _count in counts.most_common(limit)]
+    for key in sorted(counts, key=lambda item: (item[0], item[1])):
+        if key[0] == "llm" and key not in selected:
+            selected.append(key)
     return [
-        {"source": source, "code": code, "message": messages[(source, code)], "count": count}
-        for (source, code), count in counts.most_common(limit)
+        {"source": source, "code": code, "message": messages[(source, code)], "count": counts[(source, code)]}
+        for source, code in selected
     ]
 
 
