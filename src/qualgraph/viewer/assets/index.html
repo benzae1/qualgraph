@@ -4,12 +4,80 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Qualgraph Viewer</title>
+    <link rel="stylesheet" href="/assets/styles.css">
   </head>
   <body>
-    <main>
-      <h1>Qualgraph Viewer</h1>
-      <p>The bundled viewer assets are installed.</p>
-    </main>
+    <div class="shell">
+      <aside class="sidebar">
+        <header class="brand">
+          <span class="mark"></span>
+          <div>
+            <h1>Qualgraph</h1>
+            <p id="graphPath">Loading graph...</p>
+          </div>
+        </header>
+
+        <section class="summary-grid" id="summaryGrid"></section>
+
+        <label class="search">
+          <span>Search</span>
+          <input id="searchInput" type="search" placeholder="node, file, finding">
+        </label>
+
+        <div class="filter-row">
+          <button class="chip is-active" data-source="">All</button>
+          <button class="chip" data-source="llm">LLM</button>
+          <button class="chip" data-source="bandit">Security</button>
+          <button class="chip" data-source="cross-signal">Architecture</button>
+        </div>
+
+        <section>
+          <div class="section-title">
+            <h2>Clusters</h2>
+            <button id="overviewButton" title="Return to cluster overview">Overview</button>
+          </div>
+          <div class="list" id="clusterList"></div>
+        </section>
+      </aside>
+
+      <main class="stage">
+        <div class="toolbar">
+          <div>
+            <div class="eyebrow" id="modeLabel">Cluster Map</div>
+            <h2 id="viewTitle">System overview</h2>
+          </div>
+          <div class="toolbar-actions">
+            <button id="fitButton" title="Refit graph">Fit</button>
+            <button id="llmButton" title="Show LLM findings">LLM Findings</button>
+          </div>
+        </div>
+        <canvas id="graphCanvas"></canvas>
+        <div class="legend">
+          <span><i class="dot production"></i>Production</span>
+          <span><i class="dot test"></i>Tests</span>
+          <span><i class="dot finding"></i>Findings</span>
+        </div>
+      </main>
+
+      <aside class="inspector">
+        <section id="inspectorPanel" class="panel">
+          <div class="empty">
+            <span class="pulse"></span>
+            <h2>Select a cluster or node</h2>
+            <p>Drill through the graph to inspect findings, risk signals, source evidence, and relationships.</p>
+          </div>
+        </section>
+
+        <section class="panel findings-panel">
+          <div class="section-title">
+            <h2 id="findingsTitle">Findings</h2>
+            <span id="findingCount">0</span>
+          </div>
+          <div class="findings" id="findingsList"></div>
+        </section>
+      </aside>
+    </div>
+
     <script src="/assets/app.js"></script>
   </body>
 </html>
