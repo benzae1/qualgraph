@@ -1,12 +1,12 @@
 # Graph Report - analytify  (2026-05-04)
 
 ## Corpus Check
-- 748 files · ~943,447 words
+- 748 files · ~944,165 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 16193 nodes · 66109 edges · 66 communities detected
-- Extraction: 32% EXTRACTED · 68% INFERRED · 0% AMBIGUOUS · INFERRED: 44761 edges (avg confidence: 0.66)
+- 16203 nodes · 66157 edges · 66 communities detected
+- Extraction: 32% EXTRACTED · 68% INFERRED · 0% AMBIGUOUS · INFERRED: 44779 edges (avg confidence: 0.66)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -113,115 +113,115 @@
 
 ### Community 0 - "Community 0"
 Cohesion: 0.0
-Nodes (1128): AddonManager, This class facilitates loading and storing :ref:`topics-addons`., Load add-ons and configurations from a settings object and apply them., Update early settings that do not require a crawler instance, such as SPIDER_MOD, AjaxCrawlMiddleware, _has_ajaxcrawlable_meta(), Handle 'AJAX crawlable' pages marked as crawlable via meta tag., Return True if a page without hash fragment could be "AJAX crawlable". (+1120 more)
+Nodes (1256): ABCMeta, AddonManager, This class facilitates loading and storing :ref:`topics-addons`., Load add-ons and configurations from a settings object and apply them., Update early settings that do not require a crawler instance, such as SPIDER_MOD, AjaxCrawlMiddleware, _has_ajaxcrawlable_meta(), Handle 'AJAX crawlable' pages marked as crawlable via meta tag. (+1248 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.01
-Nodes (828): AbstractCookieJar, AbstractResolver, ResolveResult, AbstractCookieJar, AbstractResolver, BaseProtocol, _BaseRequestContextManager, delete() (+820 more)
+Nodes (1230): init(), get_root(), main(), init(), main(), fetch(), go(), client() (+1222 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.01
-Nodes (772): Creates an Starlette application., Initializes the application.          Parameters:             debug: Boolean, Starlette, AuthCredentials, AuthenticationBackend, AuthenticationError, AuthenticationMiddleware, BaseUser (+764 more)
+Nodes (665): ABC, AbstractAccessLogger, AbstractAsyncAccessLogger, AbstractMatchInfo, AbstractRouter, AbstractStreamWriter, AbstractView, Execute the view handler. (+657 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.01
-Nodes (582): AbstractAccessLogger, AbstractAsyncAccessLogger, AbstractMatchInfo, AbstractRouter, AbstractStreamWriter, AbstractView, Execute the view handler., Resolve result.      This is the result returned from an AbstractResolver's (+574 more)
+Nodes (821): Creates an Starlette application., Initializes the application.          Parameters:             debug: Boolean, Starlette, AssertionError, AuthCredentials, AuthenticationBackend, AuthenticationError, AuthenticationMiddleware (+813 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.01
-Nodes (941): init(), main(), init(), main(), fetch(), go(), client(), ClientSession (+933 more)
+Cohesion: 0.0
+Nodes (597): Agent, BaseDownloadHandler, BaseRunSpiderCommand, CachingHostnameResolverSpider, set_zlib_backend(), cleanup_payload_pending_file_closes(), enable_cleanup_closed(), netrc_contents() (+589 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.01
-Nodes (761): time(), ClientTimeout, SSRFConnector, links(), url(), proc(), make_client_request(), BaseConnector (+753 more)
+Nodes (778): AbstractCookieJar, AbstractResolver, ResolveResult, AbstractResolver, _BaseRequestContextManager, delete(), ClientConnectionError, ClientConnectionResetError (+770 more)
 
 ### Community 6 - "Community 6"
 Cohesion: 0.01
-Nodes (604): Return True if the connection is open., BaseProtocol, BrotliDecompressor, CompressObjArgs, DecompressionBaseHandler, encoding_to_mode(), Base class for decompression handlers., Decompress the given data. (+596 more)
+Nodes (656): AbstractCookieJar, background_tasks(), listen_to_valkey(), on_shutdown(), time(), ClientTimeout, SSRFConnector, proc() (+648 more)
 
 ### Community 7 - "Community 7"
 Cohesion: 0.01
-Nodes (391): BaseDownloadHandler, ClientTLSOptions, CookiesMiddleware, This middleware enables working with sites that need cookies, type(), CoreStats, from_crawler(), Extension for collecting core stats like items scraped and start/finish times (+383 more)
+Nodes (612): AbstractStreamWriter, boot(), draw(), drillCluster(), drillFile(), escapeAttr(), escapeHtml(), fetchJson() (+604 more)
 
 ### Community 8 - "Community 8"
 Cohesion: 0.01
-Nodes (535): Agent, H2Agent, H2ConnectionPool, Close all the HTTP/2 connections and remove them from pool          Returns:, Arguments:             uri - URI obtained directly from request URL, We use the proxy uri instead of uri obtained from request url, ScrapyProxyH2Agent, BaseDownloadHandler (+527 more)
+Nodes (372): H2Agent, H2ConnectionPool, Close all the HTTP/2 connections and remove them from pool          Returns:, Arguments:             uri - URI obtained directly from request URL, We use the proxy uri instead of uri obtained from request url, ScrapyProxyH2Agent, BaseDownloadHandler, Optional base class for download handlers. (+364 more)
 
 ### Community 9 - "Community 9"
 Cohesion: 0.01
-Nodes (342): ABC, ABCMeta, AssertionError, identity(), BlockingFeedStorage, main(), Contract, CsvItemExporter (+334 more)
+Nodes (347): BrowserLikePolicyForHTTPS, ClientTLSOptions, BrowserLikeContextFactory, _filter_method_warning(), from_crawler(), _ScrapyClientContextFactory, If the header `key` does not exist, then set it to `value`.         Returns the, make_response() (+339 more)
 
 ### Community 10 - "Community 10"
-Cohesion: 0.01
-Nodes (416): AbstractStreamWriter, boot(), draw(), drillCluster(), escapeAttr(), escapeHtml(), fetchJson(), findingCard() (+408 more)
+Cohesion: 0.02
+Nodes (458): AnalysisSummary, analyze_top_n(), _attach_findings(), build_request(), _cache_key(), _finding_payload(), _grammar_version(), LLMAnalyzer (+450 more)
 
 ### Community 11 - "Community 11"
 Cohesion: 0.01
-Nodes (285): load_response(), _embed_bpython_shell(), _embed_ipython_shell(), _embed_ptpython_shell(), _embed_standard_shell(), get_shell_embed_func(), Return the first acceptable shell-embed function     from a given list of shell, Start an IPython Shell (+277 more)
+Nodes (217): load_response(), NotSupported, Indicates a feature or method is not supported, CSVFeedSpider, This module implements the XMLFeedSpider which is the recommended spider to use, Spider for parsing CSV feeds.     It receives a CSV file in a response; iterate, This method has the same purpose as the one in XMLFeedSpider, This method has the same purpose as the one in XMLFeedSpider (+209 more)
 
 ### Community 12 - "Community 12"
 Cohesion: 0.01
-Nodes (334): load_pre_crawler_settings(), BaseHTTPRequestHandler, annotate_clusters(), cluster_leiden(), _cluster_partition(), _coarsen_clusters(), _compact_cluster_ids(), _is_test_node() (+326 more)
+Nodes (232): BlockingFeedStorage, main(), CsvItemExporter, Debugger, Extensions for debugging Scrapy  See documentation in docs/topics/extensions.r, StackTraceDump, from_crawler(), process_request() (+224 more)
 
 ### Community 13 - "Community 13"
 Cohesion: 0.01
-Nodes (465): AnalysisSummary, analyze_top_n(), _attach_findings(), build_request(), _cache_key(), _finding_payload(), _grammar_version(), LLMAnalyzer (+457 more)
+Nodes (204): load_pre_crawler_settings(), _BenchServer, _BenchSpider, Command, A spider that follows all links, _getarg(), Root, build_component_list() (+196 more)
 
 ### Community 14 - "Community 14"
 Cohesion: 0.01
-Nodes (385): get_root(), main(), api_logging_middleware(), This is a collection of semi-complete examples that get included into the cookbo, retry_middleware(), ssrf_middleware(), TokenRefresh401Middleware, TokenRefreshExpiryMiddleware (+377 more)
+Nodes (242): AioHTTPTestCase, from_crawler(), NoRequestsSpider, create_looping_call(), _parallel_asyncio(), Execute a callable over the objects in the given iterable, in parallel,     usi, Create an instance of a looping call class.      This creates an instance of, BaseProtocol (+234 more)
 
 ### Community 15 - "Community 15"
-Cohesion: 0.02
-Nodes (264): background_tasks(), listen_to_valkey(), on_shutdown(), websocket_handler(), display_message(), ConnectionResetError, calculate_timeout_when(), call_later() (+256 more)
+Cohesion: 0.01
+Nodes (208): BaseHTTPRequestHandler, _gen_default_accept_encoding(), annotate_clusters(), cluster_leiden(), _cluster_partition(), _coarsen_clusters(), _compact_cluster_ids(), _is_test_node() (+200 more)
 
 ### Community 16 - "Community 16"
-Cohesion: 0.01
-Nodes (172): AioHTTPTestCase, _parallel_asyncio(), Execute a callable over the objects in the given iterable, in parallel,     usi, BasicAuthMiddleware, main(), A protected resource that requires any valid auth., Run a simple test server with basic auth endpoints., Run all basic auth middleware tests. (+164 more)
+Cohesion: 0.02
+Nodes (71): _DummyLock, from_crawler(), full_url(), host(), _is_public_domain(), origin_req_host(), process_request(), process_response() (+63 more)
 
 ### Community 17 - "Community 17"
 Cohesion: 0.02
-Nodes (171): cookies(), parse_cookie_header(), parse_set_cookie_headers(), preserve_morsel_with_coded_value(), Unquote a cookie value.      Vendored from http.cookies._unquote to ensure com, Parse a Cookie header according to RFC 6265 Section 5.4.      Cookie headers c, Parse cookie headers using a vendored version of SimpleCookie parsing.      Th, Preserve a Morsel's coded_value exactly as received from the server.      This (+163 more)
+Nodes (144): Compress the data and returned the compressed bytes.          Note that flush(, ZLibBackendWrapper, Helpers for WebSocket protocol versions 13 and 8., Websocket masking function.      `mask` is a `bytes` object of length 4; `data, _websocket_mask_python(), ws_ext_gen(), ws_ext_parse(), _xor_table() (+136 more)
 
 ### Community 18 - "Community 18"
-Cohesion: 0.03
-Nodes (28): curl_to_request_kwargs(), CurlParser, DataAction, _parse_headers_and_cookies(), Convert a cURL command syntax to Request kwargs.      :param str curl_command:, from_response(), from_curl(), _buildresponse() (+20 more)
+Cohesion: 0.02
+Nodes (48): curl_to_request_kwargs(), CurlParser, DataAction, _parse_headers_and_cookies(), Convert a cURL command syntax to Request kwargs.      :param str curl_command:, FormRequest, from_response(), _get_form() (+40 more)
 
 ### Community 19 - "Community 19"
-Cohesion: 0.07
-Nodes (91): BaseSpiderMiddleware, from_crawler(), process_spider_output(), process_spider_output_async(), Return a processed item from the spider output.          This method is called, Optional base class for spider middlewares.      .. versionadded:: 2.13, Return a processed request from the spider output.          This method is cal, BaseSpiderMiddleware (+83 more)
+Cohesion: 0.02
+Nodes (171): cookies(), parse_cookie_header(), parse_set_cookie_headers(), preserve_morsel_with_coded_value(), Unquote a cookie value.      Vendored from http.cookies._unquote to ensure com, Parse a Cookie header according to RFC 6265 Section 5.4.      Cookie headers c, Parse cookie headers using a vendored version of SimpleCookie parsing.      Th, Preserve a Morsel's coded_value exactly as received from the server.      This (+163 more)
 
 ### Community 20 - "Community 20"
-Cohesion: 0.04
-Nodes (10): content_disposition(), content_disposition_filename(), parse_content_disposition(), test_attwithfn2231iso_bad(), test_attwithfn2231nbadpct1(), test_attwithfn2231nbadpct2(), test_attwithfn2231utf8_bad(), test_attwithquotedsemicolon() (+2 more)
+Cohesion: 0.07
+Nodes (89): BaseSpiderMiddleware, from_crawler(), process_spider_output(), process_spider_output_async(), Return a processed item from the spider output.          This method is called, Optional base class for spider middlewares.      .. versionadded:: 2.13, Return a processed request from the spider output.          This method is cal, BaseSpiderMiddleware (+81 more)
 
 ### Community 21 - "Community 21"
 Cohesion: 0.04
-Nodes (31): main(), MockDNSResolver, MockDNSServer, Implements twisted.internet.interfaces.IResolver partially, get_script_run_env(), Return a OS environment dict suitable to run scripts shipped with tests., get_script_dir(), Setting TWISTED_REACTOR_ENABLED=False in spider settings is not         current (+23 more)
+Nodes (38): DownloadHandlerProtocol, ItemLoader, Tiny order-processing package used as a qualgraph benchmark fixture., A user-friendly abstraction to populate an :ref:`item <topics-items>` with data, Inventory, Inventory storage and reservation logic., StockItem, MailSender (+30 more)
 
 ### Community 22 - "Community 22"
-Cohesion: 0.06
-Nodes (36): coroutine_test(), inline_callbacks_test(), Mark a test function written in a :func:`twisted.internet.defer.inlineCallbacks`, Mark a test function that returns a coroutine.      * with ``pytest-twisted``, AsyncioSleepSpiderMiddleware, ModernWrapSpider, ModernWrapSpiderMiddleware, ModernWrapSpiderSubclass (+28 more)
+Cohesion: 0.03
+Nodes (53): Command, TextTestResult, call(), _pop_command_name(), main(), showRandomAnnouncement(), shuffle(), DummyTestCase (+45 more)
 
 ### Community 23 - "Community 23"
-Cohesion: 0.08
-Nodes (23): _pop_command_name(), _append_settings(), create_files(), _proj_path_cached(), The command uses the expected *CrawlerProcess, the spider works., The command uses the expected *CrawlerProcess, the spider fails to use asyncio., The reactor is set via the project default settings (to the asyncio value)., The reactor is set via the command line to the asyncio value.         AsyncCraw (+15 more)
+Cohesion: 0.04
+Nodes (11): content_disposition_filename(), filename(), name(), parse_content_disposition(), test_attwithfn2231iso_bad(), test_attwithfn2231nbadpct1(), test_attwithfn2231nbadpct2(), test_attwithfn2231utf8_bad() (+3 more)
 
 ### Community 24 - "Community 24"
-Cohesion: 0.06
-Nodes (9): _BenchServer, _BenchSpider, Command, A spider that follows all links, Command, Command, Command, ScrapyCommand (+1 more)
+Cohesion: 0.04
+Nodes (33): main(), MockDNSResolver, MockDNSServer, Implements twisted.internet.interfaces.IResolver partially, async_sleep(), get_script_run_env(), Return a OS environment dict suitable to run scripts shipped with tests., twisted_sleep() (+25 more)
 
 ### Community 25 - "Community 25"
-Cohesion: 0.12
-Nodes (5): test_absolute_path(), test_custom_asyncio_loop_enabled_true(), test_runspider_log_short_names(), TestRunSpiderCommand, TestWindowsRunSpiderCommand
+Cohesion: 0.05
+Nodes (35): _get_handler(), get_scrapy_root_handler(), install_scrapy_root_handler(), LogCounterHandler, Return a log handler object according to settings, Fake file-like stream object that redirects writes to a logger instance      T, Record log levels count into a crawler stats, # NOTE: This also handles 'args' being an empty dict, that case doesn't (+27 more)
 
 ### Community 26 - "Community 26"
-Cohesion: 0.11
-Nodes (15): Directive, Element, General, collect_scrapy_settings_refs(), get_setting_name_and_refid(), _iter_sorted_settings(), make_setting_element(), make_setting_markdown_item() (+7 more)
+Cohesion: 0.05
+Nodes (47): coroutine_test(), inline_callbacks_test(), Mark a test function written in a :func:`twisted.internet.defer.inlineCallbacks`, Mark a test function that returns a coroutine.      * with ``pytest-twisted``, test_asyncio_delayed(), test_deprecated(), test_deprecated_non_generator_exception(), test_deprecated_subclass() (+39 more)
 
 ### Community 27 - "Community 27"
-Cohesion: 0.11
-Nodes (9): Bz2Plugin, GzipPlugin, LZMAPlugin, Extension for processing data before they are exported to feeds., Uses all the declared plugins to process data first, then writes         the pr, Compresses received data using `gzip <https://en.wikipedia.org/wiki/Gzip>`_., Close the target file along with all the plugins., Compresses received data using `bz2 <https://en.wikipedia.org/wiki/Bzip2>`_. (+1 more)
+Cohesion: 0.12
+Nodes (5): test_absolute_path(), test_custom_asyncio_loop_enabled_true(), test_runspider_log_short_names(), TestRunSpiderCommand, TestWindowsRunSpiderCommand
 
 ### Community 28 - "Community 28"
 Cohesion: 0.17
@@ -450,17 +450,17 @@ Nodes (1): Return the stable node id used by graph building and caching.      Co
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Crawler` connect `Community 0` to `Community 2`, `Community 5`, `Community 6`, `Community 7`, `Community 8`, `Community 9`, `Community 10`, `Community 11`, `Community 12`, `Community 19`?**
+- **Why does `Crawler` connect `Community 0` to `Community 3`, `Community 4`, `Community 5`, `Community 6`, `Community 8`, `Community 9`, `Community 11`, `Community 12`, `Community 13`, `Community 14`, `Community 15`, `Community 16`, `Community 20`, `Community 21`, `Community 25`?**
   _High betweenness centrality (0.063) - this node is a cross-community bridge._
-- **Why does `Application` connect `Community 4` to `Community 1`, `Community 2`, `Community 3`, `Community 11`, `Community 14`, `Community 16`?**
+- **Why does `Application` connect `Community 1` to `Community 2`, `Community 5`, `Community 11`, `Community 14`, `Community 21`?**
   _High betweenness centrality (0.055) - this node is a cross-community bridge._
-- **Why does `ScrapyDeprecationWarning` connect `Community 0` to `Community 2`, `Community 4`, `Community 5`, `Community 7`, `Community 8`, `Community 9`, `Community 10`, `Community 11`, `Community 12`, `Community 16`, `Community 22`?**
+- **Why does `ScrapyDeprecationWarning` connect `Community 0` to `Community 1`, `Community 4`, `Community 6`, `Community 7`, `Community 8`, `Community 9`, `Community 11`, `Community 12`, `Community 13`, `Community 14`, `Community 15`, `Community 21`, `Community 26`?**
   _High betweenness centrality (0.048) - this node is a cross-community bridge._
 - **Are the 876 inferred relationships involving `Application` (e.g. with `AbstractRouter` and `AbstractMatchInfo`) actually correct?**
   _`Application` has 876 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 593 inferred relationships involving `Crawler` (e.g. with `AddonManager` and `This class facilitates loading and storing :ref:`topics-addons`.`) actually correct?**
   _`Crawler` has 593 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 569 inferred relationships involving `str` (e.g. with `.__str__()` and `.__str__()`) actually correct?**
-  _`str` has 569 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 572 inferred relationships involving `str` (e.g. with `.__str__()` and `.__str__()`) actually correct?**
+  _`str` has 572 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 566 inferred relationships involving `url()` (e.g. with `.__init__()` and `._build_url()`) actually correct?**
   _`url()` has 566 INFERRED edges - model-reasoned connections that need verification._
