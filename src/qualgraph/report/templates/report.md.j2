@@ -21,6 +21,11 @@
 {% if summary.avg_coverage is not none %}
 - Average line coverage: {{ format_percent(summary.avg_coverage) }}
 {% endif %}
+{% if summary.warnings %}
+{% for warning in summary.warnings %}
+- {{ warning }}
+{% endfor %}
+{% endif %}
 
 Top findings:
 {% if summary.top_findings %}
@@ -168,7 +173,9 @@ _Deduped by node, tool, rule, location, and message._
 
 ## Coverage Gaps
 
-{% if coverage_gaps %}
+{% if not coverage_state.available %}
+- Coverage data unavailable; coverage gaps were not computed.
+{% elif coverage_gaps %}
 {% for attrs in coverage_gaps %}
 - {{ attrs.qualified_name }}: {{ format_percent(attrs.coverage_line) }} ({{ attrs.file_path }}:{{ attrs.line_start }})
 {% endfor %}

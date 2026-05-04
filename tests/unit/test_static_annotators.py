@@ -661,6 +661,17 @@ def test_risk_score_writes_weighted_components_for_llm_selection() -> None:
     assert [node_id for node_id, _attrs in top_risk_nodes(graph, limit=1)] == ["high"]
 
 
+def test_risk_score_omits_coverage_gap_when_coverage_is_unavailable() -> None:
+    graph = nx.DiGraph()
+    graph.add_node("low", type=NodeType.FUNCTION.value, centrality=0.1, complexity=1)
+    graph.add_node("high", type=NodeType.METHOD.value, centrality=0.9, complexity=12)
+
+    score(graph, {"w1": 1, "w2": 1, "w3": 1, "w4": 100, "w5": 1, "w6": 1, "w7": 1})
+
+    assert graph.graph["coverage_available"] is False
+    assert "coverage_gap" not in graph.nodes["high"]["risk_components"]
+
+
 def test_risk_score_uses_percentile_hotpath_weight() -> None:
     graph = nx.DiGraph()
     graph.add_node("cold", type=NodeType.FUNCTION.value, cpu_pct=0.0)
@@ -965,6 +976,31 @@ def test_report_explains_missing_coverage_contexts() -> None:
 
     assert "Coverage-context linked production functions/methods: 0/1" in report
     assert "No coverage contexts found; run coverage with dynamic_context=test_function" in report
+
+
+def test_report_warns_when_coverage_data_is_unavailable() -> None:
+    graph = nx.DiGraph()
+    graph.graph["repo_path"] = "repo"
+    graph.add_node(
+        "prod",
+        type=NodeType.FUNCTION.value,
+        qualified_name="sample.prod",
+        file_path="sample.py",
+        line_start=1,
+        line_end=4,
+        risk_score=1.0,
+        risk_components={"complexity": 1.0},
+    )
+
+    report = render_markdown_report(graph)
+
+    assert "WARNING: Coverage annotator was not run" in report
+    assert "coverage_gap, untested_hotspot, and coverage-context test linkage signals are disabled" in report
+    assert "coverage: not_run; note=no coverage data found at repo" in report
+    assert ".coverage" in report
+    assert "test_linkage: not_run; edges_added=0, note=coverage data unavailable" in report
+    assert "Coverage data unavailable; coverage gaps were not computed." in report
+    assert "Coverage data unavailable; coverage-context linkage and coverage-derived gaps were not computed." in report
 
 
 def test_json_export_wraps_node_link_data_with_versioned_metadata() -> None:

@@ -32,6 +32,9 @@ def score(graph: nx.DiGraph, weights: Mapping[str, float] | None = None) -> None
     if not funcs:
         return
 
+    coverage_available = any(attrs.get("coverage_line") is not None for _node_id, attrs in funcs)
+    graph.graph["coverage_available"] = coverage_available
+
     percentile_ranks: dict[str, list[float]] = {}
     for component in ("centrality", "complexity", "churn", "hotpath"):
         values = [float(attrs.get(component) or 0.0) for _node_id, attrs in funcs]
@@ -55,11 +58,12 @@ def score(graph: nx.DiGraph, weights: Mapping[str, float] | None = None) -> None
             "centrality": active_weights["w1"] * percentile_ranks["centrality"][index],
             "complexity": active_weights["w2"] * percentile_ranks["complexity"][index],
             "churn": active_weights["w3"] * percentile_ranks["churn"][index],
-            "coverage_gap": active_weights["w4"] * coverage_gap,
             "security": active_weights["w5"] * security_max,
             "llm": active_weights["w6"] * float(attrs.get("llm_severity_max") or 0.0),
             "hotpath": active_weights["w7"] * (percentile_ranks["hotpath"][index] if hotpath_raw > 0 else 0.0),
         }
+        if coverage_available:
+            components["coverage_gap"] = active_weights["w4"] * coverage_gap
         attrs["risk_score"] = float(sum(components.values()))
         attrs["risk_components"] = components
 

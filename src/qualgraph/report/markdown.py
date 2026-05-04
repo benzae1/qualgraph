@@ -31,6 +31,7 @@ def build_report_context(graph: nx.DiGraph, top_n: int = 10) -> dict[str, Any]:
     actionable_records = [record for record in finding_records if _is_actionable_record(record)]
     covered = [float(attrs["coverage_line"]) for _node_id, attrs in nodes if attrs.get("coverage_line") is not None]
     avg_coverage = sum(covered) / len(covered) if covered else None
+    coverage_state = _coverage_state(graph, nodes, run_summary)
     top_findings = _priority_findings(actionable_records, limit=3)
     risk_nodes = _risk_nodes(nodes, finding_records, limit=top_n)
     clusters = _clusters(nodes, finding_records, risk_nodes)
@@ -51,6 +52,7 @@ def build_report_context(graph: nx.DiGraph, top_n: int = 10) -> dict[str, Any]:
             "duration_ms": _duration_ms(graph, run_summary),
             "top_findings": top_findings,
             "llm_validation": _llm_validation(graph),
+            "warnings": _report_warnings(coverage_state),
         },
         "node_types": sorted(Counter(attrs.get("type", "unknown") for _node_id, attrs in nodes).items()),
         "edge_types": sorted(Counter(attrs.get("type", "unknown") for _source, _target, attrs in edges).items()),
@@ -60,13 +62,14 @@ def build_report_context(graph: nx.DiGraph, top_n: int = 10) -> dict[str, Any]:
         "priority_findings": _priority_findings(actionable_records, limit=10),
         "risk_nodes": risk_nodes,
         "coverage_gaps": _coverage_gaps(nodes, limit=10),
-        "test_linkage": _test_linkage(nodes, edges),
+        "coverage_state": coverage_state,
+        "test_linkage": _test_linkage(nodes, edges, coverage_state),
         "git_history": _git_history(nodes),
         "co_changes": _co_changes(graph),
         "clusters": clusters,
         "cross_signal_findings": _cross_signal_findings(finding_records),
         "dimension_scorecards": _dimension_scorecards(actionable_records, risk_nodes),
-        "annotator_status": _annotator_status(graph, run_summary),
+        "annotator_status": _annotator_status(graph, run_summary, coverage_state),
         "format_score": _format_score,
         "format_small": _format_small,
         "format_percent": _format_percent,
@@ -331,7 +334,11 @@ def _coverage_gaps(nodes: list[tuple[str, dict]], limit: int) -> list[dict[str, 
     return sorted(gaps, key=lambda item: item.get("coverage_line") or 0)[:limit]
 
 
-def _test_linkage(nodes: list[tuple[str, dict]], edges: list[tuple[str, str, dict]]) -> dict[str, Any]:
+def _test_linkage(
+    nodes: list[tuple[str, dict]],
+    edges: list[tuple[str, str, dict]],
+    coverage_state: dict[str, Any],
+) -> dict[str, Any]:
     production = {
         node_id: attrs
         for node_id, attrs in nodes
@@ -359,7 +366,12 @@ def _test_linkage(nodes: list[tuple[str, dict]], edges: list[tuple[str, str, dic
         if node_id not in tested_nodes and attrs.get("coverage_line") is not None and float(attrs.get("coverage_line") or 0) < 0.8
     ]
     context_note = ""
-    if dynamic_nodes == set() and covered_nodes:
+    if not coverage_state["available"]:
+        context_note = (
+            "Coverage data unavailable; coverage-context linkage and coverage-derived gaps were not computed. "
+            "Run coverage with dynamic_context=test_function or use --coverage-mode run."
+        )
+    elif dynamic_nodes == set() and covered_nodes:
         context_note = (
             "No coverage contexts found; run coverage with dynamic_context=test_function "
             "or use --coverage-mode run to let Qualgraph create the context rcfile."
@@ -374,6 +386,54 @@ def _test_linkage(nodes: list[tuple[str, dict]], edges: list[tuple[str, str, dic
         "context_note": context_note,
         "untested": sorted(untested, key=lambda item: float(item.get("coverage_line") or 0))[:10],
     }
+
+
+def _coverage_state(
+    graph: nx.DiGraph,
+    nodes: list[tuple[str, dict]],
+    run_summary: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    coverage_known = sum(
+        1
+        for _node_id, attrs in nodes
+        if attrs.get("type") in {"Function", "Method"} and not _is_test_node(attrs) and attrs.get("coverage_line") is not None
+    )
+    repo_path = graph.graph.get("repo_path") or (run_summary or {}).get("repo_path")
+    expected_path = str(Path(repo_path) / ".coverage") if repo_path else ".coverage"
+    statuses = _raw_annotator_statuses(graph, run_summary)
+    coverage_status = _status_named(statuses, "coverage")
+    test_linkage_status = _status_named(statuses, "test_linkage")
+    available = coverage_known > 0
+    if available:
+        note = ""
+    elif coverage_status:
+        note = (
+            f"Coverage data not found or no production nodes were annotated from {expected_path}; "
+            "coverage_gap, untested_hotspot, and coverage-context test linkage signals are disabled."
+        )
+    else:
+        note = (
+            f"Coverage annotator was not run and no coverage data was found at {expected_path}; "
+            "coverage_gap, untested_hotspot, and coverage-context test linkage signals are disabled."
+        )
+    return {
+        "available": available,
+        "coverage_known": coverage_known,
+        "expected_path": expected_path,
+        "coverage_status": coverage_status,
+        "test_linkage_status": test_linkage_status,
+        "note": note,
+    }
+
+
+def _report_warnings(coverage_state: dict[str, Any]) -> list[str]:
+    warnings = []
+    if not coverage_state["available"]:
+        warnings.append(
+            f"WARNING: {coverage_state['note']} Run pytest with coverage enabled before invoking Qualgraph, "
+            "or run qualgraph annotate with --coverage-mode run."
+        )
+    return warnings
 
 
 def _git_history(nodes: list[tuple[str, dict]]) -> list[dict[str, Any]]:
@@ -605,10 +665,12 @@ def _dimension(finding: dict[str, Any]) -> str:
     return "maintainability"
 
 
-def _annotator_status(graph: nx.DiGraph, run_summary: dict[str, Any] | None = None) -> list[dict[str, Any]]:
-    raw_statuses = graph.graph.get("annotator_status")
-    if not raw_statuses and run_summary:
-        raw_statuses = run_summary.get("annotators")
+def _annotator_status(
+    graph: nx.DiGraph,
+    run_summary: dict[str, Any] | None = None,
+    coverage_state: dict[str, Any] | None = None,
+) -> list[dict[str, Any]]:
+    raw_statuses = _raw_annotator_statuses(graph, run_summary)
     statuses = []
     for item in raw_statuses or []:
         if not isinstance(item, dict):
@@ -621,7 +683,41 @@ def _annotator_status(graph: nx.DiGraph, run_summary: dict[str, Any] | None = No
                 "counts": _format_counts(item.get("counts")),
             }
         )
+    if coverage_state and not coverage_state["available"]:
+        names = {item["name"] for item in statuses}
+        if "coverage" not in names:
+            statuses.append(
+                {
+                    "name": "coverage",
+                    "status": "not_run",
+                    "duration_ms": None,
+                    "counts": f"note=no coverage data found at {coverage_state['expected_path']}",
+                }
+            )
+        if "test_linkage" not in names:
+            statuses.append(
+                {
+                    "name": "test_linkage",
+                    "status": "not_run",
+                    "duration_ms": None,
+                    "counts": "edges_added=0, note=coverage data unavailable",
+                }
+            )
     return statuses
+
+
+def _raw_annotator_statuses(graph: nx.DiGraph, run_summary: dict[str, Any] | None = None) -> list[Any]:
+    raw_statuses = graph.graph.get("annotator_status")
+    if not raw_statuses and run_summary:
+        raw_statuses = run_summary.get("annotators")
+    return list(raw_statuses or [])
+
+
+def _status_named(statuses: list[Any], name: str) -> dict[str, Any] | None:
+    for item in statuses:
+        if isinstance(item, dict) and item.get("name") == name:
+            return item
+    return None
 
 
 def _format_counts(counts: Any) -> str:
