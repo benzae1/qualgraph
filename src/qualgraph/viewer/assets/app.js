@@ -220,7 +220,7 @@ function resize() {
 
 function seedPositions() {
   const nodes = state.graph.nodes || [];
-  const radius = Math.min(width, height) * 0.32;
+  const radius = Math.min(width, height) * (state.mode === 'clusters' ? 0.56 : 0.38);
   nodes.forEach((node, i) => {
     if (node.x !== undefined && !state.needsFit) return;
     const angle = (Math.PI * 2 * i) / Math.max(nodes.length, 1);
@@ -241,16 +241,21 @@ function simulate() {
   const nodes = state.graph.nodes || [];
   const edges = state.graph.edges || [];
   const byId = new Map(nodes.map(node => [node.id, node]));
+  const centerPull = state.mode === 'clusters' ? 0.00022 : 0.0009;
+  const repulsion = state.mode === 'clusters' ? 17500 : 4200;
+  const maxRepulsion = state.mode === 'clusters' ? 3.4 : 1.9;
+  const linkTarget = state.mode === 'clusters' ? 320 : 120;
+  const linkForce = state.mode === 'clusters' ? 0.0018 : 0.004;
   for (const node of nodes) {
-    node.vx += (width / 2 - node.x) * 0.0009;
-    node.vy += (height / 2 - node.y) * 0.0009;
+    node.vx += (width / 2 - node.x) * centerPull;
+    node.vy += (height / 2 - node.y) * centerPull;
   }
   for (let i = 0; i < nodes.length; i++) {
     for (let j = i + 1; j < nodes.length; j++) {
       const a = nodes[i], b = nodes[j];
       const dx = b.x - a.x, dy = b.y - a.y;
       const d2 = Math.max(80, dx * dx + dy * dy);
-      const force = Math.min(1.9, 4200 / d2);
+      const force = Math.min(maxRepulsion, repulsion / d2);
       const d = Math.sqrt(d2);
       a.vx -= dx / d * force; a.vy -= dy / d * force;
       b.vx += dx / d * force; b.vy += dy / d * force;
@@ -261,8 +266,7 @@ function simulate() {
     if (!a || !b) continue;
     const dx = b.x - a.x, dy = b.y - a.y;
     const d = Math.max(1, Math.sqrt(dx * dx + dy * dy));
-    const target = state.mode === 'clusters' ? 190 : 120;
-    const force = (d - target) * 0.004;
+    const force = (d - linkTarget) * linkForce;
     a.vx += dx / d * force; a.vy += dy / d * force;
     b.vx -= dx / d * force; b.vy -= dy / d * force;
   }
@@ -317,9 +321,9 @@ function draw() {
     }
     if (active || labelSet.has(node.id)) {
       ctx.fillStyle = '#dfe8ff';
-      ctx.font = `${Math.max(10, 12 / Math.sqrt(state.viewport.scale))}px Segoe UI`;
+      ctx.font = `${Math.max(10, (state.mode === 'clusters' ? 11 : 12) / Math.sqrt(state.viewport.scale))}px Segoe UI`;
       ctx.textAlign = 'center';
-      ctx.fillText(trim(node.label || node.name || node.qualified_name, 28), node.x, node.y + r + 15);
+      ctx.fillText(trim(node.label || node.name || node.qualified_name, state.mode === 'clusters' ? 24 : 28), node.x, node.y + r + 15);
     }
   }
   ctx.restore();
@@ -336,7 +340,7 @@ function tick() {
 }
 
 function nodeRadius(node) {
-  if (state.mode === 'clusters') return 9 + Math.sqrt(node.size || 1) * 1.2 + Math.min(12, node.finding_count || 0);
+  if (state.mode === 'clusters') return Math.min(28, 7 + Math.sqrt(node.size || 1) * 0.72 + Math.min(6, (node.finding_count || 0) * 0.45));
   return 6 + Math.min(14, Math.max(0, node.risk_score || 0) * 2.4) + Math.min(4, node.finding_count || 0);
 }
 
@@ -455,8 +459,11 @@ function setOverviewModeLabel() {
 }
 
 function labelCandidates(nodes) {
+  if (state.mode === 'clusters') {
+    return new Set(nodes.map(node => node.id));
+  }
   const ranked = [...nodes].sort((a, b) => labelScore(b) - labelScore(a));
-  const limit = state.mode === 'clusters' ? Math.min(14, Math.ceil(nodes.length * 0.22)) : Math.min(22, Math.ceil(nodes.length * 0.18));
+  const limit = Math.min(22, Math.ceil(nodes.length * 0.18));
   return new Set(ranked.slice(0, limit).filter(labelScore).map(node => node.id));
 }
 
