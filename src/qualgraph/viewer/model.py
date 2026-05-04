@@ -55,7 +55,7 @@ class ViewerData:
             "llm_validation": llm_validation if isinstance(llm_validation, dict) else None,
         }
 
-    def graph_payload(self, *, cluster_id: str | None = None) -> dict[str, Any]:
+    def graph_payload(self, *, cluster_id: str | None = None, file_path: str | None = None) -> dict[str, Any]:
         if cluster_id is None:
             clusters = self._overview_clusters()
             visible_ids = {cluster["id"] for cluster in clusters}
@@ -77,21 +77,34 @@ class ViewerData:
                 "total_clusters": len(self._clusters),
                 "hidden_clusters": max(0, len(self._clusters) - len(clusters)),
             }
+        if file_path is None:
+            return self._file_graph_payload(cluster_id)
         cluster_nodes = [
             node_id
             for node_id, attrs in self._nodes.items()
-            if _cluster_id(attrs) == cluster_id
+            if _cluster_id(attrs) == cluster_id and str(attrs.get("file_path") or "") == file_path
         ]
         node_set = set(cluster_nodes)
         return {
-            "mode": "cluster",
+            "mode": "file",
             "cluster_id": cluster_id,
+            "file_path": file_path,
             "nodes": [self._slim_node(node_id, self._nodes[node_id]) for node_id in cluster_nodes],
             "edges": [
                 _slim_edge(source, target, attrs)
                 for source, target, attrs in self.graph.edges(data=True)
                 if source in node_set and target in node_set
             ],
+        }
+
+    def _file_graph_payload(self, cluster_id: str) -> dict[str, Any]:
+        files = self._files_for_cluster(cluster_id)
+        visible_paths = {item["id"] for item in files}
+        return {
+            "mode": "files",
+            "cluster_id": cluster_id,
+            "nodes": files,
+            "edges": self._file_edges(cluster_id, visible_paths=visible_paths),
         }
 
     def clusters(self) -> list[dict[str, Any]]:
@@ -120,6 +133,9 @@ class ViewerData:
         if source:
             findings = [item for item in findings if item["source"] == source]
         return sorted(findings, key=lambda item: (_severity_rank(item["severity"]), item["risk_score"]), reverse=True)
+
+    def files(self, cluster_id: str) -> list[dict[str, Any]]:
+        return self._files_for_cluster(cluster_id)
 
     def node_detail(self, node_id: str) -> dict[str, Any] | None:
         attrs = self._nodes.get(node_id)
@@ -224,6 +240,59 @@ class ViewerData:
             for (source, target, edge_type), weight in edges.most_common(limit)
         ]
 
+    def _files_for_cluster(self, cluster_id: str) -> list[dict[str, Any]]:
+        grouped: dict[str, list[tuple[str, dict[str, Any]]]] = defaultdict(list)
+        for node_id, attrs in self._nodes.items():
+            file_path = str(attrs.get("file_path") or "unknown")
+            if _cluster_id(attrs) == cluster_id:
+                grouped[file_path].append((node_id, attrs))
+        files = []
+        for file_path, members in grouped.items():
+            attrs_list = [attrs for _node_id, attrs in members]
+            risks = [float(attrs.get("risk_score") or 0.0) for attrs in attrs_list]
+            findings = [
+                finding
+                for _node_id, attrs in members
+                for finding in attrs.get("findings") or []
+                if isinstance(finding, dict)
+            ]
+            files.append(
+                {
+                    "id": file_path,
+                    "label": _file_label(file_path),
+                    "file_path": file_path,
+                    "size": len(members),
+                    "kind": "test" if sum(1 for attrs in attrs_list if _is_test_node(attrs)) >= len(attrs_list) / 2 else "production",
+                    "risk_score": max(risks, default=0.0),
+                    "finding_count": len(findings),
+                    "llm_finding_count": sum(1 for finding in findings if finding.get("source") == "llm"),
+                    "top_symbols": sorted(
+                        [self._slim_node(node_id, attrs) for node_id, attrs in members],
+                        key=lambda item: float(item.get("risk_score") or 0.0),
+                        reverse=True,
+                    )[:5],
+                }
+            )
+        return sorted(files, key=lambda item: (item["risk_score"], item["finding_count"], item["size"]), reverse=True)
+
+    def _file_edges(self, cluster_id: str, *, visible_paths: set[str]) -> list[dict[str, Any]]:
+        edges: Counter[tuple[str, str, str]] = Counter()
+        for source, target, attrs in self.graph.edges(data=True):
+            source_attrs = self._nodes.get(source, {})
+            target_attrs = self._nodes.get(target, {})
+            if _cluster_id(source_attrs) != cluster_id or _cluster_id(target_attrs) != cluster_id:
+                continue
+            source_file = str(source_attrs.get("file_path") or "unknown")
+            target_file = str(target_attrs.get("file_path") or "unknown")
+            if source_file == target_file or source_file not in visible_paths or target_file not in visible_paths:
+                continue
+            ordered = tuple(sorted((source_file, target_file)))
+            edges[(ordered[0], ordered[1], str(attrs.get("type") or "unknown"))] += 1
+        return [
+            {"source": source, "target": target, "type": edge_type, "weight": weight}
+            for (source, target, edge_type), weight in edges.most_common(240)
+        ]
+
     def _slim_node(self, node_id: str, attrs: dict[str, Any]) -> dict[str, Any]:
         cluster_id = _cluster_id(attrs)
         return {
@@ -318,6 +387,13 @@ def _path_label(paths: list[str]) -> str | None:
     if not candidates:
         return None
     return _humanize(candidates.most_common(1)[0][0])
+
+
+def _file_label(file_path: str) -> str:
+    path = Path(file_path)
+    if path.name:
+        return path.name.removesuffix(".py")
+    return file_path
 
 
 def _humanize(value: str) -> str:

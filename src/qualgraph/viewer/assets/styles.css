@@ -262,6 +262,29 @@ h1 {
   font-weight: 600;
 }
 
+.breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  pointer-events: auto;
+}
+
+.crumb {
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 999px;
+  background: rgba(255,255,255,.04);
+  color: var(--muted);
+  padding: 4px 8px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.crumb:hover {
+  color: var(--text);
+  border-color: rgba(112,167,255,.45);
+}
+
 .toolbar-actions {
   display: flex;
   gap: 8px;

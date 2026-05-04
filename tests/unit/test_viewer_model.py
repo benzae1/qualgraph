@@ -26,13 +26,26 @@ def test_viewer_graph_payload_omits_source_until_node_detail() -> None:
     viewer = ViewerData(_viewer_graph())
 
     cluster_payload = viewer.graph_payload(cluster_id="1")
+    file_payload = viewer.graph_payload(cluster_id="1", file_path="pkg/mod.py")
     detail = viewer.node_detail("pkg/mod.py::pkg.mod.risky::10")
 
     assert "source" not in cluster_payload["nodes"][0]
+    assert cluster_payload["mode"] == "files"
+    assert {node["id"] for node in cluster_payload["nodes"]} == {"pkg/mod.py", "pkg/helper.py"}
+    assert file_payload["mode"] == "file"
+    assert file_payload["nodes"][0]["qualified_name"] == "pkg.mod.risky"
     assert detail is not None
     assert detail["source"] == "def risky():\n    return eval(user_input)\n"
     assert detail["findings"][0]["source"] == "llm"
     assert detail["relationships"]["outgoing"][0]["edge_type"] == "calls"
+
+
+def test_viewer_files_lists_cluster_files() -> None:
+    files = ViewerData(_viewer_graph()).files("1")
+
+    assert [item["id"] for item in files] == ["pkg/mod.py", "pkg/helper.py"]
+    assert files[0]["label"] == "mod"
+    assert files[0]["finding_count"] == 1
 
 
 def test_viewer_returns_none_for_missing_node() -> None:

@@ -5,6 +5,7 @@ const state = {
   graph: null,
   mode: 'clusters',
   activeCluster: null,
+  activeFile: null,
   activeNode: null,
   activeSource: '',
   query: '',
@@ -27,7 +28,8 @@ const els = {
   inspector: document.getElementById('inspectorPanel'),
   search: document.getElementById('searchInput'),
   modeLabel: document.getElementById('modeLabel'),
-  viewTitle: document.getElementById('viewTitle')
+  viewTitle: document.getElementById('viewTitle'),
+  breadcrumbs: document.getElementById('breadcrumbs')
 };
 
 const ctx = els.canvas.getContext('2d');
@@ -47,6 +49,7 @@ async function boot() {
   state.graph = graph;
   state.findings = findings.findings;
   setOverviewModeLabel();
+  renderBreadcrumbs();
   renderSummary();
   renderClusters();
   renderFindings();
@@ -128,6 +131,8 @@ function renderCluster(cluster) {
       <div><span>LLM Findings</span><strong>${fmt(cluster.llm_finding_count)}</strong></div>
       <div><span>Max Risk</span><strong>${cluster.max_risk_score.toFixed(2)}</strong></div>
     </div>
+    <h3>Files</h3>
+    <div class="list" id="clusterFileList"></div>
     <h3>Top Risk Nodes</h3>
     <div class="list">
       ${cluster.top_risk_nodes.map(node => `
@@ -138,6 +143,19 @@ function renderCluster(cluster) {
       `).join('') || '<p class="muted">No risk nodes in this cluster.</p>'}
     </div>
   `;
+  renderClusterFiles(cluster.id);
+}
+
+async function renderClusterFiles(clusterId) {
+  const payload = await fetchJson(`/api/files?cluster=${encodeURIComponent(clusterId)}`);
+  const target = document.getElementById('clusterFileList');
+  if (!target) return;
+  target.innerHTML = payload.files.slice(0, 30).map(file => `
+    <div class="row" data-file="${escapeAttr(file.id)}">
+      <strong>${escapeHtml(file.file_path)}</strong>
+      <small>${file.size} symbols · ${file.finding_count} findings · max risk ${file.risk_score.toFixed(1)}</small>
+    </div>
+  `).join('') || '<p class="muted">No files in this cluster.</p>';
 }
 
 async function renderNode(nodeId) {
@@ -182,20 +200,59 @@ function findingCard(item) {
 
 async function drillCluster(clusterId) {
   state.activeCluster = clusterId;
+  state.activeFile = null;
   state.activeNode = null;
-  state.mode = 'cluster';
+  state.mode = 'files';
   state.graph = await fetchJson(`/api/graph?cluster=${encodeURIComponent(clusterId)}`);
   state.needsFit = true;
   state.viewport = { x: 0, y: 0, scale: 1 };
   const cluster = state.clusters.find(item => item.id === clusterId);
-  els.modeLabel.textContent = 'Cluster Detail';
+  els.modeLabel.textContent = 'Files in cluster';
   els.viewTitle.textContent = cluster ? cluster.name : `Cluster ${clusterId}`;
   renderClusters();
   if (cluster) renderCluster(cluster);
+  renderBreadcrumbs();
+}
+
+async function drillFile(filePath) {
+  if (!state.activeCluster) return;
+  state.activeFile = filePath;
+  state.activeNode = null;
+  state.mode = 'file';
+  state.graph = await fetchJson(`/api/graph?cluster=${encodeURIComponent(state.activeCluster)}&file=${encodeURIComponent(filePath)}`);
+  state.needsFit = true;
+  state.viewport = { x: 0, y: 0, scale: 1 };
+  els.modeLabel.textContent = 'Symbols in file';
+  els.viewTitle.textContent = filePath;
+  renderFile(filePath);
+  renderBreadcrumbs();
+}
+
+function renderFile(filePath) {
+  const nodes = state.graph.nodes || [];
+  els.inspector.innerHTML = `
+    <h2>${escapeHtml(filePath)}</h2>
+    <div class="kv">
+      <div><span>Symbols</span><strong>${nodes.length}</strong></div>
+      <div><span>Findings</span><strong>${nodes.reduce((sum, node) => sum + (node.finding_count || 0), 0)}</strong></div>
+      <div><span>Max Risk</span><strong>${Math.max(0, ...nodes.map(node => node.risk_score || 0)).toFixed(2)}</strong></div>
+      <div><span>LLM</span><strong>${nodes.reduce((sum, node) => sum + (node.llm_finding_count || 0), 0)}</strong></div>
+    </div>
+    <h3>Symbols</h3>
+    <div class="list">
+      ${nodes.slice().sort((a, b) => (b.risk_score || 0) - (a.risk_score || 0)).map(node => `
+        <div class="row" data-node="${escapeAttr(node.id)}">
+          <strong>${escapeHtml(node.qualified_name)}</strong>
+          <small>${escapeHtml(node.type)} · lines ${node.line_start || ''}-${node.line_end || ''} · risk ${node.risk_score.toFixed(1)}</small>
+        </div>
+      `).join('') || '<p class="muted">No symbols in this file.</p>'}
+    </div>
+  `;
 }
 
 async function overview() {
   state.activeCluster = null;
+  state.activeFile = null;
   state.activeNode = null;
   state.mode = 'clusters';
   state.graph = await fetchJson('/api/graph');
@@ -205,6 +262,19 @@ async function overview() {
   els.viewTitle.textContent = 'System overview';
   renderClusters();
   renderEmpty();
+  renderBreadcrumbs();
+}
+
+function renderBreadcrumbs() {
+  const crumbs = [`<span class="crumb" data-nav="overview">Overview</span>`];
+  if (state.activeCluster) {
+    const cluster = state.clusters.find(item => item.id === state.activeCluster);
+    crumbs.push(`<span class="crumb" data-nav="cluster">${escapeHtml(cluster?.name || `Cluster ${state.activeCluster}`)}</span>`);
+  }
+  if (state.activeFile) {
+    crumbs.push(`<span class="crumb" data-nav="file">${escapeHtml(state.activeFile)}</span>`);
+  }
+  els.breadcrumbs.innerHTML = crumbs.join('');
 }
 
 function resize() {
@@ -220,7 +290,7 @@ function resize() {
 
 function seedPositions() {
   const nodes = state.graph.nodes || [];
-  const radius = Math.min(width, height) * (state.mode === 'clusters' ? 0.56 : 0.38);
+  const radius = Math.min(width, height) * (state.mode === 'clusters' ? 0.56 : state.mode === 'files' ? 0.46 : 0.38);
   nodes.forEach((node, i) => {
     if (node.x !== undefined && !state.needsFit) return;
     const angle = (Math.PI * 2 * i) / Math.max(nodes.length, 1);
@@ -242,10 +312,10 @@ function simulate() {
   const edges = state.graph.edges || [];
   const byId = new Map(nodes.map(node => [node.id, node]));
   const centerPull = state.mode === 'clusters' ? 0.00022 : 0.0009;
-  const repulsion = state.mode === 'clusters' ? 17500 : 4200;
+  const repulsion = state.mode === 'clusters' ? 17500 : state.mode === 'files' ? 9000 : 4200;
   const maxRepulsion = state.mode === 'clusters' ? 3.4 : 1.9;
-  const linkTarget = state.mode === 'clusters' ? 320 : 120;
-  const linkForce = state.mode === 'clusters' ? 0.0018 : 0.004;
+  const linkTarget = state.mode === 'clusters' ? 320 : state.mode === 'files' ? 210 : 120;
+  const linkForce = state.mode === 'clusters' ? 0.0018 : state.mode === 'files' ? 0.0024 : 0.004;
   for (const node of nodes) {
     node.vx += (width / 2 - node.x) * centerPull;
     node.vy += (height / 2 - node.y) * centerPull;
@@ -341,6 +411,7 @@ function tick() {
 
 function nodeRadius(node) {
   if (state.mode === 'clusters') return Math.min(28, 7 + Math.sqrt(node.size || 1) * 0.72 + Math.min(6, (node.finding_count || 0) * 0.45));
+  if (state.mode === 'files') return Math.min(24, 7 + Math.sqrt(node.size || 1) * 1.6 + Math.min(5, (node.finding_count || 0) * 0.8));
   return 6 + Math.min(14, Math.max(0, node.risk_score || 0) * 2.4) + Math.min(4, node.finding_count || 0);
 }
 
@@ -367,6 +438,7 @@ els.canvas.addEventListener('click', async event => {
   if (!node) return;
   state.selected = node.id;
   if (state.mode === 'clusters') await drillCluster(node.id);
+  else if (state.mode === 'files') await drillFile(node.id);
   else await renderNode(node.id);
 });
 
@@ -417,6 +489,8 @@ els.clusterList.addEventListener('click', event => {
 els.inspector.addEventListener('click', event => {
   const row = event.target.closest('[data-node]');
   if (row) renderNode(row.dataset.node);
+  const file = event.target.closest('[data-file]');
+  if (file) drillFile(file.dataset.file);
 });
 
 els.findingsList.addEventListener('click', event => {
@@ -425,6 +499,13 @@ els.findingsList.addEventListener('click', event => {
 });
 
 document.getElementById('overviewButton').addEventListener('click', overview);
+els.breadcrumbs.addEventListener('click', event => {
+  const crumb = event.target.closest('[data-nav]');
+  if (!crumb) return;
+  if (crumb.dataset.nav === 'overview') overview();
+  if (crumb.dataset.nav === 'cluster' && state.activeCluster) drillCluster(state.activeCluster);
+  if (crumb.dataset.nav === 'file' && state.activeFile) drillFile(state.activeFile);
+});
 document.getElementById('fitButton').addEventListener('click', () => {
   state.needsFit = true;
   state.viewport = { x: 0, y: 0, scale: 1 };
@@ -459,7 +540,7 @@ function setOverviewModeLabel() {
 }
 
 function labelCandidates(nodes) {
-  if (state.mode === 'clusters') {
+  if (state.mode === 'clusters' || state.mode === 'files') {
     return new Set(nodes.map(node => node.id));
   }
   const ranked = [...nodes].sort((a, b) => labelScore(b) - labelScore(a));

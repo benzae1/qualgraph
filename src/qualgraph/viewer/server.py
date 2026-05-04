@@ -50,7 +50,15 @@ class ViewerRequestHandler(BaseHTTPRequestHandler):
             return
         if parsed.path == "/api/graph":
             cluster_id = _first(query.get("cluster"))
-            self._send_json(self.server.viewer.graph_payload(cluster_id=cluster_id))
+            file_path = _first(query.get("file"))
+            self._send_json(self.server.viewer.graph_payload(cluster_id=cluster_id, file_path=file_path))
+            return
+        if parsed.path == "/api/files":
+            cluster_id = _first(query.get("cluster"))
+            if not cluster_id:
+                self._send_json({"error": "missing cluster id"}, status=HTTPStatus.BAD_REQUEST)
+                return
+            self._send_json({"files": self.server.viewer.files(cluster_id)})
             return
         if parsed.path == "/api/findings":
             source = _first(query.get("source"))
