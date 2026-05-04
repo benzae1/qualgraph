@@ -110,6 +110,8 @@ def _run_ruff(command: list[str], repo_path: Path) -> subprocess.CompletedProces
         cwd=repo_path,
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         check=False,
     )
 

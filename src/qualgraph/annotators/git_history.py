@@ -78,7 +78,7 @@ def _commit_records(repo: Repo, repo_path: Path, max_commits: int | None) -> lis
     command.append("--")
     if target_prefix:
         command.append(target_prefix)
-    completed = subprocess.run(command, capture_output=True, text=True, check=False)
+    completed = subprocess.run(command, capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
     if completed.returncode != 0:
         return []
     return _parse_git_log(completed.stdout, target_prefix)

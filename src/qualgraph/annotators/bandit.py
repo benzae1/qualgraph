@@ -33,6 +33,8 @@ class BanditAnnotator(BaseAnnotator):
             cwd=repo_path,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             check=False,
         )
         if completed.returncode not in (0, 1):

@@ -58,6 +58,8 @@ class CoverageAnnotator(BaseAnnotator):
                 cwd=repo_path,
                 capture_output=True,
                 text=True,
+                encoding="utf-8",
+                errors="replace",
                 check=False,
             )
             error = _subprocess_error(completed)
