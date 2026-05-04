@@ -39,6 +39,7 @@ from qualgraph.logging import RunLogger
 from qualgraph.report.json_export import write_json_export
 from qualgraph.report.markdown import write_markdown_report
 from qualgraph.scoring.risk import score as score_risk
+from qualgraph.viewer.server import serve_graph
 
 
 app = typer.Typer(help="Graph-aware code quality analysis for Python projects.")
@@ -230,6 +231,19 @@ def export_json(
     typer.echo(f"Wrote {output}")
     if verbose:
         typer.echo(f"Export source: {graph}")
+
+
+@app.command()
+def serve(
+    graph: Path = typer.Argument(..., exists=True, file_okay=True, dir_okay=False, readable=True),
+    host: str = typer.Option("127.0.0.1", "--host", help="Host interface for the local viewer."),
+    port: int = typer.Option(0, "--port", min=0, help="Port for the local viewer; 0 picks a free port."),
+    open_browser: bool = typer.Option(False, "--open", help="Open the viewer in the default browser."),
+    top_n: int = typer.Option(50, "--top-n", min=1, help="Number of top-risk nodes to expose in summary data."),
+) -> None:
+    """Serve an offline local web viewer for a Qualgraph graph JSON artifact."""
+
+    serve_graph(graph, host=host, port=port, top_n=top_n, open_browser=open_browser)
 
 
 @llm_app.command("export-tasks")
