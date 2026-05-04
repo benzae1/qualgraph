@@ -504,13 +504,19 @@ def _clusters(
                 "name": names.get(cluster_id) or inferred["name"],
                 "description": inferred["description"],
                 "size": len(cluster_nodes),
+                "kind": "test" if _cluster_test_ratio(cluster_nodes) >= 0.5 else "production",
                 "role_counts": Counter(attrs.get("cluster_role") or "unknown" for attrs in cluster_nodes).most_common(3),
                 "issues": issues,
                 "top_risk": risk_by_cluster.get(cluster_id, [])[:3],
+                "discriminators": inferred.get("discriminators") or [],
             }
         )
-    clusters = sorted(clusters, key=lambda item: (item["size"], len(item["top_risk"]), len(item["issues"])), reverse=True)
-    return _dedupe_cluster_names(clusters)[:20]
+    production = _sort_clusters([cluster for cluster in clusters if cluster["kind"] == "production"])
+    tests = _sort_clusters([cluster for cluster in clusters if cluster["kind"] == "test"])
+    displayed = [*production[:15], *tests[:5]]
+    if len(displayed) < 20:
+        displayed.extend([cluster for cluster in [*production[15:], *tests[5:]] if cluster not in displayed][: 20 - len(displayed)])
+    return _dedupe_cluster_names(displayed)
 
 
 def _cluster_names(nodes: list[tuple[str, dict]]) -> dict[Any, str]:
@@ -521,6 +527,16 @@ def _cluster_names(nodes: list[tuple[str, dict]]) -> dict[Any, str]:
         if cluster_id is not None and name:
             names.setdefault(cluster_id, str(name))
     return names
+
+
+def _sort_clusters(clusters: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return sorted(clusters, key=lambda item: (item["size"], len(item["top_risk"]), len(item["issues"])), reverse=True)
+
+
+def _cluster_test_ratio(cluster_nodes: list[dict[str, Any]]) -> float:
+    if not cluster_nodes:
+        return 0.0
+    return sum(1 for attrs in cluster_nodes if _is_test_node(attrs)) / len(cluster_nodes)
 
 
 def _cross_signal_findings(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -979,7 +995,7 @@ def _humanize_symbol(value: str) -> str:
 
 
 def _path_discriminators(paths: list[str]) -> list[str]:
-    ignored = {"", ".", "src", "tests", "test", "benchmarks", "repos", "scrapy", "starlette", "qualgraph"}
+    ignored = _ignored_path_parts(paths)
     candidates: Counter[str] = Counter()
     for path in paths:
         normalized = Path(path).with_suffix("").parts
@@ -1006,10 +1022,11 @@ def _dominant_label(names: list[str], paths: list[str]) -> str:
     if count:
         return label
     candidates: Counter[str] = Counter()
+    ignored = _ignored_path_parts(paths)
     for path in paths:
         parts = Path(path).with_suffix("").parts
         for part in reversed(parts):
-            if part not in {"src", "tests", "test"} and not part.startswith("test_"):
+            if part.lower() not in ignored and not part.startswith("test_"):
                 candidates[part] += 1
                 break
     if candidates:
@@ -1033,19 +1050,7 @@ def _test_infrastructure_label(names: list[str], paths: list[str]) -> str | None
 
 
 def _path_segment_label(paths: list[str]) -> str | None:
-    ignored = {
-        "",
-        ".",
-        "src",
-        "tests",
-        "test",
-        "benchmarks",
-        "repos",
-        "scrapy",
-        "starlette",
-        "qualgraph",
-        "__pycache__",
-    }
+    ignored = _ignored_path_parts(paths) | {"__pycache__"}
     candidates: Counter[str] = Counter()
     for path in paths:
         normalized = Path(path).with_suffix("").parts
@@ -1061,6 +1066,16 @@ def _path_segment_label(paths: list[str]) -> str | None:
     if count < max(2, len(paths) * 0.2):
         return None
     return label
+
+
+def _ignored_path_parts(paths: list[str]) -> set[str]:
+    ignored = {"", ".", "src", "tests", "test", "benchmarks", "repos", "scrapy", "starlette", "qualgraph"}
+    first_parts = [Path(path).parts[0].lower() for path in paths if Path(path).parts]
+    if first_parts:
+        first, count = Counter(first_parts).most_common(1)[0]
+        if count / len(first_parts) >= 0.8:
+            ignored.add(first)
+    return ignored
 
 
 def _domain_labels() -> dict[str, str]:
