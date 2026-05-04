@@ -12,6 +12,9 @@ from qualgraph.graph.serialize import read_json_graph
 
 
 TESTED_BY = "tested_by"
+OVERVIEW_CLUSTER_LIMIT = 42
+OVERVIEW_TEST_CLUSTER_LIMIT = 8
+OVERVIEW_EDGE_LIMIT = 140
 
 
 class ViewerData:
@@ -54,6 +57,8 @@ class ViewerData:
 
     def graph_payload(self, *, cluster_id: str | None = None) -> dict[str, Any]:
         if cluster_id is None:
+            clusters = self._overview_clusters()
+            visible_ids = {cluster["id"] for cluster in clusters}
             return {
                 "mode": "clusters",
                 "nodes": [
@@ -66,9 +71,11 @@ class ViewerData:
                         "llm_finding_count": cluster["llm_finding_count"],
                         "kind": cluster["kind"],
                     }
-                    for cluster in self.clusters()
+                    for cluster in clusters
                 ],
-                "edges": self._cluster_edges(),
+                "edges": self._cluster_edges(visible_ids=visible_ids, limit=OVERVIEW_EDGE_LIMIT),
+                "total_clusters": len(self._clusters),
+                "hidden_clusters": max(0, len(self._clusters) - len(clusters)),
             }
         cluster_nodes = [
             node_id
@@ -93,6 +100,20 @@ class ViewerData:
             key=lambda item: (item["max_risk_score"], item["finding_count"], item["size"]),
             reverse=True,
         )
+
+    def _overview_clusters(self) -> list[dict[str, Any]]:
+        production = [cluster for cluster in self.clusters() if cluster["kind"] != "test"]
+        tests = [cluster for cluster in self.clusters() if cluster["kind"] == "test"]
+        selected = production[: max(0, OVERVIEW_CLUSTER_LIMIT - OVERVIEW_TEST_CLUSTER_LIMIT)]
+        selected.extend(tests[:OVERVIEW_TEST_CLUSTER_LIMIT])
+        if len(selected) < OVERVIEW_CLUSTER_LIMIT:
+            selected_ids = {cluster["id"] for cluster in selected}
+            selected.extend(
+                cluster
+                for cluster in self.clusters()
+                if cluster["id"] not in selected_ids
+            )
+        return selected[:OVERVIEW_CLUSTER_LIMIT]
 
     def findings(self, *, source: str | None = None) -> list[dict[str, Any]]:
         findings = self._findings
@@ -181,19 +202,26 @@ class ViewerData:
             }
         return clusters
 
-    def _cluster_edges(self) -> list[dict[str, Any]]:
+    def _cluster_edges(
+        self,
+        *,
+        visible_ids: set[str] | None = None,
+        limit: int = 500,
+    ) -> list[dict[str, Any]]:
         edges: Counter[tuple[str, str, str]] = Counter()
         for source, target, attrs in self.graph.edges(data=True):
             source_cluster = _cluster_id(self._nodes.get(source, {}))
             target_cluster = _cluster_id(self._nodes.get(target, {}))
             if source_cluster == target_cluster:
                 continue
+            if visible_ids is not None and (source_cluster not in visible_ids or target_cluster not in visible_ids):
+                continue
             edge_type = str(attrs.get("type") or "unknown")
             ordered = tuple(sorted((source_cluster, target_cluster)))
             edges[(ordered[0], ordered[1], edge_type)] += 1
         return [
             {"source": source, "target": target, "type": edge_type, "weight": weight}
-            for (source, target, edge_type), weight in edges.most_common(500)
+            for (source, target, edge_type), weight in edges.most_common(limit)
         ]
 
     def _slim_node(self, node_id: str, attrs: dict[str, Any]) -> dict[str, Any]:

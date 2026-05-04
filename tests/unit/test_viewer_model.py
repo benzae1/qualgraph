@@ -39,6 +39,36 @@ def test_viewer_returns_none_for_missing_node() -> None:
     assert ViewerData(_viewer_graph()).node_detail("missing") is None
 
 
+def test_viewer_overview_payload_limits_cluster_hairball() -> None:
+    graph = nx.DiGraph()
+    for index in range(60):
+        graph.add_node(
+            f"pkg/mod_{index}.py::pkg.mod_{index}.node::1",
+            type="Function",
+            name=f"node_{index}",
+            qualified_name=f"pkg.mod_{index}.node",
+            file_path=f"pkg/mod_{index}.py",
+            line_start=1,
+            line_end=2,
+            cluster_id=index,
+            risk_score=float(index),
+        )
+        if index:
+            graph.add_edge(
+                f"pkg/mod_{index - 1}.py::pkg.mod_{index - 1}.node::1",
+                f"pkg/mod_{index}.py::pkg.mod_{index}.node::1",
+                type="calls",
+            )
+
+    payload = ViewerData(graph).graph_payload()
+
+    assert payload["mode"] == "clusters"
+    assert payload["total_clusters"] == 60
+    assert payload["hidden_clusters"] == 18
+    assert len(payload["nodes"]) == 42
+    assert len(payload["edges"]) < 60
+
+
 def _viewer_graph() -> nx.DiGraph:
     graph = nx.DiGraph()
     graph.add_node(

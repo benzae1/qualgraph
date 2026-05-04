@@ -11,7 +11,9 @@ const state = {
   particles: [],
   hover: null,
   selected: null,
-  needsFit: true
+  needsFit: true,
+  viewport: { x: 0, y: 0, scale: 1 },
+  pointer: { dragging: false, moved: false, lastX: 0, lastY: 0 }
 };
 
 const els = {
@@ -44,6 +46,7 @@ async function boot() {
   state.clusters = clusters.clusters;
   state.graph = graph;
   state.findings = findings.findings;
+  setOverviewModeLabel();
   renderSummary();
   renderClusters();
   renderFindings();
@@ -183,6 +186,7 @@ async function drillCluster(clusterId) {
   state.mode = 'cluster';
   state.graph = await fetchJson(`/api/graph?cluster=${encodeURIComponent(clusterId)}`);
   state.needsFit = true;
+  state.viewport = { x: 0, y: 0, scale: 1 };
   const cluster = state.clusters.find(item => item.id === clusterId);
   els.modeLabel.textContent = 'Cluster Detail';
   els.viewTitle.textContent = cluster ? cluster.name : `Cluster ${clusterId}`;
@@ -196,7 +200,8 @@ async function overview() {
   state.mode = 'clusters';
   state.graph = await fetchJson('/api/graph');
   state.needsFit = true;
-  els.modeLabel.textContent = 'Cluster Map';
+  state.viewport = { x: 0, y: 0, scale: 1 };
+  setOverviewModeLabel();
   els.viewTitle.textContent = 'System overview';
   renderClusters();
   renderEmpty();
@@ -225,6 +230,10 @@ function seedPositions() {
     node.vx = 0;
     node.vy = 0;
   });
+  if (state.viewport.scale === 1 && state.viewport.x === 0 && state.viewport.y === 0) {
+    state.viewport.x = 0;
+    state.viewport.y = 0;
+  }
   state.needsFit = false;
 }
 
@@ -272,7 +281,10 @@ function draw() {
   const nodes = state.graph.nodes || [];
   const edges = state.graph.edges || [];
   const byId = new Map(nodes.map(node => [node.id, node]));
+  const labelSet = labelCandidates(nodes);
   ctx.save();
+  ctx.translate(state.viewport.x, state.viewport.y);
+  ctx.scale(state.viewport.scale, state.viewport.scale);
   ctx.globalAlpha = 0.55;
   for (const edge of edges) {
     const a = byId.get(edge.source), b = byId.get(edge.target);
@@ -285,6 +297,9 @@ function draw() {
     ctx.stroke();
   }
   ctx.restore();
+  ctx.save();
+  ctx.translate(state.viewport.x, state.viewport.y);
+  ctx.scale(state.viewport.scale, state.viewport.scale);
   for (const node of nodes) {
     const r = nodeRadius(node);
     const active = state.selected === node.id || state.activeNode === node.id || state.activeCluster === node.id;
@@ -300,13 +315,14 @@ function draw() {
       ctx.lineWidth = 2;
       ctx.stroke();
     }
-    if (r > 9 || active) {
+    if (active || labelSet.has(node.id)) {
       ctx.fillStyle = '#dfe8ff';
-      ctx.font = '12px Segoe UI';
+      ctx.font = `${Math.max(10, 12 / Math.sqrt(state.viewport.scale))}px Segoe UI`;
       ctx.textAlign = 'center';
       ctx.fillText(trim(node.label || node.name || node.qualified_name, 28), node.x, node.y + r + 15);
     }
   }
+  ctx.restore();
 }
 
 function tick() {
@@ -332,14 +348,16 @@ function nodeColor(node) {
 }
 
 function pickNode(x, y) {
+  const point = screenToWorld(x, y);
   const nodes = [...(state.graph.nodes || [])].reverse();
   return nodes.find(node => {
-    const dx = x - node.x, dy = y - node.y;
+    const dx = point.x - node.x, dy = point.y - node.y;
     return Math.sqrt(dx * dx + dy * dy) <= nodeRadius(node) + 4;
   });
 }
 
 els.canvas.addEventListener('click', async event => {
+  if (state.pointer.moved) return;
   const rect = els.canvas.getBoundingClientRect();
   const node = pickNode(event.clientX - rect.left, event.clientY - rect.top);
   if (!node) return;
@@ -347,6 +365,45 @@ els.canvas.addEventListener('click', async event => {
   if (state.mode === 'clusters') await drillCluster(node.id);
   else await renderNode(node.id);
 });
+
+els.canvas.addEventListener('pointerdown', event => {
+  els.canvas.setPointerCapture(event.pointerId);
+  state.pointer.dragging = true;
+  state.pointer.moved = false;
+  state.pointer.lastX = event.clientX;
+  state.pointer.lastY = event.clientY;
+});
+
+els.canvas.addEventListener('pointermove', event => {
+  if (!state.pointer.dragging) return;
+  const dx = event.clientX - state.pointer.lastX;
+  const dy = event.clientY - state.pointer.lastY;
+  if (Math.abs(dx) + Math.abs(dy) > 2) state.pointer.moved = true;
+  state.viewport.x += dx;
+  state.viewport.y += dy;
+  state.pointer.lastX = event.clientX;
+  state.pointer.lastY = event.clientY;
+});
+
+els.canvas.addEventListener('pointerup', event => {
+  state.pointer.dragging = false;
+  try {
+    els.canvas.releasePointerCapture(event.pointerId);
+  } catch {
+    // Pointer capture can already be released by the browser.
+  }
+  setTimeout(() => { state.pointer.moved = false; }, 0);
+});
+
+els.canvas.addEventListener('wheel', event => {
+  event.preventDefault();
+  const rect = els.canvas.getBoundingClientRect();
+  const before = screenToWorld(event.clientX - rect.left, event.clientY - rect.top);
+  const factor = Math.exp(-event.deltaY * 0.001);
+  state.viewport.scale = clamp(state.viewport.scale * factor, 0.35, 2.8);
+  state.viewport.x = event.clientX - rect.left - before.x * state.viewport.scale;
+  state.viewport.y = event.clientY - rect.top - before.y * state.viewport.scale;
+}, { passive: false });
 
 els.clusterList.addEventListener('click', event => {
   const row = event.target.closest('[data-cluster]');
@@ -364,7 +421,10 @@ els.findingsList.addEventListener('click', event => {
 });
 
 document.getElementById('overviewButton').addEventListener('click', overview);
-document.getElementById('fitButton').addEventListener('click', () => { state.needsFit = true; });
+document.getElementById('fitButton').addEventListener('click', () => {
+  state.needsFit = true;
+  state.viewport = { x: 0, y: 0, scale: 1 };
+});
 document.getElementById('llmButton').addEventListener('click', () => renderFindings('llm'));
 
 document.querySelectorAll('[data-source]').forEach(button => {
@@ -385,6 +445,37 @@ window.addEventListener('resize', resize);
 
 function fmt(value) {
   return new Intl.NumberFormat().format(value || 0);
+}
+
+function setOverviewModeLabel() {
+  const shown = state.graph?.nodes?.length || 0;
+  const total = state.graph?.total_clusters || shown;
+  const hidden = state.graph?.hidden_clusters || 0;
+  els.modeLabel.textContent = hidden ? `Cluster Map · ${shown} of ${total} shown` : 'Cluster Map';
+}
+
+function labelCandidates(nodes) {
+  const ranked = [...nodes].sort((a, b) => labelScore(b) - labelScore(a));
+  const limit = state.mode === 'clusters' ? Math.min(14, Math.ceil(nodes.length * 0.22)) : Math.min(22, Math.ceil(nodes.length * 0.18));
+  return new Set(ranked.slice(0, limit).filter(labelScore).map(node => node.id));
+}
+
+function labelScore(node) {
+  if (state.mode === 'clusters') {
+    return (node.llm_finding_count || 0) * 100 + (node.finding_count || 0) * 6 + (node.risk_score || 0) * 18 + Math.sqrt(node.size || 1);
+  }
+  return (node.llm_finding_count || 0) * 100 + (node.finding_count || 0) * 12 + (node.risk_score || 0) * 20;
+}
+
+function screenToWorld(x, y) {
+  return {
+    x: (x - state.viewport.x) / state.viewport.scale,
+    y: (y - state.viewport.y) / state.viewport.scale
+  };
+}
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
 }
 
 function trim(value, length) {
