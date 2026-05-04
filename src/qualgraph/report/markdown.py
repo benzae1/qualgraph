@@ -911,7 +911,7 @@ def _source_evidence(graph: nx.DiGraph, attrs: dict[str, Any], line: Any) -> str
     return ""
 
 
-def _infer_cluster_summary(cluster_nodes: list[dict[str, Any]]) -> dict[str, str]:
+def _infer_cluster_summary(cluster_nodes: list[dict[str, Any]]) -> dict[str, Any]:
     names = [str(attrs.get("qualified_name") or attrs.get("name") or "") for attrs in cluster_nodes]
     paths = [str(attrs.get("file_path") or "") for attrs in cluster_nodes if attrs.get("file_path")]
     label = _dominant_label(names, paths)
@@ -919,36 +919,55 @@ def _infer_cluster_summary(cluster_nodes: list[dict[str, Any]]) -> dict[str, str
         name.rsplit(".", 1)[-1]
         for name in names
         if name and not name.startswith("test_")
-    ][:3]
+    ][:6]
     readable = label if label in _domain_labels().values() else label.replace("_", " ").replace("-", " ").title().strip()
-    description = "Includes " + ", ".join(top_symbols) if top_symbols else "No dominant production symbols."
-    return {"name": readable, "description": description}
+    description_symbols = top_symbols[:3]
+    description = "Includes " + ", ".join(description_symbols) if description_symbols else "No dominant production symbols."
+    discriminators = [_humanize_symbol(symbol) for symbol in top_symbols]
+    discriminators.extend(_path_discriminators(paths))
+    return {"name": readable, "description": description, "discriminators": [item for item in discriminators if item]}
 
 
 def _dedupe_cluster_names(clusters: list[dict[str, Any]]) -> list[dict[str, Any]]:
     name_counts = Counter(str(cluster["name"]) for cluster in clusters)
+    occurrence_counts: Counter[str] = Counter()
     used: set[str] = set()
     for cluster in clusters:
         base_name = str(cluster["name"])
         if name_counts[base_name] <= 1:
             used.add(base_name)
             continue
-        discriminator = _cluster_discriminator(cluster)
-        candidate = f"{base_name} ({discriminator})" if discriminator else base_name
-        if candidate in used:
-            candidate = f"{candidate} #{cluster['id']}"
+        occurrence_counts[base_name] += 1
+        candidate = ""
+        for discriminator in _cluster_discriminators(cluster):
+            proposed = f"{base_name} ({discriminator})"
+            if proposed not in used:
+                candidate = proposed
+                break
+        if not candidate:
+            candidate = f"{base_name} (Variant {occurrence_counts[base_name]})"
         cluster["name"] = candidate
         used.add(candidate)
     return clusters
 
 
-def _cluster_discriminator(cluster: dict[str, Any]) -> str:
+def _cluster_discriminators(cluster: dict[str, Any]) -> list[str]:
+    candidates = [str(item) for item in cluster.get("discriminators") or [] if item]
     description = str(cluster.get("description") or "")
     if description.startswith("Includes "):
-        first = description.removeprefix("Includes ").split(",", 1)[0].strip()
-        if first:
-            return _humanize_symbol(first)
-    return f"Cluster {cluster.get('id')}"
+        candidates.extend(
+            _humanize_symbol(item.strip())
+            for item in description.removeprefix("Includes ").split(",")
+            if item.strip()
+        )
+    seen: set[str] = set()
+    unique = []
+    for candidate in candidates:
+        if candidate in seen:
+            continue
+        seen.add(candidate)
+        unique.append(candidate)
+    return unique
 
 
 def _humanize_symbol(value: str) -> str:
@@ -957,6 +976,20 @@ def _humanize_symbol(value: str) -> str:
         return "Cluster"
     text = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", text)
     return " ".join(part.capitalize() for part in text.split())
+
+
+def _path_discriminators(paths: list[str]) -> list[str]:
+    ignored = {"", ".", "src", "tests", "test", "benchmarks", "repos", "scrapy", "starlette", "qualgraph"}
+    candidates: Counter[str] = Counter()
+    for path in paths:
+        normalized = Path(path).with_suffix("").parts
+        for part in reversed(normalized):
+            lowered = part.lower()
+            if lowered in ignored or lowered.startswith("test_") or lowered.startswith("."):
+                continue
+            candidates[part] += 1
+            break
+    return [_humanize_symbol(part) for part, _count in candidates.most_common(6)]
 
 
 def _dominant_label(names: list[str], paths: list[str]) -> str:

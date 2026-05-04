@@ -937,6 +937,56 @@ def test_report_dedupes_cluster_names_and_excludes_tests_from_risk_nodes() -> No
     assert "### 1. tests.test_sample.helper" not in report
 
 
+def test_report_uses_content_suffix_when_cluster_names_collide() -> None:
+    graph = nx.DiGraph()
+    graph.add_node(
+        "close_a",
+        type=NodeType.FUNCTION.value,
+        qualified_name="tests.test_a.close",
+        file_path="tests/test_a.py",
+        line_start=1,
+        line_end=2,
+        cluster_id=1,
+        cluster_name="Test Infrastructure",
+    )
+    graph.add_node(
+        "wait_a",
+        type=NodeType.FUNCTION.value,
+        qualified_name="tests.test_a.wait",
+        file_path="tests/test_a.py",
+        line_start=3,
+        line_end=4,
+        cluster_id=1,
+        cluster_name="Test Infrastructure",
+    )
+    graph.add_node(
+        "close_b",
+        type=NodeType.FUNCTION.value,
+        qualified_name="tests.test_b.close",
+        file_path="tests/test_b.py",
+        line_start=1,
+        line_end=2,
+        cluster_id=2,
+        cluster_name="Test Infrastructure",
+    )
+    graph.add_node(
+        "cancel_b",
+        type=NodeType.FUNCTION.value,
+        qualified_name="tests.test_b.cancel",
+        file_path="tests/test_b.py",
+        line_start=3,
+        line_end=4,
+        cluster_id=2,
+        cluster_name="Test Infrastructure",
+    )
+
+    report = render_markdown_report(graph)
+
+    assert "Test Infrastructure (Close)" in report
+    assert "Test Infrastructure (Cancel)" in report
+    assert "Test Infrastructure (Close) #" not in report
+
+
 def test_report_status_and_linkage_distinguish_static_edges_from_coverage() -> None:
     graph = nx.DiGraph()
     graph.graph["annotator_status"] = [
