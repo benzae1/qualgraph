@@ -17,9 +17,19 @@ class TestLinkageAnnotator(BaseAnnotator):
     version = "1.0"
 
     def annotate(self, graph: nx.DiGraph, repo_path: Path) -> AnnotatorResult:
-        edges_added = _add_static_test_edges(graph)
-        edges_added += _add_dynamic_context_edges(graph, repo_path)
-        return AnnotatorResult(name=self.name, edges_added=edges_added)
+        static_edges = _add_static_test_edges(graph)
+        dynamic_edges, note = _add_dynamic_context_edges(graph, repo_path)
+        extra_counts = {
+            "static_edges": static_edges,
+            "coverage_context_edges": dynamic_edges,
+        }
+        if note:
+            extra_counts["note"] = note
+        return AnnotatorResult(
+            name=self.name,
+            edges_added=static_edges + dynamic_edges,
+            extra_counts=extra_counts,
+        )
 
 
 def _add_static_test_edges(graph: nx.DiGraph) -> int:
@@ -44,19 +54,19 @@ def _add_static_test_edges(graph: nx.DiGraph) -> int:
     return edges_added
 
 
-def _add_dynamic_context_edges(graph: nx.DiGraph, repo_path: Path) -> int:
+def _add_dynamic_context_edges(graph: nx.DiGraph, repo_path: Path) -> tuple[int, str | None]:
     coverage_file = repo_path / ".coverage"
     if not coverage_file.exists():
-        return 0
+        return 0, "no coverage data available"
 
     cov = coverage.Coverage(data_file=str(coverage_file))
     try:
         cov.load()
     except coverage.CoverageException:
-        return 0
+        return 0, "coverage data unreadable"
     data = cov.get_data()
     if not hasattr(data, "contexts_by_lineno"):
-        return 0
+        return 0, "coverage context data unavailable"
 
     test_nodes = [
         {
@@ -91,7 +101,7 @@ def _add_dynamic_context_edges(graph: nx.DiGraph, repo_path: Path) -> int:
                         },
                     )
                     edges_added += 1
-    return edges_added
+    return edges_added, None if edges_added else "no coverage-context links found"
 
 
 def _match_test_context(context: str, test_nodes: list[dict[str, str | None]]) -> str | None:

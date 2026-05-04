@@ -132,6 +132,16 @@ def test_test_linkage_adds_static_tested_by_edges() -> None:
     assert any(attrs.get("linkage_source") == "static" for _source, _target, attrs in graph.edges(data=True))
 
 
+def test_test_linkage_reports_missing_coverage_data(tmp_path: Path) -> None:
+    graph = nx.DiGraph()
+    graph.add_node("prod", type=NodeType.FUNCTION.value, file_path="pkg/runtime.py")
+
+    result = TestLinkageAnnotator().annotate(graph, tmp_path)
+
+    assert result.counts()["note"] == "no coverage data available"
+    assert result.counts()["coverage_context_edges"] == 0
+
+
 def test_coverage_context_rcfile_enables_test_function_contexts(tmp_path: Path) -> None:
     rcfile = _write_context_rcfile(tmp_path)
 
