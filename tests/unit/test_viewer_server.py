@@ -2,6 +2,7 @@ import json
 import threading
 from pathlib import Path
 from urllib.parse import quote
+from importlib import resources
 from urllib.request import urlopen
 
 import networkx as nx
@@ -20,15 +21,26 @@ def test_viewer_server_serves_api_and_assets(tmp_path: Path) -> None:
         summary = _json_get(f"{server.url}api/summary")
         graph = _json_get(f"{server.url}api/graph")
         node = _json_get(f"{server.url}api/node?id={quote('pkg/mod.py::pkg.mod.risky::10', safe='')}")
-        html = urlopen(server.url, timeout=5).read().decode("utf-8")
+        with urlopen(server.url, timeout=5) as response:
+            html = response.read().decode("utf-8")
+            content_type = response.headers["Content-Type"]
 
         assert summary["nodes"] == 1
         assert graph["mode"] == "clusters"
         assert node["source"] == "def risky():\n    pass\n"
         assert "Qualgraph Viewer" in html
+        assert content_type.startswith("text/html")
     finally:
         server.shutdown()
         server.server_close()
+
+
+def test_viewer_assets_are_package_resources() -> None:
+    asset_root = resources.files("qualgraph.viewer.assets")
+
+    assert asset_root.joinpath("index.html").is_file()
+    assert asset_root.joinpath("app.js").is_file()
+    assert asset_root.joinpath("styles.css").is_file()
 
 
 def _json_get(url: str) -> dict:

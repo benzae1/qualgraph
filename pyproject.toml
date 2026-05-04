@@ -31,3 +31,9 @@ dependencies = [
 [project.scripts]
 analytify = "qualgraph.cli:app"
 qualgraph = "qualgraph.cli:app"
+
+[tool.setuptools.package-data]
+qualgraph = [
+  "report/templates/*.j2",
+  "viewer/assets/*",
+]
