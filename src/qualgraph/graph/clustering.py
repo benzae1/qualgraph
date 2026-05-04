@@ -10,6 +10,8 @@ import igraph as ig
 import leidenalg
 import networkx as nx
 
+from qualgraph.graph.schema import NodeType
+
 
 DEFAULT_RESOLUTION = 0.05
 
@@ -20,6 +22,24 @@ def cluster_leiden(g: nx.DiGraph, resolution: float = DEFAULT_RESOLUTION) -> dic
     if g.number_of_nodes() == 0:
         return {}
 
+    test_nodes = [node_id for node_id, attrs in g.nodes(data=True) if _is_test_node(attrs)]
+    test_node_set = set(test_nodes)
+    production_nodes = [node_id for node_id in g.nodes if node_id not in test_node_set]
+    if test_nodes and production_nodes:
+        clusters: dict[str, int] = {}
+        next_cluster_id = 0
+        for node_ids in (production_nodes, test_nodes):
+            subgraph = g.subgraph(node_ids).copy()
+            partition = _cluster_partition(subgraph, resolution)
+            id_map = {cluster_id: index + next_cluster_id for index, cluster_id in enumerate(sorted(set(partition.values())))}
+            clusters.update({node_id: id_map[cluster_id] for node_id, cluster_id in partition.items()})
+            next_cluster_id += len(id_map)
+        return _compact_cluster_ids(clusters)
+
+    return _cluster_partition(g, resolution)
+
+
+def _cluster_partition(g: nx.DiGraph, resolution: float) -> dict[str, int]:
     h = _to_igraph(g)
     if h.ecount() == 0:
         return _coarsen_clusters(g, {vertex["name"]: index for index, vertex in enumerate(h.vs)})
@@ -28,6 +48,7 @@ def cluster_leiden(g: nx.DiGraph, resolution: float = DEFAULT_RESOLUTION) -> dic
         h,
         leidenalg.RBConfigurationVertexPartition,
         resolution_parameter=resolution,
+        weights="weight",
     )
     clusters = {
         h.vs[index]["name"]: cluster_id
@@ -43,17 +64,75 @@ def annotate_clusters(g: nx.DiGraph, resolution: float = DEFAULT_RESOLUTION) -> 
         g.nodes[node_id]["cluster_id"] = cluster_id
     g.graph["cluster_count"] = len(set(clusters.values()))
     g.graph["cluster_resolution"] = resolution
+    g.graph["cluster_test_nodes_separate"] = True
+    g.graph["cluster_path_bias"] = True
     return clusters
 
 
 def _to_igraph(g: nx.DiGraph) -> ig.Graph:
-    undirected = g.to_undirected()
     h = ig.Graph()
-    node_ids = list(undirected.nodes())
+    node_ids = list(g.nodes())
     h.add_vertices(node_ids)
-    if undirected.number_of_edges() > 0:
-        h.add_edges(list(undirected.edges()))
+    edge_weights = _weighted_edges(g)
+    if edge_weights:
+        edges = list(edge_weights)
+        h.add_edges(edges)
+        h.es["weight"] = [edge_weights[edge] for edge in edges]
     return h
+
+
+def _weighted_edges(g: nx.DiGraph) -> dict[tuple[str, str], float]:
+    weights: dict[tuple[str, str], float] = defaultdict(float)
+    for source, target in g.edges():
+        if source == target:
+            continue
+        edge = _ordered_edge(source, target)
+        weights[edge] += 1.0
+    for source, target, weight in _path_bias_edges(g):
+        if source == target:
+            continue
+        edge = _ordered_edge(source, target)
+        weights[edge] += weight
+    return weights
+
+
+def _path_bias_edges(g: nx.DiGraph) -> list[tuple[str, str, float]]:
+    edges: list[tuple[str, str, float]] = []
+    by_file: dict[str, list[str]] = defaultdict(list)
+    by_segment: dict[str, list[str]] = defaultdict(list)
+    for node_id, attrs in g.nodes(data=True):
+        file_path = str(attrs.get("file_path") or "")
+        if file_path:
+            by_file[file_path].append(node_id)
+        segment = _path_segment(attrs)
+        if segment:
+            by_segment[segment].append(node_id)
+    for node_ids in by_file.values():
+        edges.extend(_locality_chain(g, node_ids, weight=3.0))
+    for node_ids in by_segment.values():
+        edges.extend(_locality_chain(g, node_ids, weight=0.75, max_neighbors=1))
+    return edges
+
+
+def _locality_chain(
+    g: nx.DiGraph,
+    node_ids: list[str],
+    *,
+    weight: float,
+    max_neighbors: int = 2,
+) -> list[tuple[str, str, float]]:
+    if len(node_ids) <= 1:
+        return []
+    ordered = sorted(node_ids, key=lambda node_id: (int(g.nodes[node_id].get("line_start") or 0), node_id))
+    edges: list[tuple[str, str, float]] = []
+    for index, source in enumerate(ordered):
+        for target in ordered[index + 1 : index + 1 + max_neighbors]:
+            edges.append((source, target, weight))
+    return edges
+
+
+def _ordered_edge(source: str, target: str) -> tuple[str, str]:
+    return (source, target) if source <= target else (target, source)
 
 
 def _coarsen_clusters(g: nx.DiGraph, clusters: dict[str, int]) -> dict[str, int]:
@@ -179,10 +258,22 @@ def _path_segment(attrs: dict) -> str | None:
     file_path = str(attrs.get("file_path") or "")
     if not file_path:
         return None
-    ignored = {"", ".", "src", "tests", "test", "benchmarks", "repos", "scrapy", "starlette", "qualgraph"}
     parts = Path(file_path).with_suffix("").parts
+    if len(parts) <= 2:
+        return None
+    ignored = {"", ".", "src", "tests", "test", "benchmarks", "repos", "scrapy", "starlette", "qualgraph"}
     for part in reversed(parts[:-1]):
         lowered = part.lower()
         if lowered not in ignored and not lowered.startswith("test_") and not lowered.startswith("."):
             return lowered
     return None
+
+
+def _is_test_node(attrs: dict) -> bool:
+    file_path = str(attrs.get("file_path") or "").replace("\\", "/")
+    return (
+        attrs.get("type") == NodeType.TEST_FUNCTION.value
+        or file_path.startswith("tests/")
+        or "/tests/" in file_path
+        or file_path.rsplit("/", 1)[-1].startswith("test_")
+    )

@@ -97,6 +97,17 @@ def test_cluster_leiden_splits_oversized_clusters() -> None:
     assert max(sizes.values()) <= 2000
 
 
+def test_cluster_leiden_clusters_tests_separately_from_production() -> None:
+    graph = nx.DiGraph()
+    graph.add_node("prod", type=NodeType.FUNCTION.value, file_path="pkg/runtime.py")
+    graph.add_node("test", type=NodeType.TEST_FUNCTION.value, file_path="tests/test_runtime.py")
+    graph.add_edge("test", "prod", type="calls")
+
+    clusters = cluster_leiden(graph)
+
+    assert clusters["prod"] != clusters["test"]
+
+
 def test_radon_and_docstring_annotate_tiny_repo_nodes() -> None:
     repo = Path("benchmarks/repos/tiny_repo")
     graph = build_graph(repo, [])
