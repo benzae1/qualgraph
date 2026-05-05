@@ -1,3 +1,5 @@
+.claude/
+.codex/
 benchmarks/repos/*
 .venv/
 .qualgraph/
