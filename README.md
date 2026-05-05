@@ -1,9 +1,9 @@
 # Qualgraph
 
-[![CI](https://github.com/benzae1/analytify/actions/workflows/ci.yml/badge.svg)](https://github.com/benzae1/analytify/actions/workflows/ci.yml)
+[![CI](https://github.com/benzae1/qualgraph/actions/workflows/ci.yml/badge.svg)](https://github.com/benzae1/qualgraph/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-![Release](https://img.shields.io/github/v/release/benzae1/analytify?include_prereleases)
+![Release](https://img.shields.io/github/v/release/benzae1/qualgraph?include_prereleases)
 
 Qualgraph is a local, graph-aware code quality analyzer for Python repositories.
 It builds a code graph, annotates it with quality signals, ranks risky code, and
@@ -19,14 +19,14 @@ with weak tests, hidden git co-change coupling, and risky vulnerable imports.
 Until the package is published to PyPI, install from the repository:
 
 ```bash
-python -m pip install "git+https://github.com/benzae1/analytify.git"
+python -m pip install "git+https://github.com/benzae1/qualgraph.git"
 ```
 
 For local development:
 
 ```bash
-git clone https://github.com/benzae1/analytify.git
-cd analytify
+git clone https://github.com/benzae1/qualgraph.git
+cd qualgraph
 python -m venv .venv
 .venv/bin/python -m pip install -e ".[dev]"
 ```
@@ -34,8 +34,8 @@ python -m venv .venv
 On Windows PowerShell:
 
 ```powershell
-git clone https://github.com/benzae1/analytify.git
-cd analytify
+git clone https://github.com/benzae1/qualgraph.git
+cd qualgraph
 python -m venv .venv
 .\.venv\Scripts\python -m pip install -e ".[dev]"
 ```

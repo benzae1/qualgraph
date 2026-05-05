@@ -57,7 +57,7 @@ def test_viewer_has_no_horizontal_overflow_and_draws_canvas(tmp_path: Path) -> N
             finally:
                 browser.close()
         finally:
-            manager.stop()
+            p.stop()
     finally:
         server.shutdown()
         server.server_close()

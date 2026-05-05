@@ -7,7 +7,7 @@ Qualgraph requires Python 3.11 or 3.12.
 Until PyPI publishing is enabled, install from the current GitHub repository:
 
 ```bash
-python -m pip install "git+https://github.com/benzae1/analytify.git"
+python -m pip install "git+https://github.com/benzae1/qualgraph.git"
 qualgraph --help
 python -m qualgraph --help
 ```
@@ -15,8 +15,8 @@ python -m qualgraph --help
 ## Editable Development Install
 
 ```bash
-git clone https://github.com/benzae1/analytify.git
-cd analytify
+git clone https://github.com/benzae1/qualgraph.git
+cd qualgraph
 python -m venv .venv
 .venv/bin/python -m pip install -e ".[dev]"
 ```
@@ -24,8 +24,8 @@ python -m venv .venv
 Windows PowerShell:
 
 ```powershell
-git clone https://github.com/benzae1/analytify.git
-cd analytify
+git clone https://github.com/benzae1/qualgraph.git
+cd qualgraph
 python -m venv .venv
 .\.venv\Scripts\python -m pip install -e ".[dev]"
 ```

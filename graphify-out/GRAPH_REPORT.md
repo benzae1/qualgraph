@@ -1,13 +1,13 @@
-# Graph Report - analytify  (2026-05-04)
+# Graph Report - qualgraph  (2026-05-04)
 
 ## Corpus Check
-- 748 files · ~944,165 words
+- 748 files Â· ~944,165 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 16203 nodes · 66157 edges · 66 communities detected
-- Extraction: 32% EXTRACTED · 68% INFERRED · 0% AMBIGUOUS · INFERRED: 44779 edges (avg confidence: 0.66)
-- Token cost: 0 input · 0 output
+- 16203 nodes Â· 66157 edges Â· 66 communities detected
+- Extraction: 32% EXTRACTED Â· 68% INFERRED Â· 0% AMBIGUOUS Â· INFERRED: 44779 edges (avg confidence: 0.66)
+- Token cost: 0 input Â· 0 output
 
 ## Community Hubs (Navigation)
 - [[_COMMUNITY_Community 0|Community 0]]
@@ -91,23 +91,23 @@
 
 ## Surprising Connections (you probably didn't know these)
 - `AbstractCookieJar` --uses--> `Save cookies to a file using JSON format.          :param file_path: Path to f`  [INFERRED]
-  benchmarks\repos\aiohttp\aiohttp\abc.py → benchmarks\repos\aiohttp\aiohttp\cookiejar.py
+  benchmarks\repos\aiohttp\aiohttp\abc.py â†’ benchmarks\repos\aiohttp\aiohttp\cookiejar.py
 - `AbstractCookieJar` --uses--> `Remove expired cookies.`  [INFERRED]
-  benchmarks\repos\aiohttp\aiohttp\abc.py → benchmarks\repos\aiohttp\aiohttp\cookiejar.py
+  benchmarks\repos\aiohttp\aiohttp\abc.py â†’ benchmarks\repos\aiohttp\aiohttp\cookiejar.py
 - `AbstractCookieJar` --uses--> `Returns this jar's cookies filtered by their attributes.`  [INFERRED]
-  benchmarks\repos\aiohttp\aiohttp\abc.py → benchmarks\repos\aiohttp\aiohttp\cookiejar.py
+  benchmarks\repos\aiohttp\aiohttp\abc.py â†’ benchmarks\repos\aiohttp\aiohttp\cookiejar.py
 - `AbstractCookieJar` --uses--> `Implements a dummy cookie storage.      It can be used with the ClientSession`  [INFERRED]
-  benchmarks\repos\aiohttp\aiohttp\abc.py → benchmarks\repos\aiohttp\aiohttp\cookiejar.py
+  benchmarks\repos\aiohttp\aiohttp\abc.py â†’ benchmarks\repos\aiohttp\aiohttp\cookiejar.py
 - `AbstractStreamWriter` --uses--> `Test writer that captures written bytes in a buffer.`  [INFERRED]
-  benchmarks\repos\aiohttp\aiohttp\abc.py → benchmarks\repos\aiohttp\tests\test_payload.py
+  benchmarks\repos\aiohttp\aiohttp\abc.py â†’ benchmarks\repos\aiohttp\tests\test_payload.py
 
 ## Hyperedges (group relationships)
-- **Annotator Plugin Architecture** — annotator_base, annotator_pipeline, annotator_bandit, annotator_ruff, annotator_radon [INFERRED 0.80]
-- **Quality Signal Aggregation Flow** — annotator_pipeline, findings_cross_signal, findings_model, cache_sqlite [INFERRED 0.75]
-- **CLI Entry Flow** — cli_module, config_module, logging_module, annotator_pipeline [INFERRED 0.80]
-- **LLM provider implementations** — anthropic_provider, openai_provider, ollama_provider [INFERRED 0.85]
-- **Graph construction pipeline** — parser_graph_module, resolver_module, builder_module [INFERRED 0.80]
-- **Graph analysis output stack** — metrics_module, clustering_module, risk_module [INFERRED 0.75]
+- **Annotator Plugin Architecture** â€” annotator_base, annotator_pipeline, annotator_bandit, annotator_ruff, annotator_radon [INFERRED 0.80]
+- **Quality Signal Aggregation Flow** â€” annotator_pipeline, findings_cross_signal, findings_model, cache_sqlite [INFERRED 0.75]
+- **CLI Entry Flow** â€” cli_module, config_module, logging_module, annotator_pipeline [INFERRED 0.80]
+- **LLM provider implementations** â€” anthropic_provider, openai_provider, ollama_provider [INFERRED 0.85]
+- **Graph construction pipeline** â€” parser_graph_module, resolver_module, builder_module [INFERRED 0.80]
+- **Graph analysis output stack** â€” metrics_module, clustering_module, risk_module [INFERRED 0.75]
 
 ## Communities
 
@@ -377,7 +377,7 @@ Nodes (1): Return the stable node id used by graph building and caching.      Co
 
 ## Knowledge Gaps
 - **512 isolated node(s):** `# NOTE: makefile cythonizes all Cython modules`, `Base class for decompression handlers.`, `Decompress the given data.`, `Decompress the given data.`, `Return True if more output is available by passing b"".` (+507 more)
-  These have ≤1 connection - possible missing edges or undocumented components.
+  These have â‰¤1 connection - possible missing edges or undocumented components.
 - **Thin community `Community 29`** (7 nodes): `test_pytest_plugin.py`, `test_aiohttp_client_cls_fixture_custom_client_used()`, `test_aiohttp_client_cls_fixture_factory()`, `test_aiohttp_plugin()`, `test_aiohttp_plugin_async_fixture()`, `test_aiohttp_plugin_async_gen_fixture()`, `test_warning_checks()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 34`** (3 nodes): `exception.py`, `ExceptionSpider`, `.parse()`
