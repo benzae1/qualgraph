@@ -1,0 +1,33 @@
+# Example Qualgraph configuration.
+# The current CLI accepts equivalent flags; this file documents the intended
+# project-level configuration shape.
+
+analysis:
+  preset: standard
+  output_dir: .qualgraph
+  artifacts_dir: .qualgraph/runs
+  top_n: 10
+  metric_mode: fast
+  betweenness_samples: 128
+  coverage_mode: auto
+  git_max_commits: 1000
+
+repository:
+  exclude:
+    - .git/**
+    - .venv/**
+    - .qualgraph/**
+    - build/**
+    - dist/**
+    - __pycache__/**
+
+llm:
+  provider: ollama
+  model: llama3.1
+  max_calls: 50
+  cache: .qualgraph/cache.sqlite
+
+viewer:
+  host: 127.0.0.1
+  port: 0
+  open: false

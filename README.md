@@ -1,471 +1,154 @@
 # Qualgraph
 
-Qualgraph is a local, graph-aware code quality analysis tool for Python repositories. It builds a code graph, annotates that graph with static analysis, tests, git history, security, and LLM-derived findings, then renders a risk-ranked report.
+[![CI](https://github.com/benzae1/analytify/actions/workflows/ci.yml/badge.svg)](https://github.com/benzae1/analytify/actions/workflows/ci.yml)
+![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+![Release](https://img.shields.io/github/v/release/benzae1/analytify?include_prereleases)
 
-The central design choice is simple: **all signals live on the same graph**. Functions, methods, classes, modules, calls, imports, test links, vulnerable imports, coverage, churn, complexity, security findings, and LLM findings are all represented as node or edge attributes on one NetworkX graph. This makes cross-signal findings natural and gives LLMs focused graph context instead of a raw code dump.
+Qualgraph is a local, graph-aware code quality analyzer for Python repositories.
+It builds a code graph, annotates it with quality signals, ranks risky code, and
+renders a Markdown report plus an offline web viewer.
 
-This repository is a personal project built from scratch. The goal is a real local CLI that works on real codebases while preserving future optionality: paid CLI, hosted service, GitHub app, source-available product, or simply a useful private tool.
+The core idea is that structure, static analysis, coverage, git history,
+security findings, profiler data, and optional LLM findings all live on the same
+NetworkX graph. That makes cross-signal findings possible, such as complex code
+with weak tests, hidden git co-change coupling, and risky vulnerable imports.
 
-## Intended Outcome
+## Quickstart
 
-A user should eventually be able to run a single workflow such as:
+Until the package is published to PyPI, install from the repository:
+
+```bash
+python -m pip install "git+https://github.com/benzae1/analytify.git"
+```
+
+For local development:
+
+```bash
+git clone https://github.com/benzae1/analytify.git
+cd analytify
+python -m venv .venv
+.venv/bin/python -m pip install -e ".[dev]"
+```
+
+On Windows PowerShell:
 
 ```powershell
-qualgraph analyze .
+git clone https://github.com/benzae1/analytify.git
+cd analytify
+python -m venv .venv
+.\.venv\Scripts\python -m pip install -e ".[dev]"
 ```
 
-or, through an agent skill:
+Run the full local workflow on the bundled tiny benchmark repository:
 
-```text
-/qualgraph .
+```bash
+qualgraph analyze benchmarks/repos/tiny_repo --preset fast --coverage-mode skip --top-n 5
 ```
 
-and receive:
+This writes:
 
-- an annotated JSON graph
-- a Markdown report
-- risk-ranked code hotspots
-- static analyzer findings
-- coverage and test-linkage gaps
-- git-history signals
-- security findings
-- cross-signal derived findings
-- optional LLM findings, completed either through API providers or through an agent-file workflow that works with subscription LLM tools
+- `.qualgraph/graph.json`
+- `.qualgraph/annotated.graph.json`
+- `.qualgraph/report.md`
+- `.qualgraph/export.json`
+- `.qualgraph/runs/<run_id>/run_summary.json`
 
-## Why It Exists
+Open the local viewer:
 
-LLMs are useful code reviewers, but they are poor at whole-repository analysis when handed too much unstructured context. Static analyzers are useful, but mostly file-local and noisy. Qualgraph sits between them:
-
-1. Build a structural graph of the code.
-2. Attach deterministic signals from local tools.
-3. Score the graph to choose a small top-N set.
-4. Ask an LLM only about focused, high-risk nodes.
-5. Import structured LLM findings back into the graph.
-6. Render one evidence-backed report.
-
-The tool should produce findings that are hard to get from independent tools, for example:
-
-- high-complexity, high-centrality functions with no tests
-- vulnerable package imports attributed to the exact importing node
-- hidden coupling from git co-change edges
-- LLM findings grounded in code, metrics, neighbors, and existing findings
-- risk scores that combine structure, complexity, churn, coverage, security, LLM, and hot-path signals
-
-## Current Architecture
-
-```text
-repository
-  |
-  v
-Graph Builder
-  - Tree-sitter Python parser
-  - NetworkX DiGraph
-  - modules/classes/functions/methods/test functions
-  - calls/imports/inherits edges
-  |
-  v
-Graph Metrics and Clustering
-  - centrality
-  - in/out degree
-  - Leiden clusters
-  - cluster roles
-  |
-  v
-Annotator Pipeline
-  - each annotator mutates graph nodes or edges
-  - failures are isolated
-  |
-  v
-Risk Scorer
-  - percentile-ranked components
-  - top-risk function/method selection
-  |
-  v
-LLM Task Layer
-  - API providers: Anthropic, OpenAI, Ollama
-  - agent-file workflow for subscription LLM users
-  |
-  v
-Result Import and Report
-  - findings attached to graph nodes
-  - risk recomputed
-  - Markdown report rendered
+```bash
+qualgraph serve .qualgraph/annotated.graph.json --open
 ```
 
-## Graph Schema
+`python -m qualgraph --help` works too.
 
-Qualgraph uses a `networkx.DiGraph`.
+## CLI
 
-Node types:
+The one-command path is:
 
-- `Module`
-- `Class`
-- `Function`
-- `Method`
-- `TestFunction`
-- dependency nodes added by security attribution
+```bash
+qualgraph analyze <repo> --preset standard
+```
 
-Edge types:
+Useful focused commands:
 
-- `calls`
-- `imports`
-- `inherits`
-- `tested_by`
-- `co_changes_with`
-- `imports_vulnerable`
-
-Important node attributes:
-
-- identity: `id`, `type`, `name`, `qualified_name`, `file_path`, `line_start`, `line_end`
-- source: `source`, `docstring`
-- structure: `centrality`, `betweenness_centrality`, `degree_centrality`, `pagerank`, `in_degree`, `out_degree`, `cluster_id`, `cluster_role`
-- maintainability: `complexity`, `maintainability_index`
-- reliability: `coverage_line`, `coverage_branch`
-- history: `churn`, `author_count`, `bug_fix_keywords`
-- profiling: `profile_cum_time`, `profile_call_count`, `cpu_pct`, `hotpath_weight`
-- findings: `findings`
-- risk: `risk_score`, `risk_components`
-- LLM: `llm_severity_max`
-- performance: `hotpath_weight`
-
-## Implemented CLI Surface
-
-```powershell
+```bash
 qualgraph build <repo> --output .qualgraph/graph.json
-qualgraph annotate <repo> --graph .qualgraph/graph.json --output .qualgraph/annotated.graph.json --annotators radon,ruff,coverage,git,security
-qualgraph report .qualgraph/annotated.graph.json --output .qualgraph/report.md --top-n 10
+qualgraph annotate <repo> --graph .qualgraph/graph.json --output .qualgraph/annotated.graph.json --annotators full
+qualgraph report .qualgraph/annotated.graph.json --output .qualgraph/report.md
 qualgraph export-json .qualgraph/annotated.graph.json --output .qualgraph/export.json
+qualgraph serve .qualgraph/annotated.graph.json --open
 ```
 
-LLM agent-file workflow:
+Presets:
 
-```powershell
-qualgraph llm export-tasks .qualgraph/annotated.graph.json --limit 50
+- `fast`: radon, ruff, docstring, and cross-signal findings.
+- `standard`: fast plus git history and co-change.
+- `full`: standard plus vulture, coverage/test linkage, and security tools.
+
+If `.qualgraph/runs` is not writable, pass a run-log directory:
+
+```bash
+qualgraph analyze . --artifacts-dir /tmp/qualgraph-runs
+```
+
+or set `QUALGRAPH_ARTIFACTS_DIR`.
+
+## LLM Workflows
+
+Qualgraph does not require API keys. The subscription-friendly workflow exports
+focused task files for an agent to complete:
+
+```bash
+qualgraph llm export-tasks .qualgraph/annotated.graph.json --limit 20
 qualgraph llm import-results .qualgraph/runs/<run_id> --graph .qualgraph/annotated.graph.json --output .qualgraph/final.graph.json
 qualgraph report .qualgraph/final.graph.json --output .qualgraph/report.md
 ```
 
-API-backed LLM workflow:
+API-backed analysis is available for OpenAI, Anthropic, and local Ollama:
 
-```powershell
-qualgraph llm analyze .qualgraph/annotated.graph.json --max-llm-calls 50 --provider ollama --dry-run
-qualgraph llm analyze .qualgraph/annotated.graph.json --max-llm-calls 50 --provider openai --model gpt-4o-mini --output .qualgraph/final.graph.json
+```bash
+qualgraph llm analyze .qualgraph/annotated.graph.json --provider ollama --dry-run
+qualgraph llm analyze .qualgraph/annotated.graph.json --provider openai --model gpt-4o-mini
 ```
 
-The intended future command is:
+User code stays local unless you explicitly choose an API provider.
 
-```powershell
-qualgraph analyze <repo>
+## Documentation
+
+- [Installation](docs/installation.md)
+- [CLI Reference](docs/cli.md)
+- [Configuration](docs/configuration.md)
+- [Viewer](docs/viewer.md)
+- [LLM Workflows](docs/llm-workflows.md)
+- [Architecture](docs/architecture.md)
+- [Contributing](CONTRIBUTING.md)
+- [Security](SECURITY.md)
+
+## Development
+
+```bash
+python -m pip install -e ".[dev]"
+python -m ruff check .
+python -m pytest
+python -m build
+python -m twine check dist/*
 ```
 
-which should run the full build, annotate, score, LLM, import, and report pipeline.
+Viewer browser checks require Chromium:
 
-## Annotators
-
-Implemented or scaffolded annotators:
-
-- `RadonAnnotator`: complexity and maintainability index
-- `RuffAnnotator`: lint findings
-- `VultureAnnotator`: dead-code findings
-- `CoverageAnnotator`: line coverage from coverage.py
-- `TestLinkageAnnotator`: `tested_by` edges from static calls and coverage contexts
-- `GitHistoryAnnotator`: churn, author count, bug-fix keyword count
-- `CoChangeAnnotator`: hidden-coupling edges from git co-change
-- `DocstringAnnotator`: docstring presence metadata
-- `BanditAnnotator`: Python security findings
-- `PipAuditAnnotator`: vulnerable dependency findings and `imports_vulnerable` attribution
-- `SecretsAnnotator`: conservative detect-secrets findings
-- `CrossSignalAnnotator`: derived findings that combine graph structure, metrics, history, security, and LLM signals
-- `ProfilerAnnotator`: cProfile JSON ingestion, cumulative CPU time, call counts, and hot-path weight
-
-Grouped annotator aliases:
-
-- `coverage` runs coverage plus test linkage
-- `git` runs git history plus co-change
-- `security` runs Bandit, PipAudit, and Secrets
-- `cross_signal` or `derived` runs cross-signal derived findings
-- `profiler` ingests `--profile-json <path>`
-
-Coverage-context test linkage requires coverage data recorded with
-`dynamic_context = test_function`. Use `--coverage-mode run` to let Qualgraph
-write `.qualgraph/coverage-context.ini` and run pytest with context recording,
-or use an equivalent coverage.py rcfile before `--coverage-mode reuse`.
-
-## Cross-Signal Findings
-
-Cross-signal findings exist because all inputs share graph nodes and edges.
-
-Implemented:
-
-- `detect_untested_hotspots(graph)`: high complexity + high centrality + zero line coverage
-- `detect_hidden_coupling(graph)`: co-change edge with no calls/imports path
-- `detect_vulnerable_usage(graph)`: vulnerable import plus a call to symbols from that package
-- `detect_outdated_documentation(graph)`: docstring-consistency LLM finding on high-churn code
-- `detect_god_nodes(graph)`: top-band centrality, complexity, and in/out degree
-- `detect_cyclic_dependencies(graph)`: cycles in the calls subgraph
-- `detect_complex_hotspots(graph)`: CPU-heavy code with high complexity and weak coverage
-
-## Risk Scoring
-
-Risk is written to function and method nodes:
-
-```text
-risk =
-  w1 * centrality_percentile
-  + w2 * complexity_percentile
-  + w3 * churn_percentile
-  + w4 * coverage_gap
-  + w5 * security_severity_max
-  + w6 * llm_severity_max
-  + w7 * hotpath_weight
+```bash
+python -m playwright install chromium
+python -m pytest tests/e2e -q
 ```
 
-The scorer stores both:
+After code changes in this repository, run:
 
-- `risk_score`
-- `risk_components`
-
-The LLM layer should analyze only the top-N risk nodes. This gates API cost and keeps subscription-agent workflows manageable.
-
-## LLM Provider Abstraction
-
-The API-facing LLM layer uses:
-
-- `LLMRequest`
-- `LLMResponse`
-- `LLMProvider`
-- `LLMClient`
-
-Providers:
-
-- `AnthropicProvider`
-- `OpenAIProvider`
-- `OllamaProvider`
-
-Telemetry:
-
-- every LLM call writes to `.qualgraph/runs/<run_id>/llm_calls.jsonl`
-- fields include node id, prompt template, model id, token counts, cached tokens, cost, and latency
-
-Pricing is configurable in provider constructors. Ollama cost is always zero.
-
-## Subscription LLM and Skill Workflow
-
-Not every user has API access. Many users have subscription access through tools such as Codex, Claude Code, Cursor, or other agentic IDE tools. Qualgraph supports this through a **filesystem task protocol** rather than browser automation or copy-paste.
-
-The workflow:
-
-1. Qualgraph exports top-risk node tasks:
-
-   ```text
-   .qualgraph/runs/<run_id>/llm_tasks/
-     manifest.json
-     0001.some.node.md
-     0002.other.node.md
-   ```
-
-2. An agent reads `manifest.json` and each task Markdown file.
-
-3. The agent writes valid JSON results to:
-
-   ```text
-   .qualgraph/runs/<run_id>/llm_results/
-     0001.json
-     0002.json
-   ```
-
-4. Qualgraph imports those results, attaches them as `llm` findings, recomputes risk, and renders the final report.
-
-This lets a subscription LLM session do the semantic analysis without requiring API keys and without asking the user to manually paste prompts into a web UI.
-
-## Qualgraph Skill
-
-The repository includes a repo-local skill scaffold:
-
-```text
-.agents/skills/qualgraph/SKILL.md
+```bash
+graphify update .
 ```
 
-The intended skill behavior is:
+## Status
 
-1. Create or reuse `.venv`.
-2. Build the graph.
-3. Run annotators.
-4. Export LLM task files.
-5. Complete those task files using the current agent session.
-6. Import LLM results.
-7. Render `.qualgraph/report.md`.
-8. Return the final report path and a concise summary.
-
-This is the preferred user experience for subscription-LLM users:
-
-```text
-/qualgraph .
-```
-
-The user should not need to know the internal command sequence.
-
-## SQLite Cache
-
-The LLM cache is content-addressed and stored in SQLite.
-
-Key fields, in exact order:
-
-```text
-language_version
-grammar_version
-normalized_function_body
-annotator_name
-annotator_version
-model_id
-prompt_template_version
-```
-
-`normalized_function_body`:
-
-- normalizes line endings
-- strips trailing whitespace
-- strips trailing blank lines
-- can optionally strip comments
-- does not run Black or otherwise reformat code
-
-The cache table:
-
-```sql
-CREATE TABLE IF NOT EXISTS llm_cache(
-  key TEXT PRIMARY KEY,
-  response_json TEXT NOT NULL,
-  created_at TEXT NOT NULL
-)
-```
-
-## Reports
-
-The Markdown report currently includes:
-
-- executive summary with counts, top findings, LLM cost, and runtime
-- per-cluster overview
-- top-N risk nodes with score breakdowns and evidence trails
-- cross-signal findings
-- per-dimension scorecards
-- node type counts
-- edge type counts
-- top structural nodes
-- findings by tool
-- top finding rules
-- priority findings
-- risk hotspots
-- coverage gaps
-- test linkage summary
-- git history summary
-- co-change summary
-
-The versioned JSON export is the stable integration surface for IDE plugins, dashboards, CI, and hosted product experiments. It contains:
-
-- `schema_version`
-- `metadata.run_timestamp`
-- `metadata.config_hash`
-- `metadata.annotator_versions`
-- `graph`: NetworkX node-link data
-
-Important note for agents: `qualgraph build` alone creates a sparse structural report. Findings, coverage, git, and security sections populate only after `qualgraph annotate` has run. LLM findings appear only after `llm export-tasks`, agent result completion, and `llm import-results`.
-
-## Development Workflow
-
-Use the local venv:
-
-```powershell
-python -m venv .venv
-.venv\Scripts\python -m pip install -e . pytest
-```
-
-Run tests:
-
-```powershell
-$env:PYTHONPATH='src;benchmarks/repos/tiny_repo'
-.venv\Scripts\python -m pytest
-```
-
-Check report generation:
-
-```powershell
-.venv\Scripts\qualgraph build benchmarks\repos\tiny_repo --output .qualgraph\dev.graph.json
-.venv\Scripts\qualgraph report .qualgraph\dev.graph.json --output .qualgraph\dev.report.md
-```
-
-For full local analysis:
-
-```powershell
-.venv\Scripts\qualgraph build benchmarks\repos\tiny_repo --output .qualgraph\graph.json
-.venv\Scripts\qualgraph annotate benchmarks\repos\tiny_repo --graph .qualgraph\graph.json --output .qualgraph\annotated.graph.json --annotators radon,ruff,coverage,git,security
-.venv\Scripts\qualgraph llm export-tasks .qualgraph\annotated.graph.json --limit 50
-```
-
-Then complete task JSON files, import results, and render:
-
-```powershell
-.venv\Scripts\qualgraph llm import-results .qualgraph\runs\<run_id> --graph .qualgraph\annotated.graph.json --output .qualgraph\final.graph.json
-.venv\Scripts\qualgraph report .qualgraph\final.graph.json --output .qualgraph\report.md
-```
-
-## Current Status
-
-Implemented:
-
-- graph builder
-- parser and resolver
-- metrics and clustering
-- graph serialization
-- annotator pipeline
-- static annotators
-- security annotators
-- expanded cross-signal detectors
-- profiler/hot-path annotator
-- risk scorer
-- LLM provider abstraction
-- LLM telemetry
-- agent-file LLM workflow
-- SQLite LLM cache
-- API-backed LLM analyzer with `--max-llm-calls` and `--dry-run`
-- Markdown report generation
-- repo-local Qualgraph skill scaffold
-- tiny benchmark repo and unit tests
-
-Still planned or incomplete:
-
-- single `qualgraph analyze` command
-- richer final report sections and executive summary
-- HTML report or dashboard
-- type coverage annotator
-- cluster summarization
-- docstring consistency LLM tasks
-- differential analysis between graph snapshots
-- multi-language support
-
-## Design Principles
-
-- Keep the graph as the source of truth.
-- Keep annotators independent and failure-isolated.
-- Keep LLM analysis top-N and evidence-based.
-- Keep API providers optional.
-- Keep subscription-LLM usage first-class through the agent-file workflow.
-- Do not automate ChatGPT or Claude web UIs.
-- Keep all user code local unless the user explicitly chooses an API provider.
-- Make all run artifacts inspectable under `.qualgraph/`.
-- Commit small vertical slices with tests.
-
-## Instructions For Future Agents
-
-When continuing this project:
-
-1. Read this README first.
-2. Read `AGENTS.md`.
-3. Read `graphify-out/GRAPH_REPORT.md` before architecture or codebase questions.
-4. Prefer `.qualgraph/` for generated analysis artifacts.
-5. Use `.venv` for tests and CLI checks.
-6. After code changes, run tests and verify report generation.
-7. After code changes, run `graphify update .`.
-8. Keep the subscription-friendly agent-file LLM workflow in mind for all LLM-related work.
-9. Commit each completed change slice.
-
-The intended product shape is not just a library. It is a local CLI plus an agent skill that can orchestrate the entire analysis and LLM-finding loop for users with or without API keys.
+Qualgraph is alpha software. The public interface is useful, but the graph
+schema and scoring model may still evolve before a stable 1.0 release.
