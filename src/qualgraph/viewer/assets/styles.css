@@ -1,7 +1,7 @@
 :root {
   color-scheme: dark;
-  --bg: #080a0f;
-  --panel: #10131c;
+  --bg: #090b10;
+  --panel: #10141d;
   --panel-2: #151a25;
   --line: #2a3141;
   --text: #e8edf7;
@@ -25,10 +25,7 @@ body {
   height: 100%;
   margin: 0;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 52% 48%, rgba(76, 126, 255, .13), transparent 28%),
-    radial-gradient(circle at 82% 12%, rgba(88, 230, 217, .08), transparent 22%),
-    linear-gradient(135deg, #070910, #0b0f17 55%, #070910);
+  background: linear-gradient(135deg, #080a0f, #10131b 58%, #080a0f);
   color: var(--text);
   font-family: "Segoe UI Variable", "Segoe UI", sans-serif;
 }
@@ -52,6 +49,15 @@ button:hover {
   border-color: rgba(112, 167, 255, .7);
   background: rgba(112, 167, 255, .12);
   transform: translateY(-1px);
+}
+
+button:focus-visible,
+input:focus-visible,
+.row:focus-visible,
+.finding-card:focus-visible,
+.crumb:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
 }
 
 .shell {
@@ -89,11 +95,9 @@ button:hover {
 .mark {
   width: 34px;
   height: 34px;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle, var(--cyan), transparent 40%),
-    radial-gradient(circle at 70% 35%, var(--blue), transparent 50%);
-  box-shadow: 0 0 28px rgba(88, 230, 217, .42);
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--cyan), var(--blue));
+  box-shadow: 0 0 22px rgba(88, 230, 217, .28);
 }
 
 h1,
@@ -128,6 +132,7 @@ h1 {
 .section-title span {
   color: var(--muted);
   font-size: 12px;
+  overflow-wrap: anywhere;
 }
 
 .summary-grid {
@@ -229,11 +234,13 @@ h1 {
   display: block;
   font-size: 13px;
   margin-bottom: 4px;
+  overflow-wrap: anywhere;
 }
 
 .row small {
   color: var(--muted);
   line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
 .stage {
@@ -260,6 +267,7 @@ h1 {
 .toolbar h2 {
   font-size: 26px;
   font-weight: 600;
+  overflow-wrap: anywhere;
 }
 
 .breadcrumbs {
@@ -278,6 +286,10 @@ h1 {
   padding: 4px 8px;
   font-size: 11px;
   cursor: pointer;
+  max-width: min(46vw, 420px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .crumb:hover {
@@ -296,6 +308,41 @@ h1 {
   display: block;
   cursor: grab;
   touch-action: none;
+}
+
+.stage-state {
+  position: absolute;
+  inset: 86px 18px 56px;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  text-align: center;
+  color: var(--muted);
+}
+
+.stage-state[hidden] {
+  display: none;
+}
+
+.stage-state div {
+  max-width: 360px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(8, 10, 15, .82);
+  padding: 18px;
+  box-shadow: var(--shadow);
+}
+
+.stage-state h2 {
+  margin-bottom: 6px;
+  color: var(--text);
+  font-size: 16px;
+}
+
+.stage-state p {
+  line-height: 1.45;
+  overflow-wrap: anywhere;
 }
 
 #graphCanvas:active {
@@ -382,6 +429,7 @@ h1 {
 
 .source {
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
   overflow: auto;
   max-height: 280px;
   border-radius: 8px;
@@ -403,6 +451,8 @@ h1 {
   color: var(--muted);
   font-size: 11px;
   margin: 2px 4px 2px 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .sev-HIGH,
@@ -428,6 +478,11 @@ h1 {
   background: rgba(255,255,255,.03);
 }
 
+.finding-card strong,
+.finding-card p {
+  overflow-wrap: anywhere;
+}
+
 .finding-card p {
   color: var(--muted);
   font-size: 12px;
@@ -446,5 +501,97 @@ h1 {
     width: 390px;
     max-width: 48vw;
     z-index: 10;
+  }
+}
+
+@media (max-width: 820px) {
+  html,
+  body {
+    height: auto;
+    min-height: 100%;
+    overflow: auto;
+  }
+
+  .shell {
+    grid-template-columns: 1fr;
+    min-height: 100vh;
+  }
+
+  .sidebar,
+  .inspector {
+    height: auto;
+    max-height: none;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .stage {
+    min-height: 62vh;
+    order: 2;
+  }
+
+  .sidebar {
+    order: 1;
+  }
+
+  .inspector {
+    position: static;
+    width: auto;
+    max-width: none;
+    order: 3;
+  }
+
+  .toolbar {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    padding: 16px;
+    gap: 14px;
+    pointer-events: auto;
+  }
+
+  .toolbar h2 {
+    font-size: 21px;
+  }
+
+  #graphCanvas {
+    min-height: 430px;
+  }
+
+  .legend {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    padding: 0 16px 16px;
+    flex-wrap: wrap;
+  }
+
+  .stage-state {
+    inset: 120px 16px 56px;
+  }
+}
+
+@media (max-width: 520px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar {
+    flex-direction: column;
+  }
+
+  .toolbar-actions,
+  .filter-row {
+    width: 100%;
+  }
+
+  .toolbar-actions button,
+  .filter-row button {
+    flex: 1 1 auto;
+  }
+
+  .kv {
+    grid-template-columns: 1fr;
   }
 }

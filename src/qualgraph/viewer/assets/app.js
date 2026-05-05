@@ -29,7 +29,8 @@ const els = {
   search: document.getElementById('searchInput'),
   modeLabel: document.getElementById('modeLabel'),
   viewTitle: document.getElementById('viewTitle'),
-  breadcrumbs: document.getElementById('breadcrumbs')
+  breadcrumbs: document.getElementById('breadcrumbs'),
+  stageState: document.getElementById('stageState')
 };
 
 const ctx = els.canvas.getContext('2d');
@@ -38,6 +39,7 @@ let height = 0;
 let frame = 0;
 
 async function boot() {
+  showStageState('Loading graph', 'Preparing the local viewer.');
   const [summary, clusters, graph, findings] = await Promise.all([
     fetchJson('/api/summary'),
     fetchJson('/api/clusters'),
@@ -55,6 +57,11 @@ async function boot() {
   renderFindings();
   renderEmpty();
   resize();
+  if (!state.graph.nodes?.length) {
+    showStageState('No graph nodes', 'Run qualgraph build or qualgraph analyze before opening the viewer.');
+  } else {
+    hideStageState();
+  }
   requestAnimationFrame(tick);
 }
 
@@ -83,9 +90,9 @@ function renderClusters() {
   const query = state.query.toLowerCase();
   const clusters = state.clusters.filter(cluster => !query || cluster.name.toLowerCase().includes(query));
   els.clusterList.innerHTML = clusters.slice(0, 80).map(cluster => `
-    <div class="row ${state.activeCluster === cluster.id ? 'is-active' : ''}" data-cluster="${escapeAttr(cluster.id)}">
+    <div class="row ${state.activeCluster === cluster.id ? 'is-active' : ''}" data-cluster="${escapeAttr(cluster.id)}" tabindex="0">
       <strong>${escapeHtml(cluster.name)}</strong>
-      <small>${cluster.size} nodes · ${cluster.finding_count} findings · max risk ${cluster.max_risk_score.toFixed(1)}</small>
+      <small>${cluster.size} nodes &middot; ${cluster.finding_count} findings &middot; max risk ${cluster.max_risk_score.toFixed(1)}</small>
     </div>
   `).join('');
 }
@@ -103,7 +110,7 @@ function renderFindings(source = state.activeSource) {
   els.findingsTitle.textContent = source === 'llm' ? 'LLM Findings' : 'Findings';
   els.findingCount.textContent = findings.length;
   els.findingsList.innerHTML = findings.slice(0, 100).map(item => `
-    <div class="finding-card" data-node="${escapeAttr(item.node_id)}">
+    <div class="finding-card" data-node="${escapeAttr(item.node_id)}" tabindex="0">
       <span class="badge sev-${escapeAttr(item.severity)}">${escapeHtml(item.severity)}</span>
       <span class="badge">${escapeHtml(item.source)} ${escapeHtml(item.code)}</span>
       <strong>${escapeHtml(item.node_name)}</strong>
@@ -138,7 +145,7 @@ function renderCluster(cluster) {
       ${cluster.top_risk_nodes.map(node => `
         <div class="row" data-node="${escapeAttr(node.id)}">
           <strong>${escapeHtml(node.qualified_name)}</strong>
-          <small>${escapeHtml(node.file_path || '')}:${node.line_start || ''} · risk ${node.risk_score.toFixed(1)}</small>
+          <small>${escapeHtml(node.file_path || '')}:${node.line_start || ''} &middot; risk ${node.risk_score.toFixed(1)}</small>
         </div>
       `).join('') || '<p class="muted">No risk nodes in this cluster.</p>'}
     </div>
@@ -151,9 +158,9 @@ async function renderClusterFiles(clusterId) {
   const target = document.getElementById('clusterFileList');
   if (!target) return;
   target.innerHTML = payload.files.slice(0, 30).map(file => `
-    <div class="row" data-file="${escapeAttr(file.id)}">
+    <div class="row" data-file="${escapeAttr(file.id)}" tabindex="0">
       <strong>${escapeHtml(file.file_path)}</strong>
-      <small>${file.size} symbols · ${file.finding_count} findings · max risk ${file.risk_score.toFixed(1)}</small>
+      <small>${file.size} symbols &middot; ${file.finding_count} findings &middot; max risk ${file.risk_score.toFixed(1)}</small>
     </div>
   `).join('') || '<p class="muted">No files in this cluster.</p>';
 }
@@ -180,7 +187,7 @@ async function renderNode(nodeId) {
     <div class="list">${[...node.relationships.outgoing, ...node.relationships.incoming].slice(0, 20).map(rel => `
       <div class="row" data-node="${escapeAttr(rel.id)}">
         <strong>${escapeHtml(rel.qualified_name)}</strong>
-        <small>${escapeHtml(rel.direction)} · ${escapeHtml(rel.edge_type)} · ${escapeHtml(rel.file_path || '')}</small>
+        <small>${escapeHtml(rel.direction)} &middot; ${escapeHtml(rel.edge_type)} &middot; ${escapeHtml(rel.file_path || '')}</small>
       </div>
     `).join('') || '<p class="muted">No relationships.</p>'}</div>
   `;
@@ -243,7 +250,7 @@ function renderFile(filePath) {
       ${nodes.slice().sort((a, b) => (b.risk_score || 0) - (a.risk_score || 0)).map(node => `
         <div class="row" data-node="${escapeAttr(node.id)}">
           <strong>${escapeHtml(node.qualified_name)}</strong>
-          <small>${escapeHtml(node.type)} · lines ${node.line_start || ''}-${node.line_end || ''} · risk ${node.risk_score.toFixed(1)}</small>
+          <small>${escapeHtml(node.type)} &middot; lines ${node.line_start || ''}-${node.line_end || ''} &middot; risk ${node.risk_score.toFixed(1)}</small>
         </div>
       `).join('') || '<p class="muted">No symbols in this file.</p>'}
     </div>
@@ -485,6 +492,14 @@ els.clusterList.addEventListener('click', event => {
   const row = event.target.closest('[data-cluster]');
   if (row) drillCluster(row.dataset.cluster);
 });
+els.clusterList.addEventListener('keydown', event => {
+  if (event.key !== 'Enter' && event.key !== ' ') return;
+  const row = event.target.closest('[data-cluster]');
+  if (row) {
+    event.preventDefault();
+    drillCluster(row.dataset.cluster);
+  }
+});
 
 els.inspector.addEventListener('click', event => {
   const row = event.target.closest('[data-node]');
@@ -492,10 +507,26 @@ els.inspector.addEventListener('click', event => {
   const file = event.target.closest('[data-file]');
   if (file) drillFile(file.dataset.file);
 });
+els.inspector.addEventListener('keydown', event => {
+  if (event.key !== 'Enter' && event.key !== ' ') return;
+  const row = event.target.closest('[data-node]');
+  const file = event.target.closest('[data-file]');
+  if (row || file) event.preventDefault();
+  if (row) renderNode(row.dataset.node);
+  if (file) drillFile(file.dataset.file);
+});
 
 els.findingsList.addEventListener('click', event => {
   const row = event.target.closest('[data-node]');
   if (row) renderNode(row.dataset.node);
+});
+els.findingsList.addEventListener('keydown', event => {
+  if (event.key !== 'Enter' && event.key !== ' ') return;
+  const row = event.target.closest('[data-node]');
+  if (row) {
+    event.preventDefault();
+    renderNode(row.dataset.node);
+  }
 });
 
 document.getElementById('overviewButton').addEventListener('click', overview);
@@ -536,7 +567,21 @@ function setOverviewModeLabel() {
   const shown = state.graph?.nodes?.length || 0;
   const total = state.graph?.total_clusters || shown;
   const hidden = state.graph?.hidden_clusters || 0;
-  els.modeLabel.textContent = hidden ? `Cluster Map · ${shown} of ${total} shown` : 'Cluster Map';
+  els.modeLabel.textContent = hidden ? `Cluster Map - ${shown} of ${total} shown` : 'Cluster Map';
+}
+
+function showStageState(title, message) {
+  els.stageState.hidden = false;
+  els.stageState.innerHTML = `
+    <div>
+      <h2>${escapeHtml(title)}</h2>
+      <p>${escapeHtml(message)}</p>
+    </div>
+  `;
+}
+
+function hideStageState() {
+  els.stageState.hidden = true;
 }
 
 function labelCandidates(nodes) {
@@ -582,5 +627,6 @@ function escapeAttr(value) {
 }
 
 boot().catch(error => {
+  showStageState('Viewer failed to load', error.message);
   els.inspector.innerHTML = `<div class="empty"><h2>Viewer failed to load</h2><p>${escapeHtml(error.message)}</p></div>`;
 });

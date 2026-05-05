@@ -19,6 +19,7 @@ def test_viewer_server_serves_api_and_assets(tmp_path: Path) -> None:
     thread.start()
     try:
         summary = _json_get(f"{server.url}api/summary")
+        health = _json_get(f"{server.url}api/health")
         graph = _json_get(f"{server.url}api/graph")
         files = _json_get(f"{server.url}api/files?cluster=1")
         file_graph = _json_get(f"{server.url}api/graph?cluster=1&file=pkg%2Fmod.py")
@@ -28,6 +29,8 @@ def test_viewer_server_serves_api_and_assets(tmp_path: Path) -> None:
             content_type = response.headers["Content-Type"]
 
         assert summary["nodes"] == 1
+        assert health["status"] == "ok"
+        assert health["graph_path"] == str(graph_path)
         assert graph["mode"] == "clusters"
         assert files["files"][0]["id"] == "pkg/mod.py"
         assert file_graph["mode"] == "file"

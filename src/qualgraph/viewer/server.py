@@ -33,7 +33,7 @@ class ViewerServer(ThreadingHTTPServer):
 class ViewerRequestHandler(BaseHTTPRequestHandler):
     server: ViewerServer
 
-    def do_GET(self) -> None:  # noqa: N802
+    def do_GET(self) -> None:
         parsed = urlparse(self.path)
         query = parse_qs(parsed.query)
         if parsed.path == "/":
@@ -44,6 +44,9 @@ class ViewerRequestHandler(BaseHTTPRequestHandler):
             return
         if parsed.path == "/api/summary":
             self._send_json(self.server.viewer.summary())
+            return
+        if parsed.path == "/api/health":
+            self._send_json({"status": "ok", "graph_path": self.server.viewer.graph_path})
             return
         if parsed.path == "/api/clusters":
             self._send_json({"clusters": self.server.viewer.clusters()})
@@ -112,7 +115,10 @@ class ViewerRequestHandler(BaseHTTPRequestHandler):
 
 
 def create_server(graph_path: str | Path, *, host: str = "127.0.0.1", port: int = 0, top_n: int = 50) -> ViewerServer:
-    viewer = ViewerData.from_path(graph_path, top_n=top_n)
+    try:
+        viewer = ViewerData.from_path(graph_path, top_n=top_n)
+    except Exception as exc:
+        raise ValueError(f"could not read graph artifact {graph_path}: {exc}") from exc
     return ViewerServer((host, port), viewer)
 
 
