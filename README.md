@@ -114,6 +114,19 @@ qualgraph llm analyze .qualgraph/annotated.graph.json --provider openai --model 
 
 User code stays local unless you explicitly choose an API provider.
 
+## Agent Skill
+
+Qualgraph also ships with a reusable agent skill for Codex-style LLM workflows.
+If the agent is running inside this repository, the skill is already available
+from `.agents/skills/qualgraph`.
+
+See [Agent Skill](docs/agent-skill.md) for:
+
+- repo-local usage
+- global Codex skill installation
+- example prompts
+- expected outputs
+
 ## Documentation
 
 - [Installation](docs/installation.md)
@@ -121,6 +134,7 @@ User code stays local unless you explicitly choose an API provider.
 - [Configuration](docs/configuration.md)
 - [Viewer](docs/viewer.md)
 - [LLM Workflows](docs/llm-workflows.md)
+- [Agent Skill](docs/agent-skill.md)
 - [Architecture](docs/architecture.md)
 - [Contributing](CONTRIBUTING.md)
 - [Security](SECURITY.md)
