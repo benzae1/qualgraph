@@ -384,7 +384,7 @@ def _calls_matching_package(
     for call in calls:
         target = call.get("target")
         call_name = str(call.get("call") or "")
-        target_attrs = graph.nodes[target] if target in graph.nodes else {}
+        target_attrs = graph.nodes.get(target, {})
         target_name = str(target_attrs.get("qualified_name") or target_attrs.get("name") or "")
         if _matches_package(call_name, package) or _matches_package(target_name, package):
             payload = {"call": call_name or target_name}

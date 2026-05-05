@@ -75,11 +75,16 @@ def build(
         help="Sample count for approximate betweenness in fast metric mode.",
     ),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Print per-stage timings from the run log."),
+    artifacts_dir: Optional[Path] = typer.Option(
+        None,
+        "--artifacts-dir",
+        help="Directory for structured run logs; defaults to .qualgraph/runs or QUALGRAPH_ARTIFACTS_DIR.",
+    ),
 ) -> None:
     """Build a Python code graph and write an annotated graph artifact."""
 
     output = output or Path(f"{repo.name}.graph.json")
-    run_logger = RunLogger(repo_path=repo)
+    run_logger = RunLogger(repo_path=repo, artifacts_dir=artifacts_dir)
     try:
         with run_logger.span("build_graph") as span:
             graph = build_graph(repo, exclude)
@@ -116,6 +121,8 @@ def build(
         f"{graph.graph.get('cluster_count', 0)} clusters). "
         f"Run log: {summary.run_id}"
     )
+    if run_logger.artifact_warning:
+        typer.echo(f"Warning: {run_logger.artifact_warning}")
     if verbose:
         _echo_verbose_run(run_logger)
 
@@ -159,12 +166,17 @@ def annotate(
         help="Extra pytest args used only when the coverage annotator runs tests.",
     ),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Print per-stage timings from the run log."),
+    artifacts_dir: Optional[Path] = typer.Option(
+        None,
+        "--artifacts-dir",
+        help="Directory for structured run logs; defaults to .qualgraph/runs or QUALGRAPH_ARTIFACTS_DIR.",
+    ),
 ) -> None:
     """Run annotators over a graph, building the graph first if needed."""
 
     graph_path = graph_path or Path(f"{repo.name}.graph.json")
     output = output or graph_path
-    run_logger = RunLogger(repo_path=repo)
+    run_logger = RunLogger(repo_path=repo, artifacts_dir=artifacts_dir)
     try:
         if graph_path.exists():
             graph = read_json_graph(graph_path)
@@ -195,8 +207,115 @@ def annotate(
         f"Annotated {output} with {len(results)} result(s). "
         f"Run log: {summary.run_id}"
     )
+    if run_logger.artifact_warning:
+        typer.echo(f"Warning: {run_logger.artifact_warning}")
     if verbose:
         _echo_verbose_run(run_logger)
+
+
+@app.command()
+def analyze(
+    repo: Path = typer.Argument(..., exists=True, file_okay=False, dir_okay=True, readable=True),
+    output_dir: Path = typer.Option(Path(".qualgraph"), "--output-dir", "-o", help="Directory for graph, report, and export artifacts."),
+    preset: str = typer.Option("standard", "--preset", help="Analysis preset: fast, standard, or full."),
+    coverage_mode: str = typer.Option(
+        "auto",
+        "--coverage-mode",
+        help="Coverage behavior: auto, reuse, run, or skip.",
+    ),
+    top_n: int = typer.Option(10, "--top-n", min=1, help="Number of risk nodes to include in report and viewer data."),
+    metric_mode: str = typer.Option("fast", "--metric-mode", help="Structural metric mode: fast, exact, or off."),
+    betweenness_samples: int = typer.Option(
+        128,
+        "--betweenness-samples",
+        min=1,
+        help="Sample count for approximate betweenness in fast metric mode.",
+    ),
+    git_max_commits: int = typer.Option(
+        1000,
+        "--git-max-commits",
+        min=0,
+        help="Maximum recent commits for git annotators; 0 scans full history.",
+    ),
+    pytest_args: str = typer.Option("", "--pytest-args", help="Extra pytest args used only when coverage runs tests."),
+    serve: bool = typer.Option(False, "--serve", help="Serve the generated graph in the local viewer after analysis."),
+    open_browser: bool = typer.Option(False, "--open", help="Open the generated viewer in the default browser; implies --serve."),
+    host: str = typer.Option("127.0.0.1", "--host", help="Host interface used with --serve."),
+    port: int = typer.Option(0, "--port", min=0, help="Port used with --serve; 0 picks a free port."),
+    artifacts_dir: Optional[Path] = typer.Option(
+        None,
+        "--artifacts-dir",
+        help="Directory for structured run logs; defaults to .qualgraph/runs or QUALGRAPH_ARTIFACTS_DIR.",
+    ),
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="Print per-stage timings from the run log."),
+) -> None:
+    """Run build, annotation, report, and JSON export in one local workflow."""
+
+    normalized_preset = preset.strip().lower()
+    if normalized_preset not in {"fast", "standard", "full"}:
+        raise typer.BadParameter(f"unknown preset: {preset}")
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    graph_path = output_dir / "graph.json"
+    annotated_path = output_dir / "annotated.graph.json"
+    report_path = output_dir / "report.md"
+    export_path = output_dir / "export.json"
+    run_logger = RunLogger(repo_path=repo, artifacts_dir=artifacts_dir)
+    try:
+        with run_logger.span("build_graph") as span:
+            graph = build_graph(repo, [])
+            span["nodes"] = graph.number_of_nodes()
+            span["edges"] = graph.number_of_edges()
+
+        with run_logger.span("annotate_clusters") as span:
+            clusters = annotate_clusters(graph)
+            span["cluster_count"] = len(set(clusters.values()))
+
+        with run_logger.span("annotate_metrics") as span:
+            _annotate_metrics(graph, metric_mode=metric_mode, betweenness_samples=betweenness_samples)
+            span["nodes"] = graph.number_of_nodes()
+            span["mode"] = metric_mode
+
+        with run_logger.span("score_risk_initial") as span:
+            score_risk(graph)
+            span["nodes"] = graph.number_of_nodes()
+
+        with run_logger.span("write_json_graph", output=graph_path):
+            write_json_graph(graph, graph_path)
+
+        selected = _resolve_annotators(
+            normalized_preset,
+            coverage_mode=coverage_mode,
+            pytest_args=_split_args(pytest_args),
+            git_max_commits=git_max_commits or None,
+        )
+        results = run_pipeline(graph, repo, selected, logger=run_logger, show_progress=True)
+
+        with run_logger.span("score_risk_final") as span:
+            score_risk(graph)
+            span["nodes"] = graph.number_of_nodes()
+    finally:
+        summary = run_logger.finish()
+
+    _attach_run_summary(graph, summary)
+    write_json_graph(graph, annotated_path)
+    write_markdown_report(graph, report_path, top_n=top_n)
+    write_json_export(graph, export_path)
+
+    typer.echo(
+        f"Analyzed {repo}: {graph.number_of_nodes()} nodes, {graph.number_of_edges()} edges, "
+        f"{len(results)} annotator result(s)."
+    )
+    typer.echo(f"Graph: {annotated_path}")
+    typer.echo(f"Report: {report_path}")
+    typer.echo(f"JSON export: {export_path}")
+    typer.echo(f"Run log: {summary.run_id}")
+    if run_logger.artifact_warning:
+        typer.echo(f"Warning: {run_logger.artifact_warning}")
+    if verbose:
+        _echo_verbose_run(run_logger)
+    if serve or open_browser:
+        serve_graph(annotated_path, host=host, port=port, top_n=top_n, open_browser=open_browser)
 
 
 @app.command()
@@ -243,7 +362,12 @@ def serve(
 ) -> None:
     """Serve an offline local web viewer for a Qualgraph graph JSON artifact."""
 
-    serve_graph(graph, host=host, port=port, top_n=top_n, open_browser=open_browser)
+    try:
+        serve_graph(graph, host=host, port=port, top_n=top_n, open_browser=open_browser)
+    except OSError as exc:
+        raise typer.BadParameter(f"could not start viewer on {host}:{port}: {exc}") from exc
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc)) from exc
 
 
 @llm_app.command("export-tasks")
@@ -292,12 +416,17 @@ def llm_analyze(
     provider_name: str = typer.Option("ollama", "--provider", help="Provider: ollama, openai, or anthropic."),
     model: Optional[str] = typer.Option(None, "--model", help="Provider model id override."),
     cache_path: Path = typer.Option(Path(".qualgraph/cache.sqlite"), "--cache", help="SQLite LLM cache path."),
+    artifacts_dir: Optional[Path] = typer.Option(
+        None,
+        "--artifacts-dir",
+        help="Directory for structured run logs; defaults to .qualgraph/runs or QUALGRAPH_ARTIFACTS_DIR.",
+    ),
 ) -> None:
     """Run provider-backed LLM analysis over the highest-risk graph nodes."""
 
     code_graph = read_json_graph(graph)
     provider = _resolve_provider(provider_name, model, dry_run=dry_run)
-    run_logger = RunLogger(repo_path=Path("."))
+    run_logger = RunLogger(repo_path=Path("."), artifacts_dir=artifacts_dir)
     try:
         if dry_run:
             summary = analyze_top_n(
@@ -338,6 +467,8 @@ def llm_analyze(
             f"{summary.cache_hits} cache hit(s), {summary.findings_added} finding(s). "
             f"Wrote {output}. Run log: {run_summary.run_id}"
         )
+    if run_logger.artifact_warning:
+        typer.echo(f"Warning: {run_logger.artifact_warning}")
 
 
 def _resolve_annotators(

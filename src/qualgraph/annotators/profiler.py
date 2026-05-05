@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from contextlib import suppress
 from json import JSONDecodeError
 from dataclasses import dataclass
 from pathlib import Path
@@ -160,10 +161,8 @@ def _node_location_index(graph: nx.DiGraph, repo_path: Path) -> dict[tuple[str, 
         if file_path is None or line_start is None:
             continue
         paths = {_normalize_path(str(file_path))}
-        try:
+        with suppress(OSError):
             paths.add(_normalize_path(str((repo / str(file_path)).resolve())))
-        except OSError:
-            pass
         for path in paths:
             index[(path, int(line_start))] = node_id
     return index

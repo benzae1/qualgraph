@@ -1,7 +1,35 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
-name = "analytify"
+name = "qualgraph"
 version = "0.1.0"
+description = "Graph-aware code quality analysis for Python repositories."
+readme = "README.md"
 requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+  { name = "Qualgraph contributors" },
+]
+keywords = [
+  "code-quality",
+  "code-analysis",
+  "knowledge-graph",
+  "static-analysis",
+  "llm",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Quality Assurance",
+  "Topic :: Software Development :: Testing",
+]
 dependencies = [
   "tree-sitter==0.21.3",
   "tree-sitter-python==0.21.0",
@@ -10,7 +38,7 @@ dependencies = [
   "python-igraph==0.11.6",
   "radon==6.0.1",
   "docstring-parser==0.16",
-  "ruff==0.6.9",
+  "ruff==0.15.11",
   "vulture==2.13",
   "coverage==7.6.1",
   "bandit==1.7.10",
@@ -28,12 +56,55 @@ dependencies = [
   "openai==1.51.0",
   "httpx==0.27.2",
 ]
+
+[project.optional-dependencies]
+dev = [
+  "build>=1.2.2",
+  "pytest>=8.3",
+  "pytest-cov>=5.0",
+  "twine>=5.1",
+  "playwright>=1.49",
+]
+
+[project.urls]
+Homepage = "https://github.com/benzae1/analytify"
+Repository = "https://github.com/benzae1/analytify"
+Issues = "https://github.com/benzae1/analytify/issues"
+Changelog = "https://github.com/benzae1/analytify/blob/main/CHANGELOG.md"
+
 [project.scripts]
-analytify = "qualgraph.cli:app"
 qualgraph = "qualgraph.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.setuptools.package-data]
 qualgraph = [
   "report/templates/*.j2",
   "viewer/assets/*",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "benchmarks/repos/tiny_repo"]
+markers = [
+  "e2e: browser-backed viewer checks",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+exclude = [
+  ".git",
+  ".qualgraph",
+  ".venv",
+  "benchmarks/repos/aiohttp",
+  "benchmarks/repos/scrapy",
+  "benchmarks/repos/starlette",
+  "graphify-out",
+  "src/qualgraph/graphify-out",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "SIM", "RUF"]
+ignore = ["B008", "E501"]

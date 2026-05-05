@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import json
 import logging as stdlib_logging
+import os
+import tempfile
 import traceback
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass, field
@@ -21,6 +23,7 @@ from uuid import uuid4
 
 LOGGER_NAME = "qualgraph"
 DEFAULT_RUNS_DIR = ".qualgraph/runs"
+ARTIFACTS_DIR_ENV = "QUALGRAPH_ARTIFACTS_DIR"
 
 
 def utc_now_iso() -> str:
@@ -75,9 +78,19 @@ class RunLogger:
     ) -> None:
         self.repo_path = Path(repo_path).resolve() if repo_path is not None else None
         self.run_id = run_id or datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid4().hex[:8]
-        base_dir = Path(artifacts_dir or DEFAULT_RUNS_DIR)
+        base_dir = Path(artifacts_dir or os.environ.get(ARTIFACTS_DIR_ENV) or DEFAULT_RUNS_DIR)
         self.run_dir = base_dir / self.run_id
-        self.run_dir.mkdir(parents=True, exist_ok=True)
+        self.artifact_warning: str | None = None
+        try:
+            self.run_dir.mkdir(parents=True, exist_ok=True)
+        except PermissionError:
+            fallback_base = Path(tempfile.gettempdir()) / "qualgraph" / "runs"
+            self.run_dir = fallback_base / self.run_id
+            self.run_dir.mkdir(parents=True, exist_ok=True)
+            self.artifact_warning = (
+                f"Could not write run logs under {base_dir}; using {fallback_base} instead. "
+                f"Set {ARTIFACTS_DIR_ENV} or pass --artifacts-dir to choose a writable location."
+            )
         self.events_path = self.run_dir / "run.jsonl"
         self.llm_calls_path = self.run_dir / "llm_calls.jsonl"
         self.summary_path = self.run_dir / "run_summary.json"
@@ -88,6 +101,8 @@ class RunLogger:
             repo_path=str(self.repo_path) if self.repo_path is not None else None,
         )
         self.log_event("run_started", repo_path=self.summary.repo_path)
+        if self.artifact_warning:
+            self.log_event("artifact_dir_fallback", warning=self.artifact_warning)
 
     def log_event(self, event: str, **fields: Any) -> None:
         record = {

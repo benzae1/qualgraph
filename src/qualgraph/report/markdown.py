@@ -235,9 +235,7 @@ def _is_low_signal_finding(record: dict[str, Any]) -> bool:
     code = _finding_code(finding)
     if code.startswith("D"):
         return True
-    if code in {"S101", "B101"}:
-        return True
-    return False
+    return code in {"S101", "B101"}
 
 
 def _is_actionable_record(record: dict[str, Any]) -> bool:

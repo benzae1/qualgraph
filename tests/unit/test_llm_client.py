@@ -98,6 +98,17 @@ def test_llm_client_logs_call_telemetry_jsonl(tmp_path: Path) -> None:
     assert summary["llm"]["cached_input_tokens"] == 3
 
 
+def test_run_logger_uses_artifacts_env(monkeypatch, tmp_path: Path) -> None:
+    artifacts_dir = tmp_path / "custom-runs"
+    monkeypatch.setenv("QUALGRAPH_ARTIFACTS_DIR", str(artifacts_dir))
+
+    logger = RunLogger(repo_path=Path("."))
+    logger.finish()
+
+    assert logger.run_dir.parent == artifacts_dir
+    assert logger.summary_path.exists()
+
+
 def test_analyzer_builds_node_analysis_request() -> None:
     client = LLMClient(FakeProvider())
     response = LLMAnalyzer(client).analyze_node(NodeAnalysisRequest(node_id="node-1", context="inspect me"))

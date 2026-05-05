@@ -1,0 +1,3 @@
+"""Graph-aware code quality analysis for Python repositories."""
+
+__version__ = "0.1.0"
