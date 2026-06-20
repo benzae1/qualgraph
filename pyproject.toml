@@ -32,7 +32,7 @@ classifiers = [
 dependencies = [
   "tree-sitter==0.21.3",
   "tree-sitter-python==0.21.0",
-  "networkx==3.3",
+  "networkx==3.6.1",
   "leidenalg==0.10.2",
   "python-igraph==0.11.6",
   "radon==6.0.1",
